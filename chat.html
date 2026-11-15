@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#a9d8f2" />
+  <title>情绪搭子 · 情绪色谱</title>
+  <script>
+    try {
+      if (localStorage.getItem('emotion-atlas-theme') === 'night') {
+        document.documentElement.classList.add('night-mode');
+      }
+    } catch (_) { /* storage may be disabled */ }
+  </script>
+  <link rel="stylesheet" href="assets/css/chat.css?v=20261115-1" />
+  <script src="assets/js/background-music.js?v=20261115-3" defer></script>
+  <script src="assets/data/agent-data.js" defer></script>
+  <script src="assets/js/agent/word2vec.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/tokenizer.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/emotion-classifier.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/emotion-analyzer.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/trend-tracker.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/retriever.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/recommender.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/responder.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/intent-detector.js?v=20261115-3" defer></script>
+  <script src="assets/js/agent/agent.js?v=20261115-3" defer></script>
+  <script src="assets/js/chat.js?v=20261115-4" defer></script>
+</head>
+<body>
+  <div class="chat-background" aria-hidden="true"></div>
+  <div class="chat-frame" aria-hidden="true"></div>
+
+  <main class="chat-app">
+    <aside class="chat-sidebar">
+      <a class="back-home" href="index.html" aria-label="返回主页">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+        返回主页
+      </a>
+
+      <div class="agent-profile">
+        <div class="profile-stars" aria-hidden="true">✦</div>
+        <p>LOCAL COMPANION</p>
+        <h1>情绪搭子</h1>
+        <span>一个只保存在本机的倾听者</span>
+      </div>
+
+      <button class="new-chat" id="newChat" type="button">
+        <span aria-hidden="true">＋</span>
+        新的对话
+      </button>
+
+      <div class="conversation-list">
+        <p class="sidebar-label">最近对话</p>
+        <button class="conversation active" type="button">
+          <span class="conversation-dot"></span>
+          <span><b>今天的情绪</b><small id="conversationTime">刚刚</small></span>
+        </button>
+      </div>
+
+      <div class="local-note">
+        <span class="local-dot" aria-hidden="true"></span>
+        <p>纯本地分析</p>
+        <small>聊天、情绪分析和知识检索都在本机运行，不会上传服务器。</small>
+      </div>
+
+      <button class="clear-chat" id="clearChat" type="button">清空本地对话</button>
+    </aside>
+
+    <section class="chat-main">
+      <header class="chat-header">
+        <div>
+          <p>EMOTION COMPANION</p>
+          <h2>今天，想聊些什么？</h2>
+        </div>
+        <span class="agent-state"><i></i> 在线陪伴</span>
+      </header>
+
+      <section class="emotion-insight" id="emotionInsight" hidden aria-live="polite">
+        <div class="emotion-insight-row">
+          <div class="emotion-current">
+            <span class="emotion-dot" id="emotionDot" aria-hidden="true"></span>
+            <div>
+              <small>当前情绪</small>
+              <strong id="emotionLabel">等待倾诉</strong>
+            </div>
+          </div>
+          <span class="emotion-trend" id="emotionTrend">刚开始记录</span>
+        </div>
+        <div class="emotion-meter" aria-hidden="true"><i id="emotionMeterFill"></i></div>
+        <p class="emotion-hint" id="emotionHint">本地分析，不连接服务器。</p>
+        <div class="mood-check" id="moodCheck">
+          <span>和刚才相比</span>
+          <div class="mood-buttons" role="group" aria-label="情绪变化自评">
+            <button type="button" data-self-report="-2">更糟</button>
+            <button type="button" data-self-report="-1">差一点</button>
+            <button type="button" data-self-report="0">差不多</button>
+            <button type="button" data-self-report="1">好一点</button>
+            <button type="button" data-self-report="2">好多了</button>
+          </div>
+        </div>
+        <button class="emotion-game" id="recommendedGame" type="button" hidden>去放松一下</button>
+      </section>
+
+      <div class="chat-thread" id="chatThread" aria-live="polite" aria-label="聊天记录"></div>
+
+      <div class="quick-prompts" id="quickPrompts" aria-label="快捷开场">
+        <button type="button" data-prompt="我有点累。">我有点累</button>
+        <button type="button" data-prompt="今天发生了一件开心的事。">今天很开心</button>
+        <button type="button" data-prompt="我不知道该怎么描述现在的感受。">不知道怎么说</button>
+      </div>
+
+      <form class="chat-composer" id="chatForm">
+        <textarea id="messageInput" rows="1" maxlength="500" placeholder="说说此刻的感受…" aria-label="输入消息"></textarea>
+        <button class="send-button" id="sendButton" type="submit" aria-label="发送消息">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 17 8-17 8 3.2-8L4 4Z" /><path d="M7.2 12H21" /></svg>
+        </button>
+      </form>
+
+      <p class="chat-disclaimer">本地情绪分析用于自我觉察，不是医疗或心理治疗建议。</p>
+    </section>
+  </main>
+
+  <div class="agent-star-widget" id="agentStarWidget" role="button" tabindex="0" aria-label="可拖动、可互动的 3D 星星智能体" title="拖一拖我">
+    <span class="star-string" aria-hidden="true"></span>
+    <div class="star-hanger" id="starHanger">
+      <div class="star-model" id="starModel" aria-hidden="true">
+        <span class="star-face star-face--deep star-face--deep-5"></span>
+        <span class="star-face star-face--deep star-face--deep-4"></span>
+        <span class="star-face star-face--deep star-face--deep-3"></span>
+        <span class="star-face star-face--deep star-face--deep-2"></span>
+        <span class="star-face star-face--deep star-face--deep-1"></span>
+        <span class="star-face star-face--front">
+          <span class="star-shine"></span>
+        </span>
+      </div>
+    </div>
+    <div class="star-speech" id="starSpeech" aria-live="polite"></div>
+  </div>
+</body>
+</html>

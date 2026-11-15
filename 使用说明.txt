@@ -1,0 +1,21 @@
+情绪色谱网站 · 最终导出包
+
+打开方式：
+1. 双击 index.html 可预览。
+2. 为保证背景音乐、跨页面播放和 localStorage 状态正常，建议使用本地服务器预览。
+   在本文件夹地址栏输入 cmd 回车，然后运行：
+   python -m http.server 8000
+   浏览器打开：
+   http://localhost:8000
+
+部署方式：
+- 将本文件夹内的全部内容上传到静态网站托管空间。
+- 入口文件保持为 index.html。
+- 保持 assets、图片 文件夹与 HTML 文件的相对目录结构不变。
+- 本站不需要后端，也不需要数据库。
+
+页面：
+- index.html：主页面
+- game.html：小游戏页面
+- chat.html：智能体页面
+- squishy.html：脆皮捏捏乐原版页面

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#a9d8f2" />
+  <title>治愈游戏屋 · 情绪色谱</title>
+  <link rel="stylesheet" href="assets/css/game.css?v=20261115-6" />
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/js/background-music.js?v=20261115-3" defer></script>
+  <script src="assets/js/game3d.js" defer></script>
+  <script src="assets/audio/sand-calm-loop-data.js" defer></script>
+  <script src="assets/audio/woodfish-hit-data.js" defer></script>
+  <script src="assets/js/game.js?v=20261115-8" defer></script>
+</head>
+<body>
+  <div class="game-background" aria-hidden="true"></div>
+  <div class="game-frame" aria-hidden="true"></div>
+
+  <header class="game-topbar">
+    <div class="game-brand-slot" aria-hidden="true"><!-- 品牌艺术字预留区 --></div>
+    <div class="game-top-actions">
+      <button class="game-theme-toggle" id="gameThemeToggle" type="button" aria-label="切换白天与黑夜" aria-pressed="false">
+        <span class="game-sun" aria-hidden="true">☀</span>
+        <span class="game-moon" aria-hidden="true">☾</span>
+      </button>
+      <a class="back-home" href="index.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+        返回主页
+      </a>
+    </div>
+  </header>
+
+  <main class="game-library">
+    <header class="library-heading">
+      <h1>治愈游戏屋</h1>
+    </header>
+
+    <section class="game-grid" aria-label="小游戏列表">
+      <button class="game-card" type="button" data-game="squishy-ref" aria-label="打开 3D 脆皮捏捏乐">
+        <span class="game-visual game-visual--squishy">
+          <img src="图片/游戏一捏捏乐宣传图.png" alt="脆皮捏捏乐宣传图" loading="lazy" decoding="async" />
+        </span>
+        <span class="game-intro">捏出形状、手绘图案，再一层层浸蜡。听见细纹裂开和蜡壳碎落的治愈脆响。</span>
+        <span class="game-name"><small>01 · 3D 互动</small><strong>脆皮捏捏乐</strong></span>
+      </button>
+
+      <button class="game-card" type="button" data-game="jelly" aria-label="打开 Q 弹果冻工坊">
+        <span class="game-visual game-visual--jelly">
+          <img src="图片/游戏二果冻宣传图.png" alt="果冻工坊宣传图" loading="lazy" decoding="async" />
+        </span>
+        <span class="game-intro">选择喜欢的果冻形状与通透颜色，用手捏一捏，或用勺子一口口挖着吃。</span>
+        <span class="game-name"><small>02 · Q 弹解压</small><strong>果冻工坊</strong></span>
+      </button>
+
+      <button class="game-card" type="button" data-game="woodfish" aria-label="打开敲木鱼">
+        <span class="game-visual game-visual--woodfish">
+          <img src="图片/游戏三敲木鱼宣传图.png" alt="敲木鱼宣传图" loading="lazy" decoding="async" />
+        </span>
+        <span class="game-intro">点击木鱼，听一声清脆的木响。可以连续快速点击，把浮躁一点点放下。</span>
+        <span class="game-name"><small>03 · 点击静心</small><strong>敲木鱼</strong></span>
+      </button>
+
+      <button class="game-card" type="button" data-game="sand" aria-label="打开静心流沙">
+        <span class="game-visual game-visual--sand">
+          <img src="图片/游戏四沙漏宣传图.png" alt="静心流沙宣传图" loading="lazy" decoding="async" />
+        </span>
+        <span class="game-intro">选择 1–10 分钟，让细沙持续落进瓶中。伴着轻轻的沙沙声，把这一段时间只留给自己。</span>
+        <span class="game-name"><small>04 · 1–10 分钟</small><strong>静心流沙</strong></span>
+      </button>
+    </section>
+
+    <p class="game-hint">选择一张卡片开始。所有游戏均为纯前端互动，不连接后端。</p>
+  </main>
+
+  <button class="game-page-nav game-page-nav--left" id="gameCarouselPrev" type="button" aria-label="向左切换游戏">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+  </button>
+  <button class="game-page-nav game-page-nav--right" id="gameCarouselNext" type="button" aria-label="向右切换游戏">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+  </button>
+
+  <div class="game-modal" id="gameModal" aria-hidden="true">
+    <div class="game-modal-backdrop" data-close-game></div>
+    <section class="game-modal-panel" role="dialog" aria-modal="true" aria-labelledby="gameModalTitle" tabindex="-1">
+      <header class="game-modal-header">
+        <div>
+          <p id="gameModalKicker" hidden></p>
+          <h2 id="gameModalTitle">脆皮捏捏乐</h2>
+        </div>
+        <button class="game-close" id="closeGame" type="button" aria-label="关闭游戏">×</button>
+      </header>
+
+      <div class="game-modal-body">
+        <section class="play-panel" data-panel="squishy">
+          <div class="play-layout">
+            <div class="play-stage squishy-stage">
+              <div class="webgl-mount" id="squishy3d"></div>
+              <p class="stage-caption" id="squishyCaption">先挑一个喜欢的软胶内芯。</p>
+            </div>
+
+            <aside class="play-controls">
+              <div class="control-step" data-squishy-step="1">
+                <p class="step-label">01 / 03 · 自定义塑形</p>
+                <h3>选择基础形状</h3>
+                <div class="choice-row shape-row">
+                  <button type="button" class="choice-chip is-active" data-shape="blob">云朵</button>
+                  <button type="button" class="choice-chip" data-shape="heart">爱心</button>
+                  <button type="button" class="choice-chip" data-shape="star">星星</button>
+                  <button type="button" class="choice-chip" data-shape="circle">圆形</button>
+                  <button type="button" class="choice-chip" data-shape="bean">豆豆</button>
+                </div>
+                <h3>挑选底色</h3>
+                <div class="color-row">
+                  <button type="button" class="color-chip is-active" style="--c:#f5c75c" data-color="#f5c75c" aria-label="黄色"></button>
+                  <button type="button" class="color-chip" style="--c:#f08b86" data-color="#f08b86" aria-label="珊瑚色"></button>
+                  <button type="button" class="color-chip" style="--c:#9ed39b" data-color="#9ed39b" aria-label="绿色"></button>
+                  <button type="button" class="color-chip" style="--c:#88bfe8" data-color="#88bfe8" aria-label="蓝色"></button>
+                  <button type="button" class="color-chip" style="--c:#b99ae4" data-color="#b99ae4" aria-label="紫色"></button>
+                </div>
+                <button type="button" class="primary-action" data-squishy-next="2">进入手绘</button>
+              </div>
+
+              <div class="control-step" data-squishy-step="2" hidden>
+                <p class="step-label">02 / 03 · 手绘装饰</p>
+                <h3>选贴纸，再点一下软胶</h3>
+                <div class="sticker-row" id="squishyStickers">
+                  <button type="button" class="sticker-chip is-active" data-sticker="✿">✿</button>
+                  <button type="button" class="sticker-chip" data-sticker="★">★</button>
+                  <button type="button" class="sticker-chip" data-sticker="♡">♡</button>
+                  <button type="button" class="sticker-chip" data-sticker="✦">✦</button>
+                  <button type="button" class="sticker-chip" data-sticker="☁">☁</button>
+                </div>
+                <p class="control-note" id="decorCount">已添加 0 个装饰</p>
+                <button type="button" class="primary-action" data-squishy-next="3">完成手绘</button>
+              </div>
+
+              <div class="control-step" data-squishy-step="3" hidden>
+                <p class="step-label">03 / 03 · 浸蜡与捏碎</p>
+                <h3>反复浸蜡，制造脆壳</h3>
+                <div class="wax-meter" aria-hidden="true"><span id="waxMeterFill"></span></div>
+                <div class="wax-readout"><strong id="waxCount">0 次</strong><span id="waxThickness">尚未浸蜡</span></div>
+                <button type="button" class="primary-action" id="dipWax">浸蜡一次</button>
+                <p class="control-note" id="waxNote">可以反复浸很多次，但厚度会逐渐趋于稳定。</p>
+                <button type="button" class="secondary-action" id="squishStart" hidden>进入 3D 捏碎</button>
+                <p class="control-note" id="crackCountLabel">蜡壳完整度 100%</p>
+                <p class="squish-hint" id="squishHint">捏碎阶段：在同一块蜡附近持续点击或按住拖拽，等它松动到极限才会脱落。</p>
+                <button type="button" class="text-action" id="squishyReset">重新制作</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="play-panel" data-panel="jelly" hidden>
+          <div class="play-layout">
+            <div class="play-stage jelly-stage">
+              <div class="webgl-mount" id="jelly3d"></div>
+              <p class="stage-caption" id="jellyCaption">选择果冻形状和颜色，然后开始享用。</p>
+            </div>
+
+            <aside class="play-controls">
+              <div class="control-step" data-jelly-step="1">
+                <p class="step-label">01 / 02 · 制作果冻</p>
+                <h3>选择果冻形状</h3>
+                <div class="choice-row">
+                  <button type="button" class="choice-chip is-active" data-mold="heart">爱心</button>
+                  <button type="button" class="choice-chip" data-mold="cloud">云朵</button>
+                  <button type="button" class="choice-chip" data-mold="circle">圆形</button>
+                  <button type="button" class="choice-chip" data-mold="star">星星</button>
+                  <button type="button" class="choice-chip" data-mold="flower">花朵</button>
+                </div>
+                <h3>挑选通透颜色</h3>
+                <div class="color-row">
+                  <button type="button" class="color-chip is-active" style="--c:#ffb5db" data-jelly-color="#ffb5db" aria-label="草莓粉"></button>
+                  <button type="button" class="color-chip" style="--c:#a5e1d2" data-jelly-color="#a5e1d2" aria-label="薄荷绿"></button>
+                  <button type="button" class="color-chip" style="--c:#96c5f4" data-jelly-color="#96c5f4" aria-label="海盐蓝"></button>
+                  <button type="button" class="color-chip" style="--c:#d1b1f0" data-jelly-color="#d1b1f0" aria-label="葡萄紫"></button>
+                  <button type="button" class="color-chip" style="--c:#ffd286" data-jelly-color="#ffd286" aria-label="柠檬黄"></button>
+                </div>
+                <p class="control-note">果冻会保留晶莹通透的质地，可以拖动画面从不同角度观察。</p>
+                <button type="button" class="primary-action" id="makeJelly" data-jelly-next="2">制作完成</button>
+              </div>
+
+              <div class="control-step" data-jelly-step="2" hidden>
+                <p class="step-label">02 / 02 · 享用果冻</p>
+                <h3>选择享用方式</h3>
+                <div class="jelly-mode-switch" role="group" aria-label="选择果冻享用方式">
+                  <button type="button" class="jelly-mode-chip is-active" data-jelly-mode="hand"><span>🫳</span><b>用手</b><small>Q 弹捏动</small></button>
+                  <button type="button" class="jelly-mode-chip" data-jelly-mode="spoon"><span>🥄</span><b>勺子</b><small>一口口挖着吃</small></button>
+                </div>
+                <p class="control-note" id="jellyModeHint">用手轻轻按压果冻，它会弹回来。</p>
+                <div class="jelly-eaten-meter" aria-hidden="true"><span id="jellyEatenFill"></span></div>
+                <p class="control-note" id="jellyProgressText">还没开始享用</p>
+                <button type="button" class="secondary-action" id="finishJelly">提前结束</button>
+                <button type="button" class="text-action" id="jellyReset">重新制作</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="play-panel" data-panel="woodfish" hidden>
+          <div class="play-layout">
+            <div class="play-stage woodfish-stage">
+              <img class="woodfish-image" id="woodfishImage" src="assets/images/woodfish-cutout.png" alt="木鱼" role="button" tabindex="0" draggable="false" />
+              <div class="woodfish-floaters" id="woodfishFloaters" aria-live="polite"></div>
+            </div>
+
+            <aside class="play-controls woodfish-controls">
+              <p class="step-label">轻轻一敲</p>
+              <h3>敲木鱼</h3>
+              <p class="control-note">点击木鱼敲一下，可以连续快速点击。</p>
+              <div class="woodfish-count" aria-live="polite">
+                <span>今日敲击</span>
+                <strong id="woodfishCount">0</strong>
+                <span>次</span>
+              </div>
+              <p class="control-note">每一下，都把浮躁轻轻放下一点。</p>
+              <button type="button" class="secondary-action woodfish-reset" id="resetWoodfish">归零</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="play-panel reference-play-panel" data-panel="squishy-ref" hidden>
+          <iframe id="squishyReferenceFrame" data-src="squishy.html" title="原版 3D 脆皮捏捏乐" loading="lazy" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
+        </section>
+
+        <section class="play-panel" data-panel="sand" hidden>
+          <div class="sand-layout">
+            <div class="sand-stage">
+              <div class="webgl-mount sand-mount" id="sand3d"></div>
+            </div>
+            <aside class="play-controls sand-controls">
+              <p class="step-label">流沙时长</p>
+              <h3>静心流沙</h3>
+              <p class="control-note" id="sandStatus" aria-live="polite">细沙会持续落进瓶中，结束时全部留在下层。</p>
+              <div class="sand-settings">
+                <div class="sand-duration-heading">
+                  <label for="sandDurationRange">选择时长</label>
+                  <output id="sandDurationPrint" for="sandDurationRange">60 秒</output>
+                </div>
+                <input class="sand-range" id="sandDurationRange" type="range" min="60" max="600" step="10" value="60" aria-label="流沙时长，60 到 600 秒" />
+                <div class="sand-duration-field">
+                  <input id="sandDurationNumber" type="number" min="60" max="600" step="1" value="60" inputmode="numeric" aria-label="输入流沙时长秒数" />
+                  <span>秒</span>
+                  <small>可设置 60–600 秒</small>
+                </div>
+              </div>
+              <div class="sand-time" id="sandTime">01:00</div>
+              <div class="sand-audio-row">
+                <button class="sand-mute" id="sandMute" type="button" aria-label="静音流沙声音" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="sand-mute-speaker" d="M4 9h4l5-4v14l-5-4H4z" />
+                    <path class="sand-mute-wave" d="M16 8.2c1.2 1 1.9 2.3 1.9 3.8s-.7 2.8-1.9 3.8M18.7 5.7c1.8 1.7 2.8 3.8 2.8 6.3s-1 4.6-2.8 6.3" />
+                    <path class="sand-mute-slash" d="M4 4l16 16" />
+                  </svg>
+                </button>
+                <label class="sand-volume-label" for="sandVolume">音量</label>
+                <input class="sand-volume" id="sandVolume" type="range" min="0" max="100" step="1" value="32" aria-label="流沙声音音量" />
+                <output class="sand-volume-output" id="sandVolumeOutput" for="sandVolume">32%</output>
+              </div>
+              <button type="button" class="primary-action" id="startSand">开始流沙</button>
+              <button type="button" class="text-action" id="resetSand">重置</button>
+            </aside>
+          </div>
+        </section>
+      </div>
+
+      <div class="game-toast" id="gameToast" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+</body>
+</html>

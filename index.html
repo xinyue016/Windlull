@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#a9d8f2" />
+  <meta name="description" content="普拉奇克情绪轮静态网页设计。" />
+  <title>情绪色谱</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=20261115-2" />
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/data/healing-quotes.js?v=20261115-1" defer></script>
+  <script src="assets/js/background-music.js?v=20261115-3" defer></script>
+  <script src="assets/js/app.js?v=20261115-3" defer></script>
+  <script src="assets/js/cloud3d.js" defer></script>
+  <script src="assets/js/scratch-card.js?v=20261115-1" defer></script>
+</head>
+<body>
+    <div class="scenery" aria-hidden="true">
+    <section class="scene scene-day"><div class="cloud3d-layer" id="cloud3dLayer" aria-hidden="true"></div><div class="scene-vignette"></div></section>
+    <section class="scene scene-night">
+      <div class="star-layer" id="starLayer"></div>
+    </section>
+  </div>
+
+  <div class="page-frame" aria-hidden="true"></div>
+
+  <aside class="cloud-quote-card" id="cloudQuoteCard" aria-hidden="true" aria-live="polite">
+    <button class="cloud-quote-close" id="closeCloudQuote" type="button" aria-label="关闭安慰语录">×</button>
+    <span class="cloud-quote-mark" aria-hidden="true">“</span>
+    <p id="cloudQuoteText"></p>
+  </aside>
+
+  <header class="topbar">
+    <!-- 左上角留给设计师的名字艺术字，当前保持留白 -->
+    <div class="brand-art-slot" data-designer-slot="brand-art" aria-hidden="true"></div>
+    <time class="time-display" id="currentTime" aria-label="当前时间">00:00</time>
+  </header>
+
+  <main class="page-shell">
+    <div class="mood-wheel-stage" id="moodWheelStage">
+      <div class="mood-wheel" id="moodWheel" role="group" aria-label="可交互情绪颜色转盘">
+        <div class="wheel-rotor" id="wheelRotor"></div>
+        <div class="wheel-center" aria-hidden="true"><span></span></div>
+        <div class="wheel-emotion-pop" id="wheelEmotionPop" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <aside class="daily-scratch" id="dailyScratch" aria-labelledby="dailyScratchTitle">
+      <div class="scratch-heading">
+        <div>
+          <p>今日治愈签</p>
+          <h2 id="dailyScratchTitle">刮开一句送给今天的话</h2>
+        </div>
+        <span id="scratchStatus">轻轻刮开</span>
+      </div>
+      <div class="scratch-surface" id="scratchSurface" role="button" tabindex="0" aria-label="刮开今天的治愈语录，也可以按回车键直接打开">
+        <p class="scratch-quote" id="scratchQuote"></p>
+        <canvas id="scratchCanvas" aria-hidden="true"></canvas>
+      </div>
+    </aside>
+
+    <aside class="emotion-feature" aria-labelledby="emotionTitle">
+      <button class="wheel-trigger" id="openWheel" type="button" aria-label="打开普拉奇克情绪轮混合公式图谱" aria-haspopup="dialog">
+        <span class="wheel-frame">
+          <span class="wheel-ring" aria-hidden="true"></span>
+          <img src="图片/普拉奇克情绪轮.jpg" alt="普拉奇克情绪轮" decoding="async" />
+        </span>
+      </button>
+
+      <div class="emotion-copy">
+        <h2 id="emotionTitle">
+          <span>普拉奇克情绪轮：</span>
+          <span>探索人类情感的色彩图谱</span>
+        </h2>
+        <p class="emotion-description">
+          像认识调色盘一样认识你的情绪——罗伯特·普拉奇克的心理学经典模型。情绪不是混乱的杂音，它们有结构、有强度，还能像颜色一样混合。
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <section class="home-page-secondary" aria-labelledby="emotionGuideTitle">
+    <div class="emotion-guide">
+      <div class="guide-top">
+        <header class="guide-heading">
+          <p class="guide-kicker">情绪使用说明</p>
+          <h2 id="emotionGuideTitle">情绪不是需要立刻修好的故障</h2>
+          <p class="guide-intro">它更像一个信号，告诉你发生了什么、你在意什么，以及此刻可能需要什么。</p>
+        </header>
+
+        <aside class="guide-reading-note" aria-label="阅读提示">
+          <span>阅读提示</span>
+          <p>不用急着判断自己的情绪对不对。先注意此刻最明显的一处信号，答案可以慢慢出现。</p>
+        </aside>
+      </div>
+
+      <div class="guide-grid">
+        <article class="guide-card guide-card--formation">
+          <span class="guide-index">01</span>
+          <div class="guide-card-copy">
+            <h3>情绪是怎样形成的</h3>
+            <div class="guide-flow" aria-label="情绪形成过程：事件、理解、身体反应、行动冲动、背后需要">
+              <span>事件</span><i>→</i><span>理解</span><i>→</i><span>身体</span><i>→</i><span>冲动</span><i>→</i><span>需要</span>
+            </div>
+            <p>同一件事，因为理解不同，身体和情绪反应也可能不同。</p>
+          </div>
+        </article>
+
+        <article class="guide-card">
+          <span class="guide-index">02</span>
+          <div class="guide-card-copy">
+            <h3>看见情绪的四个入口</h3>
+            <div class="guide-entry-list">
+              <span><b>事件</b>刚才发生了什么</span>
+              <span><b>身体</b>哪里紧、热、沉或发空</span>
+              <span><b>念头</b>脑中反复出现的那句话</span>
+              <span><b>冲动</b>想逃、想哭或想立刻解决</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="guide-card guide-card--wave">
+          <span class="guide-index">03</span>
+          <div class="guide-card-copy">
+            <h3>情绪强度像波浪</h3>
+            <svg class="guide-wave" viewBox="0 0 240 58" aria-hidden="true">
+              <path d="M4 47C28 47 34 45 50 34S77 7 96 7s18 13 31 22 21 18 38 18 24-7 35-18 18-16 36-16" />
+              <line x1="4" y1="51" x2="236" y2="51" />
+            </svg>
+            <p>高峰时先降低强度，再做决定；有些感受需要时间自然回落。</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <nav class="side-rail" aria-label="主要功能">
+    <a class="rail-button" href="game.html" data-tooltip="情绪小游戏" aria-label="进入情绪小游戏，页面预留">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 19 9 7.5l3.7 6.2 2.8-4.2L21 19H3Z" />
+        <path d="m6.8 12 2.2-3.3L11 12" />
+        <path d="m13.8 15.5 1.7-2.6 2.2 3.3" />
+      </svg>
+      <span class="rail-tooltip">情绪小游戏</span>
+    </a>
+
+    <div class="star-cluster">
+      <span class="star-halo" aria-hidden="true"></span>
+      <button class="star-button" id="agentWake" type="button" title="唤醒智能体" aria-label="唤醒情绪智能体" aria-expanded="false" aria-controls="agentPanel">
+        <span class="star-3d" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="starMain" x1="12" y1="8" x2="82" y2="94" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff4ad" />
+                <stop offset=".42" stop-color="#ffd65c" />
+                <stop offset="1" stop-color="#f3a62e" />
+              </linearGradient>
+              <linearGradient id="starLight" x1="22" y1="14" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fffdf0" stop-opacity=".95" />
+                <stop offset="1" stop-color="#fffdf0" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path class="star-layer star-layer--back" d="M50 7 60.7 34.9 89.2 19.9 74.2 48.4 97 50 74.2 51.6 89.2 80.1 60.7 65.1 50 93 39.3 65.1 10.8 80.1 25.8 51.6 3 50l22.8-1.6L10.8 19.9l28.5 15L50 7Z" />
+            <path class="star-layer star-layer--mid" d="M50 7 60.7 34.9 89.2 19.9 74.2 48.4 97 50 74.2 51.6 89.2 80.1 60.7 65.1 50 93 39.3 65.1 10.8 80.1 25.8 51.6 3 50l22.8-1.6L10.8 19.9l28.5 15L50 7Z" fill="url(#starMain)" />
+            <path class="star-layer star-layer--front" d="M50 12.5 59 37.2 83.4 24.4 70.6 49 89.8 50 70.6 51 83.4 75.6 59 62.8 50 87.5 41 62.8 16.6 75.6 29.4 51 10.2 50l19.2-1L16.6 24.4 41 37.2 50 12.5Z" fill="url(#starLight)" />
+            <circle cx="47" cy="44" r="4.5" fill="#fff" opacity=".68" />
+          </svg>
+        </span>
+        <span class="star-spark star-spark--one" aria-hidden="true"></span>
+        <span class="star-spark star-spark--two" aria-hidden="true"></span>
+        <span class="star-spark star-spark--three" aria-hidden="true"></span>
+      </button>
+
+      <a class="rail-button chat-button" href="chat.html" data-tooltip="与情绪智能体对话" aria-label="进入智能体对话页，页面预留">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5.2 5.1h13.6a2.2 2.2 0 0 1 2.2 2.2v7.2a2.2 2.2 0 0 1-2.2 2.2h-7.2L7 20.2v-3.5H5.2A2.2 2.2 0 0 1 3 14.5V7.3a2.2 2.2 0 0 1 2.2-2.2Z" />
+          <path d="M8 9.3h8M8 12.6h5.3" />
+        </svg>
+        <span class="rail-tooltip">智能体对话</span>
+      </a>
+    </div>
+
+    <span class="rail-divider" aria-hidden="true"></span>
+
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换白天与黑夜模式" aria-pressed="false" data-tooltip="切换昼夜">
+      <span class="theme-track" aria-hidden="true">
+        <span class="theme-icon theme-icon--sun">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4" /><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7" /></svg>
+        </span>
+        <span class="theme-icon theme-icon--moon">
+          <svg viewBox="0 0 24 24"><path d="M20 15.4A8.4 8.4 0 0 1 8.6 4a8.5 8.5 0 1 0 11.4 11.4Z" /></svg>
+        </span>
+        <span class="theme-knob"></span>
+      </span>
+      <span class="rail-tooltip">切换昼夜</span>
+    </button>
+
+    <div class="music-volume-wrap" id="musicVolumeWrap">
+      <button class="rail-button music-button" id="musicButton" type="button" aria-label="播放背景音乐" aria-pressed="false" data-tooltip="播放背景音乐">
+        <svg class="music-icon music-icon--play" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18.2V6.8l9-2v10.6" />
+          <ellipse cx="6.5" cy="18.4" rx="2.8" ry="2.1" />
+          <ellipse cx="15.5" cy="15.8" rx="2.8" ry="2.1" />
+        </svg>
+        <svg class="music-icon music-icon--pause" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8.5 5.5v13M15.5 5.5v13" />
+        </svg>
+        <span class="music-rings" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="rail-tooltip">背景音乐</span>
+      </button>
+      <button class="music-volume-trigger" id="musicVolumeTrigger" type="button" aria-label="调节背景音乐音量" aria-expanded="false" aria-controls="musicVolumePanel">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9h3l4-3v12l-4-3H4z" />
+          <path d="M15 9.5a4 4 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10" />
+        </svg>
+      </button>
+      <div class="music-volume-panel" id="musicVolumePanel" role="group" aria-label="背景音乐音量">
+        <div class="music-volume-heading"><span>背景音乐音量</span><output id="musicVolumeOutput" for="musicVolume">72%</output></div>
+        <input class="music-volume-range" id="musicVolume" type="range" min="0" max="100" step="1" value="72" aria-label="背景音乐音量" />
+      </div>
+    </div>
+  </nav>
+
+  <section class="agent-panel" id="agentPanel" aria-hidden="true" aria-labelledby="agentTitle">
+    <button class="agent-close" id="agentClose" type="button" aria-label="关闭智能体面板">×</button>
+    <div class="agent-avatar" aria-hidden="true"><span></span><i></i></div>
+    <div class="agent-copy">
+      <p>本地陪伴模式</p>
+      <h2 id="agentTitle">情绪搭子已苏醒</h2>
+      <span>我在这里。想聊聊此刻的感受，还是一起看看今天的心情颜色？</span>
+      <a href="chat.html">开始对话 <b aria-hidden="true">↗</b></a>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal" id="emotionModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+      <header class="modal-header">
+        <div>
+          <h2 id="modalTitle">24 情绪混合公式卡</h2>
+          <p class="modal-subtitle">八种基本情绪，像三原色一样彼此相遇，混合出更细微、更真实的感受。</p>
+        </div>
+        <button class="modal-close" id="closeModal" type="button" aria-label="关闭情绪图谱">×</button>
+      </header>
+
+      <div class="modal-scroll" id="modalScroll">
+        <section class="emotion-key" aria-labelledby="emotionKeyTitle">
+          <div class="section-heading">
+            <span class="section-index">00</span>
+            <div><h3 id="emotionKeyTitle">八种基本情绪</h3></div>
+            <span class="section-note">情绪轮的原色</span>
+          </div>
+          <div class="emotion-key-grid" id="emotionKeyGrid"></div>
+        </section>
+
+        <div id="formulaGroups"></div>
+
+        <section class="opposition-section" aria-labelledby="oppositionTitle">
+          <div class="section-heading">
+            <span class="section-index">04</span>
+            <div><h3 id="oppositionTitle">对立冲突态</h3></div>
+            <span class="section-note">4 组情绪轴线</span>
+          </div>
+          <div class="opposition-grid" id="oppositionGrid"></div>
+        </section>
+
+        <blockquote class="modal-quote">
+          “情绪不是非黑即白，混合让我们更理解自己和他人。”
+          <cite>— 罗伯特·普拉奇克</cite>
+        </blockquote>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

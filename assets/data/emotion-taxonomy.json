@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0",
+  "description": "纯前端情绪智能体使用的 25 类情绪分类体系，危机风险独立判断。",
+  "categories": [
+    { "id": "calm", "name": "平静", "group": "positive", "valence": 0.70, "arousal": 0.15, "dominance": 0.58 },
+    { "id": "joy", "name": "开心", "group": "positive", "valence": 0.90, "arousal": 0.65, "dominance": 0.66 },
+    { "id": "satisfaction", "name": "满足", "group": "positive", "valence": 0.80, "arousal": 0.35, "dominance": 0.72 },
+    { "id": "gratitude", "name": "感激", "group": "positive", "valence": 0.82, "arousal": 0.45, "dominance": 0.54 },
+    { "id": "hope", "name": "希望", "group": "positive", "valence": 0.75, "arousal": 0.50, "dominance": 0.68 },
+    { "id": "anticipation", "name": "期待", "group": "positive", "valence": 0.64, "arousal": 0.60, "dominance": 0.64 },
+    { "id": "anxiety", "name": "焦虑", "group": "negative", "valence": -0.66, "arousal": 0.82, "dominance": 0.30 },
+    { "id": "stress", "name": "压力", "group": "negative", "valence": -0.70, "arousal": 0.76, "dominance": 0.34 },
+    { "id": "anger", "name": "愤怒", "group": "negative", "valence": -0.82, "arousal": 0.88, "dominance": 0.57 },
+    { "id": "annoyance", "name": "烦躁", "group": "negative", "valence": -0.56, "arousal": 0.72, "dominance": 0.40 },
+    { "id": "fear", "name": "恐惧", "group": "negative", "valence": -0.82, "arousal": 0.86, "dominance": 0.18 },
+    { "id": "sadness", "name": "悲伤", "group": "negative", "valence": -0.82, "arousal": 0.30, "dominance": 0.24 },
+    { "id": "disappointment", "name": "失落", "group": "negative", "valence": -0.66, "arousal": 0.34, "dominance": 0.30 },
+    { "id": "grievance", "name": "委屈", "group": "negative", "valence": -0.66, "arousal": 0.46, "dominance": 0.22 },
+    { "id": "loneliness", "name": "孤独", "group": "negative", "valence": -0.72, "arousal": 0.24, "dominance": 0.18 },
+    { "id": "fatigue", "name": "疲惫", "group": "negative", "valence": -0.46, "arousal": 0.14, "dominance": 0.25 },
+    { "id": "self_blame", "name": "自责", "group": "negative", "valence": -0.76, "arousal": 0.42, "dominance": 0.18 },
+    { "id": "shame", "name": "羞耻", "group": "negative", "valence": -0.82, "arousal": 0.58, "dominance": 0.12 },
+    { "id": "helplessness", "name": "无力", "group": "negative", "valence": -0.76, "arousal": 0.20, "dominance": 0.08 },
+    { "id": "despair", "name": "绝望", "group": "negative", "valence": -0.96, "arousal": 0.30, "dominance": 0.04 },
+    { "id": "jealousy", "name": "嫉妒", "group": "negative", "valence": -0.56, "arousal": 0.66, "dominance": 0.30 },
+    { "id": "disgust", "name": "厌恶", "group": "negative", "valence": -0.72, "arousal": 0.64, "dominance": 0.52 },
+    { "id": "confusion", "name": "困惑", "group": "mixed", "valence": -0.24, "arousal": 0.50, "dominance": 0.26 },
+    { "id": "surprise", "name": "惊讶", "group": "mixed", "valence": 0.04, "arousal": 0.76, "dominance": 0.44 },
+    { "id": "boredom", "name": "无聊", "group": "mixed", "valence": -0.16, "arousal": 0.22, "dominance": 0.42 },
+    { "id": "neutral", "name": "中性", "group": "mixed", "valence": 0.00, "arousal": 0.20, "dominance": 0.50 }
+  ],
+  "risk_levels": [
+    { "id": "low", "name": "低", "description": "没有明显危机信号" },
+    { "id": "watch", "name": "关注", "description": "出现强烈绝望、无价值感或持续恶化" },
+    { "id": "high", "name": "高", "description": "出现自伤、自杀、伤人或无法保证自身安全的表达" }
+  ]
+}

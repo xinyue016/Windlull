@@ -1,0 +1,122 @@
+{
+  "version": "1.0.0",
+  "entries": [
+    {
+      "id": "grounding-01",
+      "title": "把注意力带回当下",
+      "emotions": ["anxiety", "stress", "confusion"],
+      "keywords": ["脑子乱", "停不下来", "胡思乱想", "心慌", "紧张", "不知所措"],
+      "content": "当思绪太满时，不必马上想清楚所有事。先找出眼前能看到的三样东西、能听到的两种声音，再慢慢呼吸一次。",
+      "suggestion": "先做一次很短的感官练习，不要求自己立刻冷静。",
+      "games": ["woodfish", "sand"]
+    },
+    {
+      "id": "breath-01",
+      "title": "让呼吸慢下来",
+      "emotions": ["anxiety", "anger", "fear", "stress"],
+      "keywords": ["喘不过气", "心跳", "发抖", "紧张", "害怕", "火大"],
+      "content": "吸气不用很深，呼气可以稍微长一点。重点是让呼气比吸气慢，而不是强迫自己马上平静。",
+      "suggestion": "试三次自然的慢呼气，只关注空气离开身体的感觉。",
+      "games": ["sand", "woodfish"]
+    },
+    {
+      "id": "pressure-01",
+      "title": "把大任务切成最小一步",
+      "emotions": ["stress", "anxiety", "helplessness"],
+      "keywords": ["作业", "考试", "工作", "截止", "来不及", "任务太多", "赶不完"],
+      "content": "压力大时，任务在脑子里会显得比实际更大。只选一件十分钟内能开始的小事，做完再决定下一步。",
+      "suggestion": "不要列完整计划，只写下现在能开始的最小动作。",
+      "games": ["woodfish", "squishy"]
+    },
+    {
+      "id": "rumination-01",
+      "title": "给反复出现的念头留一个位置",
+      "emotions": ["anxiety", "self_blame", "sadness", "despair"],
+      "keywords": ["反复想", "后悔", "都是我的错", "想不通", "停不下来", "没意义"],
+      "content": "反复思考有时是在试图保护你，但继续逼自己给出答案会更累。可以先把念头写下来，约定稍后再处理，而不是现在解决。",
+      "suggestion": "把最重复的那句话写下来，然后先离开屏幕一分钟。",
+      "games": ["woodfish", "sand"]
+    },
+    {
+      "id": "emotion-name-01",
+      "title": "把感受说得更具体",
+      "emotions": ["confusion", "neutral", "annoyance"],
+      "keywords": ["不知道怎么说", "说不上来", "很乱", "烦", "不舒服"],
+      "content": "说不清不代表没有感受。可以从身体、事件和需要三个方向慢慢找：身体哪里紧，发生了什么，现在最希望别人怎么对你。",
+      "suggestion": "先只说身体的感觉，不急着给它取名字。",
+      "games": ["jelly", "woodfish"]
+    },
+    {
+      "id": "self-compassion-01",
+      "title": "先停止继续责怪自己",
+      "emotions": ["self_blame", "shame", "grievance", "disappointment"],
+      "keywords": ["我不够好", "都是我的错", "丢脸", "后悔", "不配", "失望"],
+      "content": "一件事没做好，不等于你整个人都不好。可以承认遗憾，同时把自己当成一个正在学习的人来对待。",
+      "suggestion": "把“我怎么这么差”换成“这件事让我很难受，我需要一点时间”。",
+      "games": ["squishy", "jelly"]
+    },
+    {
+      "id": "loneliness-01",
+      "title": "孤独时先建立一个小连接",
+      "emotions": ["loneliness", "sadness", "grievance"],
+      "keywords": ["没人懂", "一个人", "孤单", "没人陪", "被冷落", "没人听"],
+      "content": "孤独不说明你不值得被靠近，只说明此刻缺少一个能接住你的连接。可以先选择一个相对安全的人，发一句很短的话。",
+      "suggestion": "不必解释全部，只说“我今天有点难受，你能陪我聊一会儿吗”。",
+      "games": ["jelly", "woodfish"]
+    },
+    {
+      "id": "anger-01",
+      "title": "先让身体离开冲突现场",
+      "emotions": ["anger", "annoyance", "disgust"],
+      "keywords": ["生气", "火大", "想发火", "讨厌", "不公平", "受不了"],
+      "content": "愤怒往往在提醒你某个边界被碰到了。先让身体离开一点距离，再决定要不要表达，比在最高强度时立刻回应更安全。",
+      "suggestion": "先暂停一分钟，把想说的话写在草稿里，不马上发出去。",
+      "games": ["squishy", "woodfish"]
+    },
+    {
+      "id": "annoyance-01",
+      "title": "先减少一个刺激源",
+      "emotions": ["annoyance", "stress", "anger"],
+      "keywords": ["烦躁", "心烦", "被打扰", "受不了", "忙", "做不完", "静不下来"],
+      "content": "烦躁时，大脑往往同时被太多东西拉扯。先减少一个正在打扰你的来源，比要求自己立刻专注更有效。",
+      "suggestion": "先暂停一分钟，关掉一个不必要的提醒或页面，把注意力只放在眼前一件事上。",
+      "games": ["woodfish", "squishy"]
+    },
+    {
+      "id": "fatigue-01",
+      "title": "疲惫不是意志力不够",
+      "emotions": ["fatigue", "helplessness", "sadness"],
+      "keywords": ["好累", "没力气", "撑不住", "没精神", "睡不好", "透支"],
+      "content": "长期疲惫时，继续要求自己高效只会消耗更多。先降低今天的完成标准，比强行振作更有用。",
+      "suggestion": "先允许自己完成一件最低限度的事，其他事情暂时放下。",
+      "games": ["sand", "jelly"]
+    },
+    {
+      "id": "improvement-01",
+      "title": "记住一点点变好的感觉",
+      "emotions": ["calm", "hope", "satisfaction", "gratitude", "joy"],
+      "keywords": ["好一点", "缓过来", "轻松", "安心", "平静", "有希望"],
+      "content": "情绪变好不一定是一下子开心起来，也可能只是身体没那么紧、念头慢了一点。把这个变化记住，它能帮助你以后再次找到方法。",
+      "suggestion": "想一下刚才是什么让状态松动了一点，只记住一个有效的小动作。",
+      "games": []
+    },
+    {
+      "id": "boredom-01",
+      "title": "给无聊一个低门槛出口",
+      "emotions": ["boredom", "neutral"],
+      "keywords": ["无聊", "没意思", "没事干", "不知道干嘛", "提不起兴趣", "闲得慌"],
+      "content": "无聊不一定要马上变成有意义的状态。先让身体动一下，或者换一个感官刺激，往往比继续找“应该做什么”更容易。",
+      "suggestion": "随手选一个两分钟能动起来的小动作，不要求自己立刻变得有兴致。",
+      "games": ["woodfish", "jelly", "sand"]
+    },
+    {
+      "id": "crisis-01",
+      "title": "先保证当下安全",
+      "emotions": ["despair"],
+      "keywords": ["自杀", "想死", "不想活", "伤害自己", "活不下去", "永远消失"],
+      "content": "如果此刻可能会伤害自己或别人，请先离开危险物品和危险地点，尽快联系一个能来到你身边的人。不要一个人承担这一刻。",
+      "suggestion": "现在先联系一个可信任的人，明确告诉对方“我现在可能不安全，需要你陪我”。",
+      "games": []
+    }
+  ]
+}
