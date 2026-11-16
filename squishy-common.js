@@ -73,7 +73,7 @@ window.UG = (function () {
       st.textContent = ['Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Maru Gothic ProN'].flatMap(n => sans.map(([w, src]) => ff(n, w, src))).join('')
         + ['Hiragino Mincho ProN', 'Yu Mincho'].flatMap(n => serif.map(([w, src]) => ff(n, w, src))).join('');
       document.head.appendChild(st);
-      try { for (const f of ['400 16px "Hiragino Sans"', '700 16px "Hiragino Sans"', '900 16px "Hiragino Sans"', '900 16px "Hiragino Mincho ProN"']) document.fonts.load(f, '中文'); } catch (e) {}
+      try { for (const f of ['400 16px "Hiragino Sans"', '700 16px "Hiragino Sans"', '900 16px "Hiragino Sans"', '900 16px "Hiragino Mincho ProN"']) document.fonts.load(f, '中文').catch(() => {}); } catch (e) {}
     }
     // 画面の文字：日本語を含む文字と属性を置き換える。あとから書き換わった所も MutationObserver で追う。translate="no" の中は触らない
     const ATTRS = ['alt', 'aria-label', 'title', 'placeholder'];

@@ -44,6 +44,34 @@
     'squishy-ref': { title: '3D 脆皮捏捏乐 · 原版', kicker: 'PLAYROOM · 01 / ORIGINAL 3D' }
   };
 
+  const loadedScripts = new Map();
+  const loadScript = (src) => {
+    if (loadedScripts.has(src)) return loadedScripts.get(src);
+    const promise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        loadedScripts.delete(src);
+        reject(new Error('Script failed to load: ' + src));
+      };
+      document.head.appendChild(script);
+    });
+    loadedScripts.set(src, promise);
+    return promise;
+  };
+
+  const ensure3DEngine = async () => {
+    if (!window.THREE) await loadScript('assets/vendor/three.min.js');
+    if (!window.Game3D) await loadScript('assets/js/game3d.js');
+  };
+  const ensureSandAudioData = () => window.SAND_CALM_LOOP_DATA
+    ? Promise.resolve()
+    : loadScript('assets/audio/sand-calm-loop-data.js');
+  const ensureWoodfishAudioData = () => window.WOODFISH_HIT_DATA
+    ? Promise.resolve()
+    : loadScript('assets/audio/woodfish-hit-data.js');
   const showToast = (message) => {
     window.clearTimeout(toastTimer);
     toast.textContent = message;
@@ -119,7 +147,7 @@
     Object.values(controllers).forEach((controller) => { if (controller) controller.deactivate(); });
   };
 
-  const openGame = (game) => {
+  const openGame = async (game) => {
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('modal-open');
@@ -138,8 +166,23 @@
       deactivateAll();
       return;
     }
+
     modal.classList.remove('reference-mode');
     const usesWebGL = game !== 'woodfish';
+    let loadingTimer = window.setTimeout(() => showToast('正在准备游戏…'), 260);
+    try {
+      if (game === 'sand') await ensureSandAudioData();
+      if (game === 'woodfish') await ensureWoodfishAudioData();
+      if (usesWebGL) await ensure3DEngine();
+      if (activeGame !== game) return;
+    } catch (error) {
+      console.error('Game resources failed to load:', error);
+      window.clearTimeout(loadingTimer);
+      showToast('游戏资源加载失败，请检查网络后重试。');
+      return;
+    }
+    window.clearTimeout(loadingTimer);
+
     const controller = usesWebGL ? ensureController(game) : null;
     if (usesWebGL && !controller) return;
     resetGame(game);
@@ -1067,6 +1110,15 @@
     if (game === 'jelly') resetJelly();
     if (game === 'woodfish') resetWoodfish();
     if (game === 'sand') resetSand();
+  }
+
+  const warm3DEngine = () => {
+    ensure3DEngine().catch(() => { /* loaded on demand if idle preload fails */ });
+  };
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(warm3DEngine, { timeout: 3000 });
+  } else {
+    window.setTimeout(warm3DEngine, 1500);
   }
 
   const requestedGame = new URLSearchParams(window.location.search).get('game');

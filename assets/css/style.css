@@ -2070,3 +2070,12 @@ body.night-mode .daily-scratch.is-revealed .scratch-surface { background: rgba(4
     padding: 3px;
   }
 }
+
+
+/* Mobile rendering performance */
+@media (max-width: 700px) {
+  .scene-day,
+  .scene-night {
+    animation: none !important;
+  }
+}

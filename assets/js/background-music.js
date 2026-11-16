@@ -4,8 +4,8 @@
   const pagePath = decodeURIComponent(window.location.pathname).replace(/\\/g, '/');
   const isGamePage = /\/game\.html$/i.test(pagePath);
   const pageTrack = isGamePage
-    ? { src: 'assets/audio/game-background.mp3', volume: 0.18, fadeIn: 3200 }
-    : { src: 'assets/audio/wind-chime-04-loop.wav', volume: 0.72, fadeIn: 0 };
+    ? { src: 'assets/audio/game-background-web.mp3', volume: 0.18, fadeIn: 3200 }
+    : { src: 'assets/audio/wind-chime-04-loop-web.mp3', volume: 0.72, fadeIn: 0 };
 
   const ENABLED_KEY = 'emotion-atlas-background-music';
   const POSITION_KEY = isGamePage
@@ -18,7 +18,7 @@
 
   const audio = new Audio(pageTrack.src);
   audio.loop = true;
-  audio.preload = 'auto';
+  audio.preload = 'none';
   audio.volume = 0;
   audio.setAttribute('playsinline', '');
   audio.setAttribute('aria-hidden', 'true');
@@ -41,7 +41,9 @@
     try { window.localStorage.removeItem(key); } catch (_) { /* storage may be disabled */ }
   };
   const readNumber = (key, fallback = 0) => {
-    const value = Number(read(key));
+    const raw = read(key);
+    if (raw === null || raw === '') return fallback;
+    const value = Number(raw);
     return Number.isFinite(value) ? value : fallback;
   };
 
@@ -53,7 +55,7 @@
     return isGamePage ? Math.min(pageTrack.volume, master * 0.25) : Math.min(1, master);
   };
   audio.volume = isGamePage ? 0 : getTargetVolume();
-  audio.preload = enabled ? 'auto' : 'metadata';
+  audio.preload = 'none';
 
   const notify = () => {
     document.dispatchEvent(new CustomEvent('backgroundmusicchange', {
@@ -161,6 +163,10 @@
 
   const startPlayback = async () => {
     if (!enabled) return false;
+    if (audio.readyState === 0) {
+      audio.preload = 'auto';
+      try { audio.load(); } catch (_) { /* media may still be loading */ }
+    }
     const ready = await waitForMetadata();
     if (!ready || !enabled) return false;
     restoreTimeline();
@@ -298,6 +304,14 @@
   if (document.body) mountAudio();
   else document.addEventListener('DOMContentLoaded', mountAudio, { once: true });
 
-  if (enabled) startPlayback();
-  else notify();
+  if (enabled) {
+    const deferInitialPlayback = () => startPlayback();
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(deferInitialPlayback, { timeout: 1200 });
+    } else {
+      window.setTimeout(deferInitialPlayback, 650);
+    }
+  } else {
+    notify();
+  }
 })();

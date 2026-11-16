@@ -1,6 +1,7 @@
 /* 首页可点击的 Three.js 体积云 */
 (() => {
   'use strict';
+  const boot = () => {
   const THREE = window.THREE;
   const mount = document.getElementById('cloud3dLayer');
   if (!THREE || !mount) return;
@@ -53,7 +54,7 @@
   if (closeQuote) closeQuote.addEventListener('click', hideComfortQuote);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth <= 700 ? 1.35 : 1.75));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.domElement.style.pointerEvents = 'none';
@@ -201,9 +202,12 @@
   if (window.ResizeObserver) new ResizeObserver(resize).observe(mount);
   resize();
 
+  let lastRender = 0;
   const animate = (now) => {
     if (!active) return;
     raf = requestAnimationFrame(animate);
+    if (window.innerWidth <= 700 && now - lastRender < 32) return;
+    lastRender = now;
     const delta = Math.min((now - last) / 1000, 0.05);
     last = now;
     const time = now / 1000;
@@ -265,4 +269,15 @@
     const hits = ray.intersectObjects(hitboxes, false);
     if (hits.length) showComfortQuote();
   });
+  };
+
+  const scheduleBoot = () => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(boot, { timeout: 1400 });
+    } else {
+      window.setTimeout(boot, 650);
+    }
+  };
+  if (document.readyState === 'complete') scheduleBoot();
+  else document.addEventListener('DOMContentLoaded', scheduleBoot, { once: true });
 })();

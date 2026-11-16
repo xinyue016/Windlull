@@ -34404,7 +34404,7 @@ ${SHAPE_NAME()}\u30FB${RES.wax}\u30ED\u30A6\u30FB${RES.cracks} \u56DE\u30D1\u30A
   titleBox();
   requestAnimationFrame(frame);
   mb.disabled = false;
-  mb.textContent = "\u3064\u304F\u308B";
+  mb.textContent = "制作";
   if (UG.load("count", 0) > 0) {
     $("#zkBtn").textContent = zkLabel();
     $("#zkBtn").classList.remove("hidden");
