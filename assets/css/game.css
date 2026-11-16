@@ -35,7 +35,7 @@ img, svg { display: block; }
 .game-background {
   position: fixed;
   inset: 0;
-  background: url("../../图片/主页面背景图——白天.png") center center / cover no-repeat;
+  background: url("../../图片/主页面背景图——白天.webp") center center / cover no-repeat;
   z-index: 0;
 }
 .game-background::after {
@@ -791,7 +791,7 @@ body.night-mode {
   --game-card-bg: rgba(255, 255, 255, 0.62);
 }
 body.night-mode .game-background {
-  background-image: url("../../图片/主页面背景图——黑夜.png");
+  background-image: url("../../图片/主页面背景图——黑夜.webp");
   filter: brightness(.78) saturate(.9);
 }
 body.night-mode .game-background::after {

@@ -1252,11 +1252,11 @@ body.night-mode .modal-backdrop { background: rgba(4, 2, 16, 0.66); }
    背景照片与交互修订
    ========================================================= */
 .scene-day {
-  background: url("../../图片/主页面背景图——白天.png") center center / cover no-repeat;
+  background: url("../../图片/主页面背景图——白天.webp") center center / cover no-repeat;
   animation: photo-pan 44s ease-in-out infinite alternate;
 }
 .scene-night {
-  background: url("../../图片/主页面背景图——黑夜.png") center center / cover no-repeat;
+  background: url("../../图片/主页面背景图——黑夜.webp") center center / cover no-repeat;
   animation: photo-pan 58s ease-in-out infinite alternate-reverse;
 }
 .scene-vignette {

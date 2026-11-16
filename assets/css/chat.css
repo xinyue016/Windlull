@@ -35,7 +35,7 @@ svg { display: block; }
   z-index: 0;
   background:
     linear-gradient(rgba(222, 243, 250, 0.28), rgba(222, 243, 250, 0.38)),
-    url("../../图片/主页面背景图——白天.png") center center / cover no-repeat;
+    url("../../图片/主页面背景图——白天.webp") center center / cover no-repeat;
   filter: saturate(.9);
 }
 .chat-background::after {
@@ -495,7 +495,7 @@ html.night-mode body {
 html.night-mode .chat-background {
   background:
     linear-gradient(rgba(28, 20, 61, 0.32), rgba(16, 11, 42, 0.46)),
-    url("../../图片/主页面背景图——黑夜.png") center center / cover no-repeat;
+    url("../../图片/主页面背景图——黑夜.webp") center center / cover no-repeat;
   filter: saturate(0.82) brightness(0.84);
 }
 html.night-mode .chat-background::after {
