@@ -1089,3 +1089,20 @@ body.night-mode .game-page-nav:hover { background: rgba(43,34,86,.72); color: #f
   .game-page-nav--left { left: 7px; }
   .game-page-nav--right { right: 7px; }
 }
+
+
+/* Remove mobile tap/focus artifacts without hiding keyboard focus */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus:not(:focus-visible) {
+  outline: none !important;
+}
+canvas,
+.webgl-mount canvas,
+.game-card,
+.jelly-stage,
+.woodfish-image {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}

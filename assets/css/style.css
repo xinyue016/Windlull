@@ -2079,3 +2079,22 @@ body.night-mode .daily-scratch.is-revealed .scratch-surface { background: rgba(4
     animation: none !important;
   }
 }
+
+
+/* Remove mobile tap/focus artifacts without hiding keyboard focus */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus:not(:focus-visible) {
+  outline: none !important;
+}
+canvas,
+.webgl-mount canvas,
+.emotion-sector,
+.wheel-trigger {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+.emotion-sector:focus-visible {
+  outline: none !important;
+}
