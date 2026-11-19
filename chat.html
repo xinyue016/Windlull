@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#a9d8f2" />
-  <title>情绪搭子 · 风歇小筑</title>
+  <title>情绪日记 · 风歇小筑</title>
   <script>
     try {
       if (localStorage.getItem('emotion-atlas-theme') === 'night') {
@@ -12,119 +12,142 @@
       }
     } catch (_) { /* storage may be disabled */ }
   </script>
-  <link rel="stylesheet" href="assets/css/chat.css?v=20261116-1" />
-  <script src="assets/js/background-music.js?v=20261116-3" defer></script>
-  <script src="assets/data/agent-data.js" defer></script>
-  <script src="assets/js/agent/word2vec.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/tokenizer.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/emotion-classifier.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/emotion-analyzer.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/trend-tracker.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/retriever.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/recommender.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/responder.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/intent-detector.js?v=20261115-3" defer></script>
-  <script src="assets/js/agent/agent.js?v=20261115-3" defer></script>
-  <script src="assets/js/chat.js?v=20261115-4" defer></script>
+  <link rel="stylesheet" href="assets/css/chat.css?v=20261118-11" />
+  <link rel="stylesheet" href="assets/css/app-sidebar.css?v=20261118-11" />
+  <script src="assets/js/background-music.js?v=20261119-6" defer></script>
+  <script src="assets/js/app-sidebar.js?v=20261118-8" defer></script>
+  <script src="assets/js/chat.js?v=20261118-8" defer></script>
 </head>
 <body>
   <div class="chat-background" aria-hidden="true"></div>
   <div class="chat-frame" aria-hidden="true"></div>
 
-  <main class="chat-app">
-    <aside class="chat-sidebar">
-      <a class="back-home" href="index.html" aria-label="返回主页">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
-        返回主页
-      </a>
-
-      <div class="agent-profile">
-        <div class="profile-stars" aria-hidden="true">✦</div>
-        <p>LOCAL COMPANION</p>
-        <h1>情绪搭子</h1>
-        <span>一个只保存在本机的倾听者</span>
-      </div>
-
-      <button class="new-chat" id="newChat" type="button">
-        <span aria-hidden="true">＋</span>
-        新的对话
-      </button>
-
-      <div class="conversation-list">
-        <p class="sidebar-label">最近对话</p>
-        <button class="conversation active" type="button">
-          <span class="conversation-dot"></span>
-          <span><b>今天的情绪</b><small id="conversationTime">刚刚</small></span>
-        </button>
-      </div>
-
-      <div class="local-note">
-        <span class="local-dot" aria-hidden="true"></span>
-        <p>纯本地分析</p>
-        <small>聊天、情绪分析和知识检索都在本机运行，不会上传服务器。</small>
-      </div>
-
-      <button class="clear-chat" id="clearChat" type="button">清空本地对话</button>
-    </aside>
-
-    <section class="chat-main">
-      <header class="chat-header">
+  <main class="diary-app">
+    <section class="diary-main">
+      <header class="diary-header">
         <div>
-          <p>EMOTION COMPANION</p>
-          <h2>今天，想聊些什么？</h2>
+          <h1>情绪日记</h1>
+          <p class="diary-intro">让情绪有一个可以被看见的位置。无需写得完整，留下一笔就好。</p>
         </div>
-        <span class="agent-state"><i></i> 在线陪伴</span>
+        <div class="diary-stats" aria-label="记录数量">
+          <span>当前 <b id="activeMoodCount">0</b></span>
+          <span>历史 <b id="historyMoodCount">0</b></span>
+        </div>
       </header>
 
-      <section class="emotion-insight" id="emotionInsight" hidden aria-live="polite">
-        <div class="emotion-insight-row">
-          <div class="emotion-current">
-            <span class="emotion-dot" id="emotionDot" aria-hidden="true"></span>
-            <div>
-              <small>当前情绪</small>
-              <strong id="emotionLabel">等待倾诉</strong>
-            </div>
-          </div>
-          <span class="emotion-trend" id="emotionTrend">刚开始记录</span>
-        </div>
-        <div class="emotion-meter" aria-hidden="true"><i id="emotionMeterFill"></i></div>
-        <p class="emotion-hint" id="emotionHint">本地分析，不连接服务器。</p>
-        <div class="mood-check" id="moodCheck">
-          <span>和刚才相比</span>
-          <div class="mood-buttons" role="group" aria-label="情绪变化自评">
-            <button type="button" data-self-report="-2">更糟</button>
-            <button type="button" data-self-report="-1">差一点</button>
-            <button type="button" data-self-report="0">差不多</button>
-            <button type="button" data-self-report="1">好一点</button>
-            <button type="button" data-self-report="2">好多了</button>
-          </div>
-        </div>
-        <button class="emotion-game" id="recommendedGame" type="button" hidden>去放松一下</button>
-      </section>
-
-      <div class="chat-thread" id="chatThread" aria-live="polite" aria-label="聊天记录"></div>
-
-      <div class="quick-prompts" id="quickPrompts" aria-label="快捷开场">
-        <button type="button" data-prompt="我有点累。">我有点累</button>
-        <button type="button" data-prompt="今天发生了一件开心的事。">今天很开心</button>
-        <button type="button" data-prompt="我不知道该怎么描述现在的感受。">不知道怎么说</button>
+      <div class="diary-local-note">
+        <span aria-hidden="true"></span>
+        提示：所有内容仅保存在当前浏览器本机，下次从同一设备、同一浏览器进入时仍会保留，不会上传服务器。
       </div>
 
-      <form class="chat-composer" id="chatForm">
-        <textarea id="messageInput" rows="1" maxlength="500" placeholder="说说此刻的感受…" aria-label="输入消息"></textarea>
-        <button class="send-button" id="sendButton" type="submit" aria-label="发送消息">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 17 8-17 8 3.2-8L4 4Z" /><path d="M7.2 12H21" /></svg>
-        </button>
-      </form>
+      <div class="mood-board" id="moodBoard">
+        <div class="mood-empty" id="moodEmpty">
+          <strong>还没有留下记录</strong>
+          <span>点击下方“添加记录”，写下此刻的时间、情绪和事件。</span>
+        </div>
+        <div class="mood-records" id="moodRecords" aria-live="polite">
+          <div class="mood-records-canvas" id="moodRecordsCanvas"></div>
+        </div>
 
-      <p class="chat-disclaimer">本地情绪分析用于自我觉察，不是医疗或心理治疗建议。</p>
+        <div class="mood-actions" aria-label="情绪记录操作">
+          <button class="mood-action mood-action--add" id="addMoodButton" type="button">
+            <span aria-hidden="true">＋</span>
+            <small>添加记录</small>
+          </button>
+          <button class="mood-action mood-action--history" id="historyMoodButton" type="button">
+            <span aria-hidden="true">🕒</span>
+            <small>历史记录</small>
+          </button>
+        </div>
+      </div>
     </section>
   </main>
 
-  <div class="agent-star-widget" id="agentStarWidget" role="button" tabindex="0" aria-label="可拖动、可互动的 3D 星星智能体" title="拖一拖我">
+  <div class="diary-modal" id="addMoodModal" aria-hidden="true">
+    <div class="diary-modal-backdrop" data-close-add-mood></div>
+    <section class="diary-modal-panel" role="dialog" aria-modal="true" aria-labelledby="addMoodTitle" tabindex="-1">
+      <header class="diary-modal-header">
+        <div>
+          <p>新的一笔</p>
+          <h2 id="addMoodTitle">记录此刻的情绪</h2>
+        </div>
+        <button class="diary-modal-close" id="cancelAddMoodTop" type="button" aria-label="关闭添加记录">×</button>
+      </header>
+      <form class="mood-form" id="addMoodForm">
+        <label>
+          <span>时间</span>
+          <input id="moodTimeInput" type="text" maxlength="30" required placeholder="例如：2026.11.18 20:30" />
+        </label>
+        <label>
+          <span>情绪</span>
+          <select id="moodEmotionInput">
+            <option value="joy">喜悦 😊</option>
+            <option value="trust">信任 🤝</option>
+            <option value="fear">恐惧 😨</option>
+            <option value="surprise">惊讶 😲</option>
+            <option value="sadness">悲伤 😢</option>
+            <option value="disgust">厌恶 🤢</option>
+            <option value="anger">愤怒 😠</option>
+            <option value="anticipation">期待 🤩</option>
+          </select>
+        </label>
+        <label>
+          <span>事件</span>
+          <textarea id="moodEventInput" maxlength="500" rows="4" required placeholder="写下发生了什么，以及你当时的感受。"></textarea>
+        </label>
+        <p class="mood-form-note">同屏最多保留 50 条记录，更早的记录会进入历史记录。</p>
+        <p class="mood-form-error" id="moodFormError" role="alert"></p>
+        <div class="diary-modal-actions">
+          <button class="diary-button diary-button--quiet" id="cancelAddMood" type="button">取消</button>
+          <button class="diary-button diary-button--primary" type="submit">确定添加</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div class="diary-modal" id="detailMoodModal" aria-hidden="true">
+    <div class="diary-modal-backdrop" data-close-mood-detail></div>
+    <section class="diary-modal-panel diary-detail-panel" role="dialog" aria-modal="true" aria-labelledby="detailMoodTitle" tabindex="-1">
+      <header class="diary-modal-header">
+        <div>
+          <p>情绪记录</p>
+          <h2 id="detailMoodTitle">这一笔心情</h2>
+        </div>
+        <button class="diary-modal-close" id="closeMoodDetailTop" type="button" aria-label="关闭情绪记录">×</button>
+      </header>
+      <dl class="mood-detail-list">
+        <div><dt>时间</dt><dd id="detailMoodTime"></dd></div>
+        <div><dt>情绪</dt><dd id="detailMoodEmotion"></dd></div>
+        <div><dt>事件</dt><dd id="detailMoodEvent"></dd></div>
+      </dl>
+      <div class="diary-modal-actions">
+        <button class="diary-button diary-button--danger" id="deleteMoodButton" type="button">删除本条</button>
+        <button class="diary-button diary-button--quiet" id="closeMoodDetail" type="button">关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="diary-modal" id="historyMoodModal" aria-hidden="true">
+    <div class="diary-modal-backdrop" data-close-mood-history></div>
+    <section class="diary-modal-panel diary-history-panel" role="dialog" aria-modal="true" aria-labelledby="historyMoodTitle" tabindex="-1">
+      <header class="diary-modal-header">
+        <div>
+          <p>历史记录</p>
+          <h2 id="historyMoodTitle">更早的心情</h2>
+        </div>
+        <button class="diary-modal-close" id="closeMoodHistoryTop" type="button" aria-label="关闭历史记录">×</button>
+      </header>
+      <div class="mood-history-list" id="historyMoodList"></div>
+      <div class="diary-modal-actions">
+        <button class="diary-button diary-button--quiet" id="closeMoodHistory" type="button">关闭</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="agent-star-widget diary-star-widget" id="diaryStarWidget" role="button" tabindex="0" aria-label="可拖动的星星挂件" title="拖一拖我">
     <span class="star-string" aria-hidden="true"></span>
-    <div class="star-hanger" id="starHanger">
-      <div class="star-model" id="starModel" aria-hidden="true">
+    <div class="star-hanger" id="diaryStarHanger">
+      <div class="star-model" id="diaryStarModel" aria-hidden="true">
         <span class="star-face star-face--deep star-face--deep-5"></span>
         <span class="star-face star-face--deep star-face--deep-4"></span>
         <span class="star-face star-face--deep star-face--deep-3"></span>
@@ -135,7 +158,7 @@
         </span>
       </div>
     </div>
-    <div class="star-speech" id="starSpeech" aria-live="polite"></div>
+    <div class="star-speech" id="diaryStarSpeech" aria-live="polite"></div>
   </div>
 </body>
 </html>

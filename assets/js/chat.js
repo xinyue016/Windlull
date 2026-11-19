@@ -1,343 +1,376 @@
-/* 情绪搭子 · 本地聊天与拖拽星星 */
+/* 风歇小筑 · 本地情绪日记与可拖动星星 */
 (() => {
   'use strict';
 
-  const thread = document.getElementById('chatThread');
-  const form = document.getElementById('chatForm');
-  const input = document.getElementById('messageInput');
-  const sendButton = document.getElementById('sendButton');
-  const quickPrompts = document.getElementById('quickPrompts');
-  const newChatButton = document.getElementById('newChat');
-  const clearChatButton = document.getElementById('clearChat');
-  const conversationTime = document.getElementById('conversationTime');
-  const starWidget = document.getElementById('agentStarWidget');
-  const starSpeech = document.getElementById('starSpeech');
-  const emotionInsight = document.getElementById('emotionInsight');
-  const emotionLabel = document.getElementById('emotionLabel');
-  const emotionTrend = document.getElementById('emotionTrend');
-  const emotionDot = document.getElementById('emotionDot');
-  const emotionMeterFill = document.getElementById('emotionMeterFill');
-  const emotionHint = document.getElementById('emotionHint');
-  const moodCheck = document.getElementById('moodCheck');
-  const recommendedGame = document.getElementById('recommendedGame');
-  const taxonomyMap = new Map(window.EMOTION_AGENT_DATA.taxonomy.categories.map((item) => [item.id, item]));
-
-  const STORAGE_KEY = 'emotion-atlas-chat-history';
+  const MOOD_STORAGE_KEY = 'emotion-atlas-mood-records';
+  const HISTORY_STORAGE_KEY = 'emotion-atlas-mood-history';
   const STAR_POSITION_KEY = 'emotion-atlas-star-position';
-  let messages = [];
-  let sending = false;
+  const MAX_ACTIVE_RECORDS = 50;
+
+  const emotions = {
+    joy: { name: '喜悦', icon: '😊' },
+    trust: { name: '信任', icon: '🤝' },
+    fear: { name: '恐惧', icon: '😨' },
+    surprise: { name: '惊讶', icon: '😲' },
+    sadness: { name: '悲伤', icon: '😢' },
+    disgust: { name: '厌恶', icon: '🤢' },
+    anger: { name: '愤怒', icon: '😠' },
+    anticipation: { name: '期待', icon: '🤩' }
+  };
+  const emotionAliases = {
+    happy: 'joy',
+    joy: 'joy',
+    angry: 'anger',
+    sad: 'sadness',
+    blue: 'sadness'
+  };
+  const normalizeEmotionKey = (key) => emotions[key] ? key : (emotionAliases[key] || 'joy');
+
+  const moodRecords = document.getElementById('moodRecords');
+  const moodRecordsCanvas = document.getElementById('moodRecordsCanvas');
+  const moodEmpty = document.getElementById('moodEmpty');
+  const activeMoodCount = document.getElementById('activeMoodCount');
+  const historyMoodCount = document.getElementById('historyMoodCount');
+  const addMoodButton = document.getElementById('addMoodButton');
+  const historyMoodButton = document.getElementById('historyMoodButton');
+  const addMoodModal = document.getElementById('addMoodModal');
+  const detailMoodModal = document.getElementById('detailMoodModal');
+  const historyMoodModal = document.getElementById('historyMoodModal');
+  const addMoodForm = document.getElementById('addMoodForm');
+  const moodTimeInput = document.getElementById('moodTimeInput');
+  const moodEmotionInput = document.getElementById('moodEmotionInput');
+  const moodEventInput = document.getElementById('moodEventInput');
+  const moodFormError = document.getElementById('moodFormError');
+  const detailMoodTime = document.getElementById('detailMoodTime');
+  const detailMoodEmotion = document.getElementById('detailMoodEmotion');
+  const detailMoodEvent = document.getElementById('detailMoodEvent');
+  const historyMoodList = document.getElementById('historyMoodList');
+  const deleteMoodButton = document.getElementById('deleteMoodButton');
+  const starWidget = document.getElementById('diaryStarWidget');
+  const starSpeech = document.getElementById('diaryStarSpeech');
+
+  const modalTriggers = {
+    add: addMoodButton,
+    detail: null,
+    history: historyMoodButton
+  };
+  let activeModal = null;
+  let modalReturnFocus = null;
+  let currentMoodIndex = -1;
   let speechTimer = null;
-  let replyTimers = [];
 
   const safeStorage = {
     get(key) {
       try { return window.localStorage.getItem(key); } catch (_) { return null; }
     },
     set(key, value) {
-      try { window.localStorage.setItem(key, value); } catch (_) { /* static local fallback */ }
+      try { window.localStorage.setItem(key, value); } catch (_) { /* storage disabled */ }
     },
     remove(key) {
       try { window.localStorage.removeItem(key); } catch (_) { /* storage disabled */ }
     }
   };
 
-  const chatThemeMeta = document.querySelector('meta[name="theme-color"]');
-  const applyChatTheme = () => {
-    const isNight = safeStorage.get('emotion-atlas-theme') === 'night';
-    document.documentElement.classList.toggle('night-mode', isNight);
-    if (chatThemeMeta) chatThemeMeta.setAttribute('content', isNight ? '#211944' : '#a9d8f2');
+  const readArray = (key) => {
+    const raw = safeStorage.get(key);
+    if (!raw) return [];
+    try {
+      const value = JSON.parse(raw);
+      return Array.isArray(value) ? value.filter((item) => item && typeof item === 'object') : [];
+    } catch (_) {
+      return [];
+    }
   };
-  applyChatTheme();
-  window.addEventListener('storage', (event) => {
-    if (event.key === 'emotion-atlas-theme') applyChatTheme();
-  });
-  window.addEventListener('pageshow', applyChatTheme);
+
+  let moodList = readArray(MOOD_STORAGE_KEY).slice(-MAX_ACTIVE_RECORDS);
+  let historyList = readArray(HISTORY_STORAGE_KEY);
 
   const nowLabel = () => {
     const date = new Date();
-    return String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0');
+    const pad = (value) => String(value).padStart(2, '0');
+    return date.getFullYear() + '.' + pad(date.getMonth() + 1) + '.' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
   };
 
-  const welcomeMessages = () => [
-    { role: 'star', text: '嗨，我在这里。今天想从哪里开始聊？', time: nowLabel() },
-    { role: 'star', text: '你不需要把情绪整理得很完美，慢慢说就好。', time: nowLabel() }
-  ];
+  const saveMoodState = () => {
+    safeStorage.set(MOOD_STORAGE_KEY, JSON.stringify(moodList));
+    safeStorage.set(HISTORY_STORAGE_KEY, JSON.stringify(historyList));
+  };
 
-  const loadMessages = () => {
-    const raw = safeStorage.get(STORAGE_KEY);
-    if (!raw) return welcomeMessages();
-    try {
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) && parsed.length ? parsed : welcomeMessages();
-    } catch (_) {
-      return welcomeMessages();
+  const updateCounts = () => {
+    if (activeMoodCount) activeMoodCount.textContent = String(moodList.length);
+    if (historyMoodCount) historyMoodCount.textContent = String(historyList.length);
+    if (moodEmpty) moodEmpty.hidden = moodList.length > 0;
+  };
+
+  const getEmotion = (key) => emotions[normalizeEmotionKey(key)];
+
+  const openDiaryModal = (dialog, returnFocus) => {
+    if (!dialog) return;
+    if (activeModal && activeModal !== dialog) {
+      activeModal.classList.remove('is-open');
+      activeModal.setAttribute('aria-hidden', 'true');
+    }
+    modalReturnFocus = returnFocus || document.activeElement;
+    activeModal = dialog;
+    dialog.classList.add('is-open');
+    dialog.setAttribute('aria-hidden', 'false');
+    const panel = dialog.querySelector('.diary-modal-panel');
+    window.setTimeout(() => panel && panel.focus({ preventScroll: true }), 40);
+  };
+
+  const closeDiaryModal = () => {
+    if (!activeModal) return;
+    activeModal.classList.remove('is-open');
+    activeModal.setAttribute('aria-hidden', 'true');
+    activeModal = null;
+    if (modalReturnFocus && typeof modalReturnFocus.focus === 'function') {
+      modalReturnFocus.focus({ preventScroll: true });
     }
   };
 
-  const saveMessages = () => {
-    messages = messages.slice(-80);
-    safeStorage.set(STORAGE_KEY, JSON.stringify(messages));
-    if (messages.length) conversationTime.textContent = messages[messages.length - 1].time || '刚刚';
-  };
+  const layoutMoodRecords = () => {
+    if (!moodRecords || !moodRecordsCanvas) return;
+    const buttons = [...moodRecordsCanvas.querySelectorAll('.mood-record')];
+    if (!buttons.length) return;
+    const width = moodRecords.clientWidth;
+    const viewHeight = moodRecords.clientHeight;
+    if (width < 20 || viewHeight < 20) return;
 
-  const scrollToBottom = (smooth = true) => {
-    thread.scrollTo({ top: thread.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
-  };
+    const baseWidth = buttons[0].offsetWidth || (window.innerWidth <= 560 ? 46 : 68);
+    const baseHeight = buttons[0].offsetHeight || baseWidth;
+    const gap = 5;
+    const columns = Math.max(1, Math.floor((width - gap) / (baseWidth + gap)));
+    const availableRows = Math.max(1, Math.floor((viewHeight - gap) / (baseHeight + gap)));
+    const rows = Math.max(Math.ceil(buttons.length / columns), availableRows);
+    const canvasHeight = Math.max(viewHeight, rows * (baseHeight + gap) + gap);
+    moodRecordsCanvas.style.height = canvasHeight + 'px';
 
-  const createMessageRow = (message) => {
-    const row = document.createElement('div');
-    row.className = 'message-row ' + (message.role === 'user' ? 'user' : 'star');
-
-    if (message.role !== 'user') {
-      const avatar = document.createElement('span');
-      avatar.className = 'message-avatar';
-      avatar.setAttribute('aria-hidden', 'true');
-      avatar.textContent = '✦';
-      row.appendChild(avatar);
+    const slots = [];
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        slots.push({
+          x: ((column + 0.5) / columns) * 100,
+          y: ((row + 0.5) / rows) * 100
+        });
+      }
     }
 
-    const bubble = document.createElement('div');
-    bubble.className = 'message-bubble';
-    bubble.textContent = message.text;
-    const time = document.createElement('span');
-    time.className = 'message-time';
-    time.textContent = message.time || '';
-    bubble.appendChild(time);
-    row.appendChild(bubble);
-    return row;
+    buttons.forEach((button, index) => {
+      const item = moodList[index] || {};
+      let bestIndex = 0;
+      let bestDistance = Infinity;
+      for (let slotIndex = 0; slotIndex < slots.length; slotIndex += 1) {
+        const slot = slots[slotIndex];
+        const dx = slot.x - (Number(item.left) || 41);
+        const dy = slot.y - (Number(item.top) || 36);
+        const distance = dx * dx + dy * dy;
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestIndex = slotIndex;
+        }
+      }
+      const chosen = slots.splice(bestIndex, 1)[0];
+      if (!chosen) return;
+      button.style.left = chosen.x + '%';
+      button.style.top = chosen.y + '%';
+      if (moodList[index]) {
+        moodList[index].left = chosen.x;
+        moodList[index].top = chosen.y;
+      }
+    });
+    saveMoodState();
+  };
+  const renderMoodRecords = () => {
+    if (!moodRecords) return;
+    moodRecordsCanvas.innerHTML = '';
+    moodList.forEach((item, index) => {
+      const emotion = getEmotion(item.emo);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'mood-record';
+      button.textContent = emotion.icon;
+      button.style.left = Number(item.left) + '%';
+      button.style.top = Number(item.top) + '%';
+      button.dataset.emotion = normalizeEmotionKey(item.emo);
+      button.title = (item.time || '') + ' · ' + emotion.name;
+      button.setAttribute('aria-label', (item.time || '') + '，' + emotion.name + '，' + (item.event || ''));
+      let longPressTimer = 0;
+      let clickTimer = 0;
+      let longPressTriggered = false;
+      let suppressClick = false;
+      const clearLongPress = () => {
+        window.clearTimeout(longPressTimer);
+        button.classList.remove('is-long-press');
+      };
+      const burst = () => {
+        button.classList.remove('is-bursting');
+        void button.offsetWidth;
+        button.classList.add('is-bursting');
+        window.setTimeout(() => button.classList.remove('is-bursting'), 700);
+      };
+      button.addEventListener('pointerdown', (event) => {
+        if (event.button !== undefined && event.button !== 0) return;
+        clearLongPress();
+        longPressTriggered = false;
+        longPressTimer = window.setTimeout(() => {
+          longPressTriggered = true;
+          suppressClick = true;
+          button.classList.add('is-long-press');
+          if (navigator.vibrate) navigator.vibrate(12);
+        }, 420);
+      });
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach((name) => {
+        button.addEventListener(name, () => {
+          clearLongPress();
+          if (longPressTriggered) window.setTimeout(() => { suppressClick = false; }, 500);
+        });
+      });
+      button.addEventListener('contextmenu', (event) => event.preventDefault());
+      button.addEventListener('click', () => {
+        if (suppressClick) {
+          suppressClick = false;
+          return;
+        }
+        if (clickTimer) {
+          window.clearTimeout(clickTimer);
+          clickTimer = 0;
+          burst();
+          return;
+        }
+        clickTimer = window.setTimeout(() => {
+          clickTimer = 0;
+          currentMoodIndex = index;
+          if (detailMoodTime) detailMoodTime.textContent = item.time || '';
+          if (detailMoodEmotion) detailMoodEmotion.textContent = emotion.name + ' ' + emotion.icon;
+          if (detailMoodEvent) detailMoodEvent.textContent = item.event || '';
+          openDiaryModal(detailMoodModal, button);
+        }, 230);
+      });
+      moodRecordsCanvas.appendChild(button);
+    });
+    updateCounts();
+    window.requestAnimationFrame(layoutMoodRecords);
   };
 
-  const renderMessages = () => {
-    thread.innerHTML = '';
-    messages.forEach((message) => thread.appendChild(createMessageRow(message)));
-    quickPrompts.hidden = messages.length > 2;
-    saveMessages();
-    requestAnimationFrame(() => scrollToBottom(false));
+  const renderHistory = () => {
+    if (!historyMoodList) return;
+    historyMoodList.innerHTML = '';
+    if (!historyList.length) {
+      const empty = document.createElement('p');
+      empty.className = 'history-empty';
+      empty.textContent = '暂无历史记录。同屏记录超过 50 条后，更早的记录会出现在这里。';
+      historyMoodList.appendChild(empty);
+      return;
+    }
+    historyList.forEach((item) => {
+      const emotion = getEmotion(item.emo);
+      const article = document.createElement('article');
+      article.className = 'history-mood-item';
+      const header = document.createElement('header');
+      const name = document.createElement('strong');
+      const time = document.createElement('time');
+      const event = document.createElement('p');
+      name.textContent = emotion.icon + ' ' + emotion.name;
+      time.textContent = item.time || '';
+      event.textContent = item.event || '';
+      header.append(name, time);
+      article.append(header, event);
+      historyMoodList.appendChild(article);
+    });
   };
 
-  const showTyping = () => {
-    const row = document.createElement('div');
-    row.className = 'message-row star';
-    row.id = 'typingMessage';
-    const avatar = document.createElement('span');
-    avatar.className = 'message-avatar';
-    avatar.setAttribute('aria-hidden', 'true');
-    avatar.textContent = '✦';
-    const bubble = document.createElement('div');
-    bubble.className = 'message-bubble typing-bubble';
-    bubble.innerHTML = '<i></i><i></i><i></i>';
-    row.appendChild(avatar);
-    row.appendChild(bubble);
-    thread.appendChild(row);
-    scrollToBottom();
+  const resetAddForm = () => {
+    if (moodTimeInput) moodTimeInput.value = nowLabel();
+    if (moodEmotionInput) moodEmotionInput.value = 'joy';
+    if (moodEventInput) moodEventInput.value = '';
+    if (moodFormError) moodFormError.textContent = '';
   };
 
-  const removeTyping = () => {
-    const typing = document.getElementById('typingMessage');
-    if (typing) typing.remove();
-  };
+  if (addMoodButton) {
+    addMoodButton.addEventListener('click', () => {
+      resetAddForm();
+      openDiaryModal(addMoodModal, addMoodButton);
+      window.setTimeout(() => moodEventInput && moodEventInput.focus(), 100);
+    });
+  }
 
+  if (historyMoodButton) {
+    historyMoodButton.addEventListener('click', () => {
+      renderHistory();
+      openDiaryModal(historyMoodModal, historyMoodButton);
+    });
+  }
+
+  if (addMoodForm) {
+    addMoodForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const time = moodTimeInput ? moodTimeInput.value.trim() : '';
+      const emo = normalizeEmotionKey(moodEmotionInput ? moodEmotionInput.value : 'joy');
+      const eventText = moodEventInput ? moodEventInput.value.trim() : '';
+      if (!time || !eventText) {
+        if (moodFormError) moodFormError.textContent = '时间和事件都需要填写。';
+        return;
+      }
+      if (moodList.length >= MAX_ACTIVE_RECORDS) {
+        historyList.push(moodList.shift());
+      }
+      moodList.push({
+        time,
+        emo,
+        event: eventText,
+        left: Math.random() * 82,
+        top: Math.random() * 72
+      });
+      saveMoodState();
+      renderMoodRecords();
+      closeDiaryModal();
+    });
+  }
+
+  if (deleteMoodButton) {
+    deleteMoodButton.addEventListener('click', () => {
+      if (currentMoodIndex < 0 || currentMoodIndex >= moodList.length) return;
+      moodList.splice(currentMoodIndex, 1);
+      currentMoodIndex = -1;
+      saveMoodState();
+      renderMoodRecords();
+      closeDiaryModal();
+    });
+  }
+
+  const bindClose = (selector) => {
+    document.querySelectorAll(selector).forEach((button) => button.addEventListener('click', closeDiaryModal));
+  };
+  bindClose('[data-close-add-mood], #cancelAddMoodTop, #cancelAddMood');
+  bindClose('[data-close-mood-detail], #closeMoodDetailTop, #closeMoodDetail');
+  bindClose('[data-close-mood-history], #closeMoodHistoryTop, #closeMoodHistory');
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && activeModal) closeDiaryModal();
+  });
+
+  /* 星星挂件：保留拖动、悬挂和 Q 弹反馈，但不再承担智能体功能 */
   const placeSpeech = () => {
+    if (!starWidget) return;
     const rect = starWidget.getBoundingClientRect();
-    starWidget.classList.toggle('bubble-right', rect.left < 250);
+    starWidget.classList.toggle('bubble-right', rect.left < 260);
   };
 
-  const showSpeech = (text, duration = 3000) => {
+  const hideSpeech = () => {
+    window.clearTimeout(speechTimer);
+    if (starSpeech) starSpeech.classList.remove('is-visible');
+  };
+
+  const showSpeech = (text, duration = 2600) => {
+    if (!starSpeech) return;
     window.clearTimeout(speechTimer);
     placeSpeech();
     starSpeech.textContent = text;
     starSpeech.classList.add('is-visible');
     if (duration > 0) {
-      speechTimer = window.setTimeout(() => {
-        starSpeech.classList.remove('is-visible');
-      }, duration);
+      speechTimer = window.setTimeout(() => starSpeech.classList.remove('is-visible'), duration);
     }
   };
-
-  const hideSpeech = () => {
-    window.clearTimeout(speechTimer);
-    starSpeech.classList.remove('is-visible');
-  };
-
-  const trendText = (trend) => ({
-    improved: '明显缓和',
-    slightly_improved: '稍微缓和',
-    stable: '暂时平稳',
-    slightly_worse: '略微变重',
-    worse: '明显变重'
-  })[trend] || '正在记录';
-
-  const renderEmotionInsight = (result) => {
-    if (!result || !result.analysis) return;
-    const analysis = result.analysis;
-    const category = taxonomyMap.get(analysis.primary);
-    const group = category ? category.group : 'mixed';
-    emotionInsight.hidden = false;
-    emotionLabel.textContent = analysis.primaryName + (analysis.secondaryName ? ' / ' + analysis.secondaryName : '') + ' · 强度 ' + analysis.intensity + '/10';
-    emotionHint.textContent = result.knowledge.length
-      ? '我参考了本地知识：' + result.knowledge[0].title + '。'
-      : '本地分析，不连接服务器。';
-    emotionMeterFill.style.width = analysis.intensity * 10 + '%';
-    const color = group === 'positive' ? '#65a77c' : group === 'negative' ? '#b47b73' : '#7b9fb2';
-    emotionDot.style.background = color;
-    emotionDot.style.boxShadow = '0 0 0 4px ' + color + '22';
-    emotionMeterFill.style.background = 'linear-gradient(90deg, ' + color + '88, ' + color + ')';
-    emotionTrend.textContent = trendText(result.trend.trend);
-    emotionTrend.classList.toggle('is-improved', result.trend.trend.includes('improved'));
-    emotionTrend.classList.toggle('is-worse', result.trend.trend.includes('worse'));
-    moodCheck.hidden = result.turnCount < 2;
-    moodCheck.querySelectorAll('[data-self-report]').forEach((button) => button.classList.remove('is-selected'));
-    if (result.recommendation) {
-      recommendedGame.hidden = false;
-      recommendedGame.textContent = '去' + result.recommendation.name;
-      recommendedGame.dataset.page = result.recommendation.page;
-    } else {
-      recommendedGame.hidden = true;
-      recommendedGame.dataset.page = '';
-    }
-  };
-
-  const shortThought = () => {
-    const phrases = ['确实是有点棘手呢…', '让我慢慢想一下…', '嗯，我听见了…'];
-    return phrases[Math.floor(Math.random() * phrases.length)];
-  };
-
-  const finishSending = () => {
-    sending = false;
-    sendButton.disabled = false;
-    input.focus();
-  };
-
-  const sendMessage = (rawText) => {
-    const text = rawText.trim();
-    if (!text || sending) return;
-    sending = true;
-    sendButton.disabled = true;
-    quickPrompts.hidden = true;
-
-    const userMessage = { role: 'user', text, time: nowLabel() };
-    messages.push(userMessage);
-    thread.appendChild(createMessageRow(userMessage));
-    saveMessages();
-    scrollToBottom();
-
-    input.value = '';
-    input.style.height = 'auto';
-    window.clearTimeout(speechTimer);
-    replyTimers.forEach((timer) => window.clearTimeout(timer));
-    replyTimers = [];
-
-    starWidget.classList.add('is-thinking');
-    showSpeech('正在思考…', 0);
-    showTyping();
-
-    replyTimers.push(window.setTimeout(() => {
-      showSpeech(shortThought(), 0);
-    }, 780));
-
-    replyTimers.push(window.setTimeout(() => {
-      removeTyping();
-      let result = null;
-      let replyText = '';
-      try {
-        result = window.AgentEngine.process(text);
-        replyText = result.reply;
-        renderEmotionInsight(result);
-      } catch (error) {
-        console.error('本地情绪分析失败：', error);
-        replyText = '我听见了。刚才的本地分析没有顺利运行，但你不需要因此停下来。可以先告诉我，现在最让你难受的是哪一部分？';
-      }
-      const starMessage = { role: 'star', text: replyText, time: nowLabel() };
-      messages.push(starMessage);
-      thread.appendChild(createMessageRow(starMessage));
-      saveMessages();
-      scrollToBottom();
-      starWidget.classList.remove('is-thinking');
-      starWidget.classList.remove('is-poked');
-      void starWidget.offsetWidth;
-      starWidget.classList.add('is-poked');
-      showSpeech(shortThought(), 2800);
-      window.setTimeout(() => starWidget.classList.remove('is-poked'), 650);
-      finishSending();
-    }, 1900));
-  };
-
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    sendMessage(input.value);
-  });
-
-  input.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      sendMessage(input.value);
-    }
-  });
-
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 110) + 'px';
-  });
-
-  document.querySelectorAll('[data-prompt]').forEach((button) => {
-    button.addEventListener('click', () => {
-      input.value = button.dataset.prompt;
-      input.focus();
-      input.dispatchEvent(new Event('input'));
-    });
-  });
-
-  moodCheck.querySelectorAll('[data-self-report]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const result = window.AgentEngine.applySelfReport(Number(button.dataset.selfReport));
-      if (!result) return;
-      moodCheck.querySelectorAll('[data-self-report]').forEach((item) => item.classList.remove('is-selected'));
-      renderEmotionInsight(result);
-      button.classList.add('is-selected');
-      showSpeech('已经记下现在的变化。', 1800);
-    });
-  });
-
-  recommendedGame.addEventListener('click', () => {
-    const page = recommendedGame.dataset.page;
-    if (page) window.location.href = page;
-  });
-
-  const resetConversation = () => {
-    replyTimers.forEach((timer) => window.clearTimeout(timer));
-    replyTimers = [];
-    sending = false;
-    sendButton.disabled = false;
-    messages = welcomeMessages();
-    removeTyping();
-    hideSpeech();
-    starWidget.classList.remove('is-thinking');
-    window.AgentEngine.reset();
-    emotionInsight.hidden = true;
-    moodCheck.querySelectorAll('[data-self-report]').forEach((button) => button.classList.remove('is-selected'));
-    renderMessages();
-    showSpeech('新的对话，慢慢来。', 2200);
-  };
-
-  newChatButton.addEventListener('click', resetConversation);
-  clearChatButton.addEventListener('click', () => {
-    if (window.confirm('要清空保存在这台设备上的聊天记录吗？')) resetConversation();
-  });
-
-  /* ---------------- 拖动与 Q 弹互动 ---------------- */
-  const savedPosition = safeStorage.get(STAR_POSITION_KEY);
-  if (savedPosition) {
-    try {
-      const position = JSON.parse(savedPosition);
-      if (Number.isFinite(position.left) && Number.isFinite(position.top)) {
-        starWidget.style.left = position.left + 'px';
-        starWidget.style.top = position.top + 'px';
-        starWidget.style.right = 'auto';
-      }
-    } catch (_) {
-      safeStorage.remove(STAR_POSITION_KEY);
-    }
-  }
 
   const clampStar = (left, top) => {
     const width = starWidget.offsetWidth;
@@ -348,27 +381,6 @@
     };
   };
 
-  requestAnimationFrame(() => {
-    const initialRect = starWidget.getBoundingClientRect();
-    if (starWidget.style.left || starWidget.style.top) {
-      const initial = clampStar(initialRect.left, initialRect.top);
-      starWidget.style.left = initial.left + 'px';
-      starWidget.style.top = initial.top + 'px';
-      starWidget.style.right = 'auto';
-    }
-    placeSpeech();
-  });
-
-  let drag = {
-    active: false,
-    moved: false,
-    pointerId: null,
-    startX: 0,
-    startY: 0,
-    originLeft: 0,
-    originTop: 0
-  };
-
   const bounceStar = () => {
     starWidget.classList.remove('is-bouncing');
     void starWidget.offsetWidth;
@@ -377,83 +389,122 @@
   };
 
   const pokeStar = () => {
+    if (!starWidget) return;
     starWidget.classList.remove('is-poked');
     void starWidget.offsetWidth;
     starWidget.classList.add('is-poked');
-    const phrases = ['唔，好痒呀！', '再戳一下试试？', '我在呢。', '嘿嘿，被你发现啦。'];
-    showSpeech(phrases[Math.floor(Math.random() * phrases.length)], 1600);
+    const phrases = ['写下一笔，给今天留个位置。', '只留一个表情，也算记录。', '不用写得完整，慢慢来。', '今天的感受，值得被看见。'];
+    showSpeech(phrases[Math.floor(Math.random() * phrases.length)], 2100);
     window.setTimeout(() => starWidget.classList.remove('is-poked'), 650);
   };
 
-  starWidget.addEventListener('pointerdown', (event) => {
-    if (event.button !== undefined && event.button !== 0) return;
-    event.preventDefault();
-    const rect = starWidget.getBoundingClientRect();
-    drag.active = true;
-    drag.moved = false;
-    drag.pointerId = event.pointerId;
-    drag.startX = event.clientX;
-    drag.startY = event.clientY;
-    drag.originLeft = rect.left;
-    drag.originTop = rect.top;
-    starWidget.style.left = rect.left + 'px';
-    starWidget.style.top = rect.top + 'px';
-    starWidget.style.right = 'auto';
-    starWidget.classList.add('is-dragging');
-    starWidget.setPointerCapture(event.pointerId);
-    hideSpeech();
-  });
-
-  starWidget.addEventListener('pointermove', (event) => {
-    if (!drag.active || event.pointerId !== drag.pointerId) return;
-    const dx = event.clientX - drag.startX;
-    const dy = event.clientY - drag.startY;
-    if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
-    const position = clampStar(drag.originLeft + dx, drag.originTop + dy);
-    starWidget.style.left = position.left + 'px';
-    starWidget.style.top = position.top + 'px';
-  });
-
-  const endDrag = (event) => {
-    if (!drag.active || event.pointerId !== drag.pointerId) return;
-    drag.active = false;
-    starWidget.classList.remove('is-dragging');
-    try { starWidget.releasePointerCapture(event.pointerId); } catch (_) { /* capture already released */ }
-    if (drag.moved) {
-      const rect = starWidget.getBoundingClientRect();
-      safeStorage.set(STAR_POSITION_KEY, JSON.stringify({
-        left: Math.round(rect.left),
-        top: Math.round(rect.top)
-      }));
-      bounceStar();
-      showSpeech('放我下来啦～', 1500);
-    } else {
-      pokeStar();
+  if (starWidget) {
+    const savedPosition = safeStorage.get(STAR_POSITION_KEY);
+    if (savedPosition) {
+      try {
+        const position = JSON.parse(savedPosition);
+        if (Number.isFinite(position.left) && Number.isFinite(position.top)) {
+          starWidget.style.left = position.left + 'px';
+          starWidget.style.top = position.top + 'px';
+          starWidget.style.right = 'auto';
+        }
+      } catch (_) {
+        safeStorage.remove(STAR_POSITION_KEY);
+      }
     }
-    drag.pointerId = null;
-  };
 
-  starWidget.addEventListener('pointerup', endDrag);
-  starWidget.addEventListener('pointercancel', endDrag);
-  starWidget.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    const drag = {
+      active: false,
+      moved: false,
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      originLeft: 0,
+      originTop: 0
+    };
+
+    starWidget.addEventListener('pointerdown', (event) => {
+      if (event.button !== undefined && event.button !== 0) return;
       event.preventDefault();
-      pokeStar();
-    }
-  });
+      const rect = starWidget.getBoundingClientRect();
+      drag.active = true;
+      drag.moved = false;
+      drag.pointerId = event.pointerId;
+      drag.startX = event.clientX;
+      drag.startY = event.clientY;
+      drag.originLeft = rect.left;
+      drag.originTop = rect.top;
+      starWidget.style.left = rect.left + 'px';
+      starWidget.style.top = rect.top + 'px';
+      starWidget.style.right = 'auto';
+      starWidget.classList.add('is-dragging');
+      starWidget.setPointerCapture(event.pointerId);
+      hideSpeech();
+    });
 
-  window.addEventListener('resize', () => {
-    const rect = starWidget.getBoundingClientRect();
-    const position = clampStar(rect.left, rect.top);
-    starWidget.style.left = position.left + 'px';
-    starWidget.style.top = position.top + 'px';
-    starWidget.style.right = 'auto';
-    placeSpeech();
-  });
+    starWidget.addEventListener('pointermove', (event) => {
+      if (!drag.active || event.pointerId !== drag.pointerId) return;
+      const dx = event.clientX - drag.startX;
+      const dy = event.clientY - drag.startY;
+      if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+      const position = clampStar(drag.originLeft + dx, drag.originTop + dy);
+      starWidget.style.left = position.left + 'px';
+      starWidget.style.top = position.top + 'px';
+    });
 
-  messages = loadMessages();
-  renderMessages();
-  const restoredResult = window.AgentEngine.getLastResult();
-  if (restoredResult && messages.some((message) => message.role === 'user')) renderEmotionInsight(restoredResult);
-  window.setTimeout(() => showSpeech('我在这里，慢慢说。', 2600), 500);
+    const endDrag = (event) => {
+      if (!drag.active || event.pointerId !== drag.pointerId) return;
+      drag.active = false;
+      starWidget.classList.remove('is-dragging');
+      try { starWidget.releasePointerCapture(event.pointerId); } catch (_) { /* released */ }
+      if (drag.moved) {
+        const rect = starWidget.getBoundingClientRect();
+        safeStorage.set(STAR_POSITION_KEY, JSON.stringify({ left: Math.round(rect.left), top: Math.round(rect.top) }));
+        bounceStar();
+        showSpeech('放我下来啦。', 1400);
+      } else {
+        pokeStar();
+      }
+      drag.pointerId = null;
+    };
+
+    starWidget.addEventListener('pointerup', endDrag);
+    starWidget.addEventListener('pointercancel', endDrag);
+    starWidget.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        pokeStar();
+      }
+    });
+
+    requestAnimationFrame(() => {
+      const rect = starWidget.getBoundingClientRect();
+      if (starWidget.style.left || starWidget.style.top) {
+        const position = clampStar(rect.left, rect.top);
+        starWidget.style.left = position.left + 'px';
+        starWidget.style.top = position.top + 'px';
+        starWidget.style.right = 'auto';
+      }
+      placeSpeech();
+    });
+
+    window.addEventListener('resize', () => {
+      const rect = starWidget.getBoundingClientRect();
+      const position = clampStar(rect.left, rect.top);
+      starWidget.style.left = position.left + 'px';
+      starWidget.style.top = position.top + 'px';
+      starWidget.style.right = 'auto';
+      placeSpeech();
+    });
+
+    window.setTimeout(() => showSpeech('写下一笔，给今天留个位置。', 3200), 500);
+  }
+
+  renderMoodRecords();
+  if (window.ResizeObserver && moodRecords) {
+    const moodLayoutObserver = new ResizeObserver(() => layoutMoodRecords());
+    moodLayoutObserver.observe(moodRecords);
+  } else {
+    window.addEventListener('resize', layoutMoodRecords);
+  }
 })();

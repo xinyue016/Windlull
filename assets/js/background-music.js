@@ -1,5 +1,7 @@
 (() => {
   'use strict';
+  const embeddedView = new URLSearchParams(window.location.search).get('embed') === '1' || window.self !== window.top;
+  if (embeddedView) return;
 
   const pagePath = decodeURIComponent(window.location.pathname).replace(/\\/g, '/');
   const isGamePage = /\/game\.html$/i.test(pagePath);
@@ -265,7 +267,14 @@
     if (event.persisted && enabled) startPlayback();
   });
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && enabled && audio.paused) startPlayback();
+    if (document.hidden) {
+      if (!audio.paused) {
+        saveTimeline();
+        audio.pause();
+      }
+      return;
+    }
+    if (enabled) startPlayback();
   });
   window.addEventListener('storage', (event) => {
     if (event.key === VOLUME_KEY) {
@@ -283,7 +292,7 @@
     if (nextEnabled && !enabled) {
       enabled = true;
       timelineRestored = false;
-      startPlayback();
+      if (!document.hidden) startPlayback();
     } else if (!nextEnabled && enabled) {
       disable();
     }
@@ -305,6 +314,7 @@
   else document.addEventListener('DOMContentLoaded', mountAudio, { once: true });
 
   if (enabled) {
+    armResumeAfterInteraction();
     const deferInitialPlayback = () => startPlayback();
     if ('requestIdleCallback' in window) {
       window.requestIdleCallback(deferInitialPlayback, { timeout: 1200 });

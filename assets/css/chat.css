@@ -1,4 +1,4 @@
-/* 情绪搭子 · 本地聊天页 */
+/* 情绪日记 · 本地记录页 */
 :root {
   --ink: #17384d;
   --ink-soft: #536f7e;
@@ -579,4 +579,769 @@ html.night-mode .chat-thread::-webkit-scrollbar-thumb {
 }
 html.night-mode .star-speech::after {
   border-color: rgba(232, 222, 255, 0.14);
+}
+
+
+
+
+/* Embedded dashboard mode */
+body.embed-mode .back-home {
+  display: none !important;
+}
+body.embed-mode .chat-app {
+  top: 18px;
+}
+
+/* =========================================================
+   情绪日记：本地心情记录页
+   ========================================================= */
+body .agent-star-widget.diary-star-widget {
+  display: block !important;
+}
+
+.diary-app {
+  position: fixed;
+  z-index: 10;
+  top: 74px;
+  right: 28px;
+  bottom: 28px;
+  left: calc(var(--app-sidebar-width) + 34px);
+}
+.diary-main {
+  height: 100%;
+  min-height: 0;
+  padding: 22px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: var(--glass);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(30px) saturate(1.12);
+}
+.diary-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line-dark);
+}
+.diary-kicker {
+  margin: 0 0 5px;
+  color: var(--ink-faint);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.diary-header h1 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.diary-intro {
+  max-width: 620px;
+  margin: 7px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.diary-stats {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 7px;
+}
+.diary-stats span {
+  padding: 7px 10px;
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+.diary-stats b { color: var(--ink); font-size: 12px; }
+.diary-local-note {
+  flex: 0 0 auto;
+  margin: 10px 0 9px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-faint);
+  font-size: 9px;
+}
+.diary-local-note span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #67a97e;
+  box-shadow: 0 0 0 4px rgba(103, 169, 126, 0.12);
+}
+.mood-board {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-dark);
+  border-radius: 23px;
+  background:
+    radial-gradient(circle at 72% 18%, rgba(255,255,255,.24), transparent 37%),
+    rgba(255, 255, 255, 0.16);
+}
+.mood-records {
+  position: absolute;
+  inset: 0 0 88px;
+  pointer-events: none;
+}
+.mood-record {
+  position: absolute;
+  width: clamp(48px, 5vw, 68px);
+  height: clamp(48px, 5vw, 68px);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(31, 80, 103, 0.08);
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  transition: transform 0.22s var(--ease), background 0.22s, box-shadow 0.22s;
+}
+.mood-record:hover,
+.mood-record:focus-visible {
+  z-index: 5;
+  transform: translate(-50%, -50%) scale(1.16);
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 12px 26px rgba(31, 80, 103, 0.16);
+}
+.mood-empty {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  display: grid;
+  gap: 6px;
+  color: var(--ink-faint);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+.mood-empty strong {
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+}
+.mood-empty span { font-size: 10px; }
+.mood-actions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  border-top: 1px solid var(--line-dark);
+  background: rgba(247, 252, 255, 0.62);
+  backdrop-filter: blur(18px);
+}
+.mood-action {
+  width: 62px;
+  height: 62px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.66);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #4dafb7, #4e91c7);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(52, 121, 148, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), filter 0.2s;
+}
+.mood-action:hover,
+.mood-action:focus-visible { transform: translateY(-3px); filter: brightness(1.06); }
+.mood-action span { font-size: 23px; line-height: 1; }
+.mood-action small { font-size: 8px; line-height: 1; white-space: nowrap; }
+.mood-action--history { background: linear-gradient(145deg, #89a5db, #8878c9); }
+
+.diary-modal {
+  position: fixed;
+  z-index: 1300;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: var(--app-sidebar-width);
+  display: grid;
+  place-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s, visibility 0s 0.25s;
+}
+.diary-modal.is-open { visibility: visible; opacity: 1; transition-delay: 0s; }
+.diary-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 32, 48, 0.38);
+  backdrop-filter: blur(10px);
+}
+html.night-mode .diary-modal-backdrop { background: rgba(5, 2, 18, 0.6); }
+.diary-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(580px, calc(100vw - var(--app-sidebar-width) - 36px));
+  max-height: min(82dvh, 760px);
+  padding: 22px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: rgba(242, 251, 255, 0.97);
+  box-shadow: 0 30px 80px rgba(11, 35, 50, 0.28);
+  color: var(--ink);
+  transform: translateY(15px) scale(0.975);
+  transition: transform 0.25s var(--ease);
+}
+.diary-modal.is-open .diary-modal-panel { transform: translateY(0) scale(1); }
+html.night-mode .diary-modal-panel { background: rgba(29, 23, 55, 0.98); }
+.diary-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line-dark);
+}
+.diary-modal-header p { margin: 0 0 4px; color: var(--ink-faint); font-size: 8px; font-weight: 700; letter-spacing: 0.15em; }
+.diary-modal-header h2 { margin: 0; font-family: var(--font-serif); font-size: 25px; font-weight: 600; }
+.diary-modal-close {
+  width: 34px;
+  height: 34px;
+  padding: 0 0 3px;
+  border: 1px solid var(--line-dark);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.38);
+  color: var(--ink);
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+}
+.mood-form { margin-top: 16px; display: grid; gap: 12px; }
+.mood-form label { display: grid; gap: 6px; }
+.mood-form label > span { color: var(--ink-soft); font-size: 10px; font-weight: 600; }
+.mood-form input,
+.mood-form select,
+.mood-form textarea {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid var(--line-dark);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.48);
+  color: var(--ink);
+  font: 12px/1.5 var(--font-sans);
+  outline: none;
+  resize: vertical;
+}
+.mood-form input:focus,
+.mood-form select:focus,
+.mood-form textarea:focus { border-color: #4ba8b8; }
+html.night-mode .mood-form input,
+html.night-mode .mood-form select,
+html.night-mode .mood-form textarea { background: rgba(255, 255, 255, 0.07); }
+.mood-form-note { margin: 0; color: var(--ink-faint); font-size: 9px; line-height: 1.5; }
+.mood-form-error { min-height: 14px; margin: 0; color: #b14f59; font-size: 10px; }
+.diary-modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 9px; }
+.diary-button {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.diary-button--primary { border-color: transparent; background: #31869f; color: #fff; }
+.diary-button--quiet { background: rgba(255, 255, 255, 0.28); color: var(--ink-soft); }
+.diary-button--danger { border-color: rgba(177, 79, 89, 0.2); background: rgba(177, 79, 89, 0.12); color: #a44350; }
+html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
+.mood-detail-list { margin: 18px 0 0; display: grid; gap: 12px; }
+.mood-detail-list div { padding: 11px 12px; border: 1px solid var(--line-dark); border-radius: 13px; background: rgba(255, 255, 255, 0.26); }
+.mood-detail-list dt { margin-bottom: 4px; color: var(--ink-faint); font-size: 9px; }
+.mood-detail-list dd { margin: 0; color: var(--ink); font-size: 12px; line-height: 1.65; white-space: pre-wrap; }
+.mood-history-list { margin-top: 15px; display: grid; gap: 9px; }
+.history-mood-item { padding: 12px 13px; border: 1px solid var(--line-dark); border-radius: 13px; background: rgba(255, 255, 255, 0.26); }
+.history-mood-item header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.history-mood-item strong { font-size: 12px; }
+.history-mood-item time { color: var(--ink-faint); font-size: 9px; }
+.history-mood-item p { margin: 6px 0 0; color: var(--ink-soft); font-size: 10px; line-height: 1.6; white-space: pre-wrap; }
+.history-empty { padding: 24px 0; color: var(--ink-faint); font-size: 11px; text-align: center; }
+
+@media (max-width: 900px) {
+  .diary-app {
+    top: 68px;
+    right: 12px;
+    bottom: 12px;
+    left: calc(var(--app-sidebar-width) + 10px);
+  }
+  .diary-main { padding: 16px 15px 14px; border-radius: 22px; }
+  .diary-header { gap: 12px; }
+  .diary-header h1 { font-size: 24px; }
+  .diary-intro { font-size: 10px; }
+  .diary-stats span { padding: 6px 8px; font-size: 8px; }
+  .mood-board { border-radius: 18px; }
+  .mood-actions { height: 76px; gap: 14px; }
+  .mood-action { width: 54px; height: 54px; }
+  .mood-action span { font-size: 20px; }
+  .mood-action small { font-size: 7px; }
+  .diary-modal-panel { width: calc(100vw - var(--app-sidebar-width) - 20px); padding: 17px; border-radius: 20px; }
+  .diary-star-widget { top: 76px; right: 18px; }
+}
+@media (max-width: 560px) {
+  .diary-app { top: 62px; right: 8px; bottom: 8px; left: calc(var(--app-sidebar-width) + 7px); }
+  .diary-main { padding: 12px 10px 10px; border-radius: 18px; }
+  .diary-kicker { font-size: 7px; }
+  .diary-header h1 { font-size: 21px; }
+  .diary-intro { font-size: 9px; }
+  .diary-stats { flex-direction: column; gap: 4px; }
+  .diary-stats span { padding: 4px 7px; }
+  .diary-local-note { margin: 7px 0; font-size: 8px; }
+  .mood-record { width: 46px; height: 46px; font-size: 36px; }
+  .diary-modal-panel { width: calc(100vw - var(--app-sidebar-width) - 14px); padding: 14px; }
+  .diary-modal-header h2 { font-size: 21px; }
+  .mood-form input, .mood-form select, .mood-form textarea { font-size: 11px; }
+  .diary-button { min-height: 34px; padding: 0 12px; font-size: 10px; }
+}
+
+.mood-empty[hidden] { display: none !important; }
+
+/* 表情记录：去掉边框与底色，加入长按和双击动效 */
+.mood-record,
+.mood-record:hover,
+.mood-record:focus-visible {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.mood-record {
+  will-change: transform;
+  transform-origin: center;
+}
+.mood-record.is-long-press[data-emotion="happy"] { animation: mood-long-happy 0.42s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="joy"] { animation: mood-long-joy 0.38s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="angry"] { animation: mood-long-angry 0.24s linear infinite; }
+.mood-record.is-long-press[data-emotion="sad"] { animation: mood-long-sad 1.1s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="blue"] { animation: mood-long-blue 0.52s ease-in-out infinite; }
+.mood-record.is-bursting { animation: mood-double-pop 0.66s cubic-bezier(.16, 1, .3, 1) both; }
+
+@keyframes mood-long-happy {
+  0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  35% { transform: translate(-50%, -50%) scale(1.16) rotate(-7deg); }
+  70% { transform: translate(-50%, -50%) scale(0.96) rotate(5deg); }
+}
+@keyframes mood-long-joy {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) scale(1); }
+  45% { transform: translate(-50%, -50%) translateY(-9px) scale(1.1) rotate(4deg); }
+  70% { transform: translate(-50%, -50%) translateY(1px) scale(0.94, 1.06); }
+}
+@keyframes mood-long-angry {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  25% { transform: translate(-50%, -50%) rotate(-7deg) scale(1.05); }
+  75% { transform: translate(-50%, -50%) rotate(7deg) scale(1.05); }
+}
+@keyframes mood-long-sad {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) scale(1); filter: saturate(1); }
+  55% { transform: translate(-50%, -50%) translateY(5px) scale(0.92, 0.96); filter: saturate(0.72); }
+}
+@keyframes mood-long-blue {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) scale(1); }
+  50% { transform: translate(-50%, -50%) translateY(-5px) scale(1.06, 0.94); }
+}
+@keyframes mood-double-pop {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  24% { transform: translate(-50%, -50%) scale(1.34) rotate(-8deg); }
+  46% { transform: translate(-50%, -50%) scale(0.88) rotate(6deg); }
+  68% { transform: translate(-50%, -50%) scale(1.15) rotate(-3deg); }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+}
+
+/* 情绪表情专用动效与无蓝框反馈 */
+.mood-record {
+  overflow: visible;
+  isolation: isolate;
+  outline: 0 !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+.mood-record:focus,
+.mood-record:focus-visible {
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+.mood-record::before,
+.mood-record::after {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+.mood-record[data-emotion="happy"]::before,
+.mood-record[data-emotion="happy"]::after { content: "✨"; font-size: 16px; }
+.mood-record[data-emotion="joy"]::before,
+.mood-record[data-emotion="joy"]::after { content: "♪"; font-size: 19px; color: #e8b64d; }
+.mood-record[data-emotion="angry"]::before { content: "🔨"; font-size: 25px; }
+.mood-record[data-emotion="angry"]::after { content: "✦"; font-size: 21px; color: #e9956c; }
+.mood-record[data-emotion="sad"]::before { content: "☁️"; font-size: 20px; }
+.mood-record[data-emotion="sad"]::after {
+  content: "";
+  width: 4px;
+  height: 7px;
+  border-radius: 60% 60% 65% 65%;
+  background: #77b5e4;
+  box-shadow: 11px 1px 0 #77b5e4, -10px 5px 0 #77b5e4, 5px 10px 0 #77b5e4, -17px 14px 0 #77b5e4;
+}
+.mood-record[data-emotion="blue"]::before { content: "☁️"; font-size: 19px; }
+.mood-record[data-emotion="blue"]::after { content: "〰"; font-size: 20px; color: #7c9eb7; }
+
+.mood-record.is-long-press[data-emotion="happy"] { animation: mood-fx-happy .72s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="joy"] { animation: mood-fx-joy .68s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="angry"] { animation: mood-fx-hit .86s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="sad"] { animation: mood-fx-sad 1.2s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="blue"] { animation: mood-fx-blue 1.1s ease-in-out infinite; }
+
+.mood-record.is-long-press[data-emotion="happy"]::before { animation: fx-spark-left .72s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="happy"]::after { animation: fx-spark-right .72s .16s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="joy"]::before { animation: fx-note-left .7s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="joy"]::after { animation: fx-note-right .7s .18s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="angry"]::before { animation: fx-hammer .86s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="angry"]::after { animation: fx-impact .86s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="sad"]::before { animation: fx-rain-cloud 1.2s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="sad"]::after { animation: fx-rain 1.2s linear infinite; }
+.mood-record.is-long-press[data-emotion="blue"]::before { animation: fx-blue-cloud 1.1s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="blue"]::after { animation: fx-blue-mist 1.1s ease-in-out infinite; }
+
+.mood-record.is-bursting[data-emotion="happy"]::before { animation: fx-spark-left .68s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="happy"]::after { animation: fx-spark-right .68s .1s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="joy"]::before { animation: fx-note-left .68s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="joy"]::after { animation: fx-note-right .68s .1s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="angry"] { animation: mood-fx-hit .86s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="angry"]::before { animation: fx-hammer .86s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="angry"]::after { animation: fx-impact .86s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="sad"]::before { animation: fx-rain-cloud 1.1s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="sad"]::after { animation: fx-rain 1.1s linear 1 both; }
+.mood-record.is-bursting[data-emotion="blue"]::before { animation: fx-blue-cloud 1s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="blue"]::after { animation: fx-blue-mist 1s ease-in-out 1 both; }
+
+@keyframes mood-fx-happy {
+  0%,100% { transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+  25% { transform: translate(-50%,-50%) scale(1.18,.92) rotate(-7deg); }
+  52% { transform: translate(-50%,-50%) scale(.94,1.1) rotate(6deg); }
+  76% { transform: translate(-50%,-50%) scale(1.08,.97) rotate(-2deg); }
+}
+@keyframes mood-fx-joy {
+  0%,100% { transform: translate(-50%,-50%) translateY(0) scale(1); }
+  42% { transform: translate(-50%,-50%) translateY(-10px) scale(1.1,.96) rotate(5deg); }
+  72% { transform: translate(-50%,-50%) translateY(1px) scale(.94,1.08); }
+}
+@keyframes mood-fx-hit {
+  0%, 30%, 100% { transform: translate(-50%,-50%) scale(1) rotate(0); }
+  42% { transform: translate(-50%,-50%) scale(1.2,.76) rotate(-4deg); }
+  49% { transform: translate(-50%,-50%) scale(.88,1.08) rotate(5deg); }
+  58% { transform: translate(-50%,-50%) scale(1.05,.94) rotate(-2deg); }
+  72% { transform: translate(-50%,-50%) scale(.97,1.03); }
+}
+@keyframes mood-fx-sad {
+  0%,100% { transform: translate(-50%,-50%) translateY(0) scale(1); filter: saturate(.85); }
+  55% { transform: translate(-50%,-50%) translateY(6px) scale(.92,.96) rotate(-2deg); filter: saturate(.65); }
+}
+@keyframes mood-fx-blue {
+  0%,100% { transform: translate(-50%,-50%) translate(0,0) scale(1); opacity: .9; }
+  50% { transform: translate(-50%,-50%) translate(4px,-6px) scale(1.05,.96); opacity: .72; }
+}
+@keyframes fx-spark-left {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.3) rotate(0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-135%,-155%) scale(.62) rotate(-90deg); }
+}
+@keyframes fx-spark-right {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.3) rotate(0); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(45%,-160%) scale(.64) rotate(95deg); }
+}
+@keyframes fx-note-left {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.5); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-145%,-170%) scale(.9) rotate(-25deg); }
+}
+@keyframes fx-note-right {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.5); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(55%,-165%) scale(.9) rotate(25deg); }
+}
+@keyframes fx-hammer {
+  0%, 100% { opacity: 0; transform: translate(45%,-155%) rotate(-38deg) scale(.82); }
+  12% { opacity: 1; }
+  34% { opacity: 1; transform: translate(20%,-118%) rotate(-32deg) scale(.92); }
+  43%, 50% { opacity: 1; transform: translate(-24%,-80%) rotate(-12deg) scale(1.16); }
+  64% { opacity: 1; transform: translate(-42%,-145%) rotate(-38deg) scale(.9); }
+  78% { opacity: 0; transform: translate(-50%,-175%) rotate(-48deg) scale(.75); }
+}
+@keyframes fx-impact {
+  0%, 38%, 100% { opacity: 0; transform: translate(-50%,-50%) scale(.2) rotate(0); }
+  46% { opacity: 1; transform: translate(25%,-65%) scale(1.35) rotate(20deg); }
+  62% { opacity: 0; transform: translate(42%,-82%) scale(.5) rotate(50deg); }
+}
+@keyframes fx-rain-cloud {
+  0%,100% { opacity: 0; transform: translate(-50%,-145%) scale(.75); }
+  18%, 78% { opacity: 1; transform: translate(-50%,-120%) scale(1); }
+}
+@keyframes fx-rain {
+  0%, 20% { opacity: 0; transform: translate(-50%,-80%) scale(.6); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, 115%) scale(.9); }
+}
+@keyframes fx-blue-cloud {
+  0%,100% { opacity: 0; transform: translate(-90%,-105%) scale(.8); }
+  30%, 72% { opacity: .9; transform: translate(-120%,-115%) scale(1); }
+}
+@keyframes fx-blue-mist {
+  0%,100% { opacity: 0; transform: translate(-10%,70%) scale(.7); }
+  35%, 70% { opacity: .8; transform: translate(30%,85%) scale(1); }
+}
+
+/* 八种基本情绪的专属图标与动效 */
+.mood-record[data-emotion="joy"]::before,
+.mood-record[data-emotion="joy"]::after { content: "✨"; font-size: 17px; color: #e8bc55; }
+.mood-record[data-emotion="trust"]::before { content: "✦"; font-size: 15px; color: #dfb34f; }
+.mood-record[data-emotion="trust"]::after { content: ""; width: 28px; height: 28px; border: 2px solid rgba(222,177,74,.72); border-radius: 50%; }
+.mood-record[data-emotion="fear"]::before { content: "💧"; font-size: 15px; }
+.mood-record[data-emotion="fear"]::after { content: "！"; font-size: 22px; font-weight: 800; color: #72a8d1; }
+.mood-record[data-emotion="surprise"]::before { content: "！"; font-size: 25px; font-weight: 800; color: #d69255; }
+.mood-record[data-emotion="surprise"]::after { content: "✦"; font-size: 20px; color: #f0ce6c; }
+.mood-record[data-emotion="sadness"]::before { content: "☁️"; font-size: 20px; }
+.mood-record[data-emotion="sadness"]::after { content: ""; width: 4px; height: 7px; border-radius: 60% 60% 65% 65%; background: #77b5e4; box-shadow: 11px 1px 0 #77b5e4, -10px 5px 0 #77b5e4, 5px 10px 0 #77b5e4, -17px 14px 0 #77b5e4; }
+.mood-record[data-emotion="disgust"]::before { content: "〰"; font-size: 20px; color: #78a969; }
+.mood-record[data-emotion="disgust"]::after { content: "•••"; font-size: 17px; color: #84ad71; }
+.mood-record[data-emotion="anger"]::before { content: "🔨"; font-size: 25px; }
+.mood-record[data-emotion="anger"]::after { content: "✦"; font-size: 21px; color: #e9956c; }
+.mood-record[data-emotion="anticipation"]::before { content: "✦"; font-size: 17px; color: #e1b548; }
+.mood-record[data-emotion="anticipation"]::after { content: "✧"; font-size: 18px; color: #e9cf74; }
+
+.mood-record.is-long-press[data-emotion="joy"] { animation: mood-fx-happy .72s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="trust"] { animation: mood-fx-trust 1.15s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="fear"] { animation: mood-fx-fear .32s linear infinite; }
+.mood-record.is-long-press[data-emotion="surprise"] { animation: mood-fx-surprise .84s cubic-bezier(.16,1,.3,1) infinite; }
+.mood-record.is-long-press[data-emotion="sadness"] { animation: mood-fx-sadness 1.2s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="disgust"] { animation: mood-fx-disgust .7s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="anger"] { animation: mood-fx-hit .86s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="anticipation"] { animation: mood-fx-anticipation .92s ease-in-out infinite; }
+
+.mood-record.is-long-press[data-emotion="joy"]::before { animation: fx-spark-left .72s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="joy"]::after { animation: fx-spark-right .72s .16s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="trust"]::before { animation: fx-trust-spark 1.15s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="trust"]::after { animation: fx-trust-ring 1.15s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="fear"]::before { animation: fx-fear-drop 1.1s linear infinite; }
+.mood-record.is-long-press[data-emotion="fear"]::after { animation: fx-fear-alert .55s steps(2,end) infinite; }
+.mood-record.is-long-press[data-emotion="surprise"]::before { animation: fx-surprise-alert .84s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="surprise"]::after { animation: fx-surprise-flash .84s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="sadness"]::before { animation: fx-rain-cloud 1.2s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="sadness"]::after { animation: fx-rain 1.2s linear infinite; }
+.mood-record.is-long-press[data-emotion="disgust"]::before { animation: fx-disgust-wave .7s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="disgust"]::after { animation: fx-disgust-dots .7s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="anger"]::before { animation: fx-hammer .86s ease-in-out infinite; }
+.mood-record.is-long-press[data-emotion="anger"]::after { animation: fx-impact .86s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="anticipation"]::before { animation: fx-anticipation-star-a .92s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="anticipation"]::after { animation: fx-anticipation-star-b .92s .1s ease-out infinite; }
+
+.mood-record.is-bursting[data-emotion="joy"] { animation: mood-fx-happy .74s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="trust"] { animation: mood-fx-trust 1s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="fear"] { animation: mood-fx-fear .8s linear 1 both; }
+.mood-record.is-bursting[data-emotion="surprise"] { animation: mood-fx-surprise .84s cubic-bezier(.16,1,.3,1) 1 both; }
+.mood-record.is-bursting[data-emotion="sadness"] { animation: mood-fx-sadness 1.1s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="disgust"] { animation: mood-fx-disgust .75s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="anger"] { animation: mood-fx-hit .86s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="anticipation"] { animation: mood-fx-anticipation .92s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="joy"]::before { animation: fx-spark-left .7s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="joy"]::after { animation: fx-spark-right .7s .1s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="trust"]::before { animation: fx-trust-spark 1s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="trust"]::after { animation: fx-trust-ring 1s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="fear"]::before { animation: fx-fear-drop .9s linear 1 both; }
+.mood-record.is-bursting[data-emotion="fear"]::after { animation: fx-fear-alert .55s steps(2,end) 1 both; }
+.mood-record.is-bursting[data-emotion="surprise"]::before { animation: fx-surprise-alert .84s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="surprise"]::after { animation: fx-surprise-flash .84s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="sadness"]::before { animation: fx-rain-cloud 1.1s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="sadness"]::after { animation: fx-rain 1.1s linear 1 both; }
+.mood-record.is-bursting[data-emotion="disgust"]::before { animation: fx-disgust-wave .75s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="disgust"]::after { animation: fx-disgust-dots .75s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="anger"]::before { animation: fx-hammer .86s ease-in-out 1 both; }
+.mood-record.is-bursting[data-emotion="anger"]::after { animation: fx-impact .86s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="anticipation"]::before { animation: fx-anticipation-star-a .92s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="anticipation"]::after { animation: fx-anticipation-star-b .92s .1s ease-out 1 both; }
+
+@keyframes mood-fx-trust {
+  0%,100% { transform: translate(-50%,-50%) scale(1); filter: drop-shadow(0 0 0 rgba(222,177,74,0)); }
+  50% { transform: translate(-50%,-50%) scale(1.07); filter: drop-shadow(0 0 10px rgba(222,177,74,.36)); }
+}
+@keyframes fx-trust-spark {
+  0%,100% { opacity: 0; transform: translate(-50%,-50%) scale(.45) rotate(0); }
+  35% { opacity: 1; transform: translate(-50%,-135%) scale(.9) rotate(35deg); }
+}
+@keyframes fx-trust-ring {
+  0%,100% { opacity: 0; transform: translate(-50%,-50%) scale(.4); }
+  30% { opacity: .78; }
+  72% { opacity: 0; transform: translate(-50%,-50%) scale(2); }
+}
+@keyframes mood-fx-fear {
+  0%,100% { transform: translate(-50%,-50%) scale(1) rotate(0); }
+  16% { transform: translate(calc(-50% - 3px),-50%) scale(.98) rotate(-2deg); }
+  32% { transform: translate(calc(-50% + 3px),-50%) scale(.96) rotate(2deg); }
+  48% { transform: translate(calc(-50% - 2px),-50%) scale(.99) rotate(-1deg); }
+  64% { transform: translate(calc(-50% + 2px),-50%) scale(1) rotate(1deg); }
+}
+@keyframes fx-fear-drop {
+  0% { opacity: 0; transform: translate(20%,-120%) scale(.55); }
+  20% { opacity: 1; }
+  80% { opacity: .9; transform: translate(20%,-15%) scale(.9); }
+  100% { opacity: 0; transform: translate(20%,25%) scale(.6); }
+}
+@keyframes fx-fear-alert {
+  0%,100% { opacity: 0; transform: translate(65%,-90%) scale(.7); }
+  50% { opacity: .95; transform: translate(65%,-90%) scale(1.12); }
+}
+
+@keyframes mood-fx-surprise {
+  0%,100% { transform: translate(-50%,-50%) scale(1) rotate(0); }
+  18% { transform: translate(-50%,-55%) scale(1.23,.88) rotate(-4deg); }
+  36% { transform: translate(-53%,-50%) scale(.92,1.08) rotate(4deg); }
+  56% { transform: translate(-50%,-50%) scale(1.06,.96); }
+}
+@keyframes fx-surprise-alert {
+  0%,100% { opacity: 0; transform: translate(-50%,-155%) scale(.45); }
+  25%,58% { opacity: 1; transform: translate(-50%,-145%) scale(1.12); }
+}
+@keyframes fx-surprise-flash {
+  0%,100% { opacity: 0; transform: translate(55%,-110%) scale(.35) rotate(0); }
+  28% { opacity: 1; transform: translate(55%,-110%) scale(1.1) rotate(35deg); }
+  62% { opacity: 0; transform: translate(70%,-90%) scale(.7) rotate(75deg); }
+}
+@keyframes mood-fx-sadness {
+  0%,100% { transform: translate(-50%,-50%) translateY(0) scale(1); filter: saturate(.85); }
+  55% { transform: translate(-50%,-50%) translateY(6px) scale(.92,.96) rotate(-2deg); filter: saturate(.62); }
+}
+@keyframes mood-fx-disgust {
+  0%,100% { transform: translate(-50%,-50%) rotate(0) scale(1); }
+  32% { transform: translate(calc(-50% + 7px),-50%) rotate(6deg) scale(.95); }
+  62% { transform: translate(calc(-50% + 4px),-50%) rotate(-4deg) scale(.98); }
+}
+@keyframes fx-disgust-wave {
+  0%,100% { opacity: 0; transform: translate(-115%,-50%) scale(.6) rotate(-10deg); }
+  35%,70% { opacity: .9; transform: translate(-135%,-50%) scale(1) rotate(6deg); }
+}
+@keyframes fx-disgust-dots {
+  0%,100% { opacity: 0; transform: translate(20%,85%) scale(.6); letter-spacing: 0; }
+  35%,70% { opacity: .8; transform: translate(45%,90%) scale(1); letter-spacing: 2px; }
+}
+@keyframes mood-fx-anticipation {
+  0%,100% { transform: translate(-50%,-50%) rotate(0) scale(1); }
+  38% { transform: translate(calc(-50% + 7px),-54%) rotate(5deg) scale(1.1,.96); }
+  68% { transform: translate(calc(-50% + 3px),-50%) rotate(-2deg) scale(.97,1.03); }
+}
+@keyframes fx-anticipation-star-a {
+  0%,100% { opacity: 0; transform: translate(-80%,40%) scale(.45) rotate(0); }
+  25% { opacity: 1; }
+  75% { opacity: 0; transform: translate(55%,-150%) scale(.85) rotate(80deg); }
+}
+@keyframes fx-anticipation-star-b {
+  0%,100% { opacity: 0; transform: translate(-50%,-50%) scale(.35) rotate(0); }
+  30% { opacity: 1; }
+  82% { opacity: 0; transform: translate(105%,-175%) scale(.7) rotate(110deg); }
+}
+
+/* 本地保存提醒字号 */
+.diary-local-note {
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.diary-intro { font-size: 13.5px; }
+.diary-stats span { font-size: 11px; }
+@media (max-width: 900px) {
+  .diary-local-note { font-size: 11.5px; }
+  .diary-intro { font-size: 12px; }
+}
+@media (max-width: 560px) {
+  .diary-local-note { font-size: 11px; line-height: 1.5; }
+  .diary-intro { font-size: 11px; }
+}
+
+/* 喜悦动效增强 */
+.mood-record[data-emotion="joy"]::before,
+.mood-record[data-emotion="joy"]::after { font-size: 22px; }
+.mood-record.is-long-press[data-emotion="joy"] { animation: mood-joy-big .78s ease-in-out infinite; }
+.mood-record.is-bursting[data-emotion="joy"] { animation: mood-joy-big .82s ease-in-out 1 both; }
+.mood-record.is-long-press[data-emotion="joy"]::before { animation: fx-joy-spark-left .78s ease-out infinite; }
+.mood-record.is-long-press[data-emotion="joy"]::after { animation: fx-joy-spark-right .78s .12s ease-out infinite; }
+.mood-record.is-bursting[data-emotion="joy"]::before { animation: fx-joy-spark-left .82s ease-out 1 both; }
+.mood-record.is-bursting[data-emotion="joy"]::after { animation: fx-joy-spark-right .82s .12s ease-out 1 both; }
+@keyframes mood-joy-big {
+  0%, 100% { transform: translate(-50%,-50%) translateY(0) scale(1) rotate(0deg); }
+  24% { transform: translate(-50%,-50%) translateY(-14px) scale(1.28,.86) rotate(-10deg); }
+  48% { transform: translate(-50%,-50%) translateY(2px) scale(.88,1.16) rotate(9deg); }
+  70% { transform: translate(-50%,-50%) translateY(-7px) scale(1.12,.96) rotate(-5deg); }
+  86% { transform: translate(-50%,-50%) translateY(1px) scale(.97,1.04) rotate(2deg); }
+}
+@keyframes fx-joy-spark-left {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.28) rotate(0deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-175%,-225%) scale(1.15) rotate(-125deg); }
+}
+@keyframes fx-joy-spark-right {
+  0% { opacity: 0; transform: translate(-50%,-50%) scale(.28) rotate(0deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(80%,-235%) scale(1.2) rotate(130deg); }
+}
+
+/* 放大 50 条规则说明 */
+.mood-form-note {
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .mood-form-note { font-size: 11.5px; }
+}
+@media (max-width: 560px) {
+  .mood-form-note { font-size: 11px; }
+}
+
+/* 记录区允许滚动，表情保持原尺寸且不重叠 */
+.mood-records {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+  scrollbar-width: none;
+}
+.mood-records::-webkit-scrollbar { display: none; }
+.mood-records-canvas {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  pointer-events: none;
+}
+.mood-records-canvas .mood-record {
+  pointer-events: auto;
+  touch-action: pan-y;
 }

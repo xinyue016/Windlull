@@ -291,6 +291,42 @@ img, svg { display: block; }
     linear-gradient(145deg, rgba(222,242,249,.8), rgba(255,255,255,.46));
 }
 .squishy-stage { background: radial-gradient(circle at 50% 43%, #fffdf0, #e7f4fa 68%); }
+.squishy-beaker {
+  position: absolute;
+  left: 50%;
+  bottom: 42px;
+  z-index: 3;
+  height: 55%;
+  aspect-ratio: 774 / 965;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.squishy-stage .webgl-mount canvas {
+  transition: transform .18s cubic-bezier(.2, .75, .25, 1);
+  will-change: transform;
+}
+.squishy-stage.is-dipping .webgl-mount canvas {
+  transform: translateY(var(--squishy-dip-shift, 0%)) scale(.36);
+  transform-origin: 50% 8%;
+}
+.squishy-beaker[hidden] { display: none; }
+.squishy-beaker img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 14px 20px rgba(51, 77, 93, .12));
+}
+.squishy-beaker__night { display: none; }
+body.night-mode .squishy-beaker__day { display: none; }
+body.night-mode .squishy-beaker__night { display: block; }
+@media (max-width: 700px) {
+  .squishy-beaker { bottom: 38px; height: 55%; }
+}
 .jelly-stage { background: radial-gradient(circle at 50% 42%, #fff4fb, #eaf5fa 68%); }
 .cooking-stage { background: radial-gradient(circle at 50% 42%, #fffaf0, #e8f4e8 68%); }
 .woodfish-stage {
@@ -310,16 +346,16 @@ img, svg { display: block; }
 .step-label { margin: 0 0 8px; color: var(--ink-faint); font-size: 8px; font-weight: 700; letter-spacing: .14em; }
 .play-controls h3 { margin: 18px 0 11px; font-family: var(--font-serif); font-size: 18px; font-weight: 600; }
 .play-controls h3:first-of-type { margin-top: 0; }
-.choice-row, .color-row, .sticker-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice-chip, .sticker-chip, .recipe-chip {
+.choice-row, .color-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice-chip, .recipe-chip {
   border: 1px solid rgba(39, 92, 117, .14);
   background: rgba(255,255,255,.64);
   color: var(--ink-soft);
   transition: transform .25s var(--ease), background .25s, border-color .25s, color .25s;
 }
 .choice-chip { min-height: 34px; padding: 0 13px; border-radius: 999px; font-size: 11px; }
-.choice-chip:hover, .sticker-chip:hover, .recipe-chip:hover { transform: translateY(-2px); background: #fff; }
-.choice-chip.is-active, .sticker-chip.is-active, .recipe-chip.is-active { border-color: rgba(43, 92, 118, .4); background: var(--ink); color: #fff; }
+.choice-chip:hover, .recipe-chip:hover { transform: translateY(-2px); background: #fff; }
+.choice-chip.is-active, .recipe-chip.is-active { border-color: rgba(43, 92, 118, .4); background: var(--ink); color: #fff; }
 .color-row { gap: 10px; margin-bottom: 22px; }
 .color-chip {
   width: 32px;
@@ -349,8 +385,6 @@ img, svg { display: block; }
 .secondary-action:hover { background: #fff; }
 .text-action { margin-top: 10px; border: 0; background: transparent; color: var(--ink-faint); font-size: 11px; text-decoration: underline; text-underline-offset: 4px; }
 .control-note { margin: 10px 0 0; color: var(--ink-faint); font-size: 10px; line-height: 1.6; }
-.sticker-row { margin-top: 8px; }
-.sticker-chip { width: 40px; height: 40px; padding: 0; border-radius: 12px; font-size: 18px; }
 .recipe-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
 .recipe-chip { min-height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 14px; font-size: 10px; }
 .recipe-chip span { font-size: 22px; }
@@ -917,37 +951,6 @@ body.night-mode .game-card:hover { background: rgba(255,255,255,.78); }
 }
 
 
-/* Embedded original 3D squishy game */
-.reference-play-panel {
-  height: calc(91dvh - 118px);
-  max-height: 750px;
-  min-height: 420px;
-  padding: 0;
-}
-.reference-play-panel iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 20px;
-  background: #eef8fc;
-}
-@media (max-width: 700px) {
-  .reference-play-panel {
-    height: calc(91dvh - 104px);
-    min-height: 400px;
-  }
-  .reference-play-panel iframe { border-radius: 16px; }
-}
-
-/* Locked standalone squishy mode */
-.game-modal.reference-mode .game-modal-header{display:none!important}
-.game-modal.reference-mode .game-modal-body{padding:0!important;overflow:hidden!important}
-.game-modal.reference-mode .game-modal-panel{background:var(--game-modal-bg)}
-.game-modal.reference-mode .reference-play-panel{height:100%;max-height:none;min-height:0;padding:0}
-.game-modal.reference-mode .reference-play-panel iframe{border-radius:30px}
-
-
 /* Jelly two-stage experience */
 .jelly-mode-switch {
   display: grid;
@@ -1105,4 +1108,10 @@ canvas,
 .woodfish-image {
   outline: none !important;
   -webkit-tap-highlight-color: transparent;
+}
+
+
+/* Embedded dashboard mode */
+body.embed-mode .back-home {
+  display: none !important;
 }

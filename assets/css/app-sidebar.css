@@ -1,0 +1,420 @@
+:root { --app-sidebar-width: 148px; }
+.app-sidebar {
+  position: fixed;
+  z-index: 1400;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--app-sidebar-width);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 20px 12px 15px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 30px 0 0 0;
+  background: linear-gradient(165deg, #e7f9ff 0%, #e6f1ff 48%, #eee7ff 100%);
+  color: #245469;
+  font-family: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  box-shadow: 10px 0 30px rgba(51, 105, 137, 0.12), inset -1px 0 rgba(255, 255, 255, 0.7);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(85, 134, 163, 0.22) transparent;
+}
+.app-sidebar::-webkit-scrollbar { width: 4px; }
+.app-sidebar::-webkit-scrollbar-thumb { border-radius: 99px; background: rgba(85, 134, 163, 0.22); }
+.sidebar-brand { padding: 4px 5px 18px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(67, 124, 151, 0.12); }
+.sidebar-brand-icon { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border-radius: 12px; color: #299bb2; background: rgba(255, 255, 255, 0.64); box-shadow: 5px 5px 12px rgba(84,128,159,.12), -5px -5px 12px rgba(255,255,255,.86), inset 0 1px rgba(255,255,255,.9); }
+.sidebar-brand-icon svg, .sidebar-menu svg, .sidebar-theme-switch svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.sidebar-brand-text { color: #245469; font-size: 17px; font-weight: 700; white-space: nowrap; }
+.sidebar-menu { margin-top: 16px; display: flex; flex-direction: column; gap: 7px; }
+.sidebar-nav-item { position: relative; width: 100%; min-height: 45px; padding: 0 10px; display: flex; align-items: center; gap: 9px; border: 0; border-radius: 14px; background: transparent; color: #315f73; font: 600 12.5px/1.25 "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; text-align: left; text-decoration: none; cursor: pointer; transition: transform .24s, background .24s, box-shadow .24s, color .24s; }
+.sidebar-nav-item:hover { transform: translateX(2px); background: rgba(255,255,255,.5); box-shadow: 5px 5px 12px rgba(81,128,159,.1), -4px -4px 10px rgba(255,255,255,.66); }
+.sidebar-nav-item.is-active { color: #228ba3; background: rgba(255,255,255,.94); box-shadow: 7px 7px 16px rgba(76,125,158,.14), -7px -7px 16px rgba(255,255,255,.9), inset 0 1px #fff; }
+.sidebar-music-item { min-height: 45px; padding: 4px 4px 4px 9px; }
+.sidebar-music-main { flex: 1 1 auto; min-width: 0; min-height: 37px; padding: 0; display: flex; align-items: center; gap: 9px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.sidebar-music-main .music-icon { width: 20px; height: 20px; flex: 0 0 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.sidebar-music-main .music-icon--pause { display: none; }
+.sidebar-music-main.is-playing .music-icon--play { display: none; }
+.sidebar-music-main.is-playing .music-icon--pause { display: block; }
+.sidebar-music-main .music-rings { display: none; }
+.sidebar-music-label { white-space: normal; line-height: 1.15; }
+.music-volume-trigger { position: static; width: 25px; height: 25px; flex: 0 0 25px; padding: 5px; border: 1px solid rgba(74,128,157,.14); border-radius: 50%; background: rgba(255,255,255,.48); color: #31849a; }
+.music-volume-trigger svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.music-volume-panel { position: absolute; z-index: 1600; top: auto; right: 0; bottom: 8px; left: calc(100% + 8px); width: 210px; padding: 11px 12px; border: 1px solid rgba(255,255,255,.75); border-radius: 15px; background: rgba(245,252,255,.96); box-shadow: 0 14px 34px rgba(34,88,119,.18); visibility: hidden; opacity: 0; pointer-events: none; transform: translateX(-5px) scale(.97); transition: opacity .22s, transform .24s, visibility 0s .24s; }
+.sidebar-music-item.is-volume-open .music-volume-panel { visibility: visible; opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); transition-delay: 0s; }
+.music-volume-heading { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; color: #4d7484; font-size: 9px; }
+.music-volume-range { width: 100%; accent-color: #45aeba; }
+.sidebar-theme-switch { width: 100%; min-height: 54px; margin-top: auto; padding: 7px 8px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 16px; background: rgba(255,255,255,.34); color: #315f73; font: 600 11px/1.2 "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; text-align: left; cursor: pointer; }
+.sidebar-theme-track { position: relative; width: 58px; height: 30px; flex: 0 0 58px; border-radius: 999px; background: rgba(255,255,255,.72); box-shadow: inset 0 2px 5px rgba(67,116,146,.13); }
+.sidebar-theme-sun,.sidebar-theme-moon { position: absolute; z-index: 1; top: 50%; width: 15px; height: 15px; transform: translateY(-50%); }
+.sidebar-theme-sun { left: 7px; color: #d7962e; }
+.sidebar-theme-moon { right: 7px; color: #7e78a7; opacity: .45; }
+.sidebar-theme-knob { position: absolute; z-index: 2; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(145deg,#fff8d7,#f0bc58); box-shadow: 0 3px 9px rgba(157,104,20,.22); transition: transform .45s cubic-bezier(.16,1,.3,1), background .45s; }
+body.night-mode .app-sidebar, html.night-mode .app-sidebar { color:#eee9ff; border-color:rgba(235,226,255,.18); background:linear-gradient(165deg,rgba(42,68,104,.96),rgba(66,48,105,.96)); }
+body.night-mode .sidebar-brand-text, html.night-mode .sidebar-brand-text, body.night-mode .sidebar-nav-item, html.night-mode .sidebar-nav-item, body.night-mode .sidebar-theme-switch, html.night-mode .sidebar-theme-switch { color:#eee9ff; }
+body.night-mode .sidebar-nav-item.is-active, html.night-mode .sidebar-nav-item.is-active { color:#fff; background:rgba(255,255,255,.12); }
+html.night-mode .sidebar-theme-knob, body.night-mode .sidebar-theme-knob { transform:translateX(28px); background:linear-gradient(145deg,#e2d9ff,#9079cf); }
+html.night-mode .sidebar-theme-sun, body.night-mode .sidebar-theme-sun { opacity:.42; } html.night-mode .sidebar-theme-moon, body.night-mode .sidebar-theme-moon { opacity:1; }
+@media (max-width: 900px) {
+  :root { --app-sidebar-width: 78px; }
+  .app-sidebar { padding: 13px 7px 10px; border-radius: 22px 0 0 0; }
+  .sidebar-brand { padding: 2px 0 12px; justify-content: center; }
+  .sidebar-brand-text { display: none; }
+  .sidebar-brand-icon { width: 36px; height: 36px; flex-basis: 36px; }
+  .sidebar-menu { gap: 6px; }
+  .sidebar-nav-item { min-height: 52px; padding: 5px 2px; flex-direction: column; justify-content: center; gap: 3px; font-size: 8px; text-align: center; }
+  .sidebar-nav-item svg { width: 19px; height: 19px; }
+  .sidebar-music-item { min-height: 54px; padding: 3px 1px; flex-direction: column; }
+  .sidebar-music-main { flex-direction: column; justify-content: center; gap: 3px; font-size: 8px; text-align: center; }
+  .sidebar-music-item .music-volume-trigger { position: absolute; top: 1px; right: 1px; width: 18px; height: 18px; padding: 3px; }
+  .music-volume-panel { right: 0; bottom: 8px; left: calc(100% + 8px); width: min(210px, calc(100vw - 100px)); }
+  .sidebar-theme-switch { min-height: 46px; padding: 6px 4px; flex-direction: column; justify-content: center; gap: 3px; font-size: 8px; text-align: center; }
+  .sidebar-theme-track { width: 56px; height: 29px; flex-basis: 56px; }
+  .sidebar-theme-knob { width: 23px; height: 23px; top: 3px; } html.night-mode .sidebar-theme-knob, body.night-mode .sidebar-theme-knob { transform: translateX(27px); }
+}
+
+/* Page-specific adaptation for fixed shared sidebar */
+body.has-app-sidebar { overflow: hidden !important; }
+body.has-app-sidebar .game-topbar { display: none !important; }
+body.has-app-sidebar .game-frame { left: calc(var(--app-sidebar-width) + 14px); }
+body.has-app-sidebar .game-library {
+  width: calc(100vw - var(--app-sidebar-width) - 48px);
+  height: calc(100dvh - 48px);
+  margin: 24px 24px 0 calc(var(--app-sidebar-width) + 24px);
+  padding: 18px;
+  overflow: hidden;
+}
+body.has-app-sidebar .game-grid { min-height: 0; height: calc(100% - 46px); }
+body.has-app-sidebar .game-top-actions .back-home,
+body.has-app-sidebar .game-theme-toggle { display: none !important; }
+body.has-app-sidebar .game-page-nav--left { left: calc(var(--app-sidebar-width) + 18px); }
+body.has-app-sidebar .game-page-nav--right { right: 18px; }
+body.has-app-sidebar .game-modal { left: var(--app-sidebar-width); }
+body.has-app-sidebar .game-modal-panel { width: min(1180px, calc(100vw - var(--app-sidebar-width) - 56px)); height: min(860px, calc(100dvh - 42px)); }
+body.has-app-sidebar .chat-frame { left: calc(var(--app-sidebar-width) + 14px); }
+body.has-app-sidebar .chat-app { left: calc(var(--app-sidebar-width) + 34px); right: 24px; top: 24px; bottom: 24px; }
+body.has-app-sidebar .back-home { display: none !important; }
+@media (max-width: 900px) {
+  body.has-app-sidebar .game-library,
+  body.has-app-sidebar .chat-app { width: calc(100vw - var(--app-sidebar-width) - 20px); margin-left: calc(var(--app-sidebar-width) + 10px); margin-right: 10px; }
+  body.has-app-sidebar .game-library { height: calc(100dvh - 20px); margin-top: 10px; padding: 10px; }
+  body.has-app-sidebar .game-grid { height: calc(100% - 42px); }
+  body.has-app-sidebar .game-frame,
+  body.has-app-sidebar .chat-frame { top: 7px; right: 7px; bottom: 7px; left: calc(var(--app-sidebar-width) + 7px); }
+  body.has-app-sidebar .chat-app { left: calc(var(--app-sidebar-width) + 10px); top: 10px; bottom: 10px; }
+  body.has-app-sidebar .game-modal { left: var(--app-sidebar-width); }
+  body.has-app-sidebar .game-modal-panel { width: calc(100vw - var(--app-sidebar-width) - 18px); height: calc(100dvh - 18px); }
+}
+
+
+/* Sidebar groups and vertical fade */
+.app-sidebar {
+  background: linear-gradient(180deg, rgba(228, 249, 255, 0.96) 0%, rgba(232, 242, 255, 0.68) 52%, rgba(238, 231, 255, 0.08) 100%);
+  backdrop-filter: blur(18px) saturate(1.05);
+}
+body.night-mode .app-sidebar,
+html.night-mode .app-sidebar {
+  background: linear-gradient(180deg, rgba(42, 68, 104, 0.95) 0%, rgba(58, 46, 95, 0.5) 58%, rgba(58, 46, 95, 0.08) 100%);
+}
+.sidebar-music-item { margin-top: 52px; }
+.sidebar-theme-switch { margin-top: 7px; }
+@media (max-width: 900px) {
+  .sidebar-music-item { margin-top: 52px; }
+  .sidebar-theme-switch { margin-top: 7px; }
+}
+
+
+/* True transparent sidebar fade without blur or white frame */
+.app-sidebar {
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: linear-gradient(180deg, rgba(225, 248, 255, 0.96) 0%, rgba(228, 241, 255, 0.62) 42%, rgba(238, 231, 255, 0.16) 72%, rgba(238, 231, 255, 0) 100%) !important;
+}
+body.night-mode .app-sidebar,
+html.night-mode .app-sidebar {
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: linear-gradient(180deg, rgba(42, 68, 104, 0.94) 0%, rgba(58, 46, 95, 0.48) 48%, rgba(58, 46, 95, 0.1) 76%, rgba(58, 46, 95, 0) 100%) !important;
+}
+
+
+/* Keep music label dark while playing */
+.sidebar-music-main.is-playing,
+.sidebar-music-main.is-playing .sidebar-music-label {
+  color: #17384d !important;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 11px;
+}
+
+/* 共用侧栏：无播放底色，音量面板在侧栏内完整展开 */
+.sidebar-music-item {
+  position: relative;
+  overflow: visible;
+}
+.sidebar-music-main,
+.sidebar-music-main:hover,
+.sidebar-music-main:focus,
+.sidebar-music-main:active,
+.sidebar-music-main.is-playing,
+.sidebar-music-main.is-playing .sidebar-music-label {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.sidebar-music-main.is-playing,
+.sidebar-music-main.is-playing .sidebar-music-label,
+body.night-mode .sidebar-music-main.is-playing,
+body.night-mode .sidebar-music-main.is-playing .sidebar-music-label,
+html.night-mode .sidebar-music-main.is-playing,
+html.night-mode .sidebar-music-main.is-playing .sidebar-music-label {
+  color: #17384d !important;
+}
+.sidebar-music-main:focus-visible {
+  outline: 2px solid rgba(49, 143, 164, 0.72);
+  outline-offset: 3px;
+}
+.sidebar-music-item .music-volume-trigger {
+  position: static !important;
+  z-index: 8;
+  width: 30px !important;
+  height: 30px !important;
+  flex: 0 0 30px !important;
+  padding: 6px !important;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+}
+.sidebar-music-item .music-volume-panel {
+  top: auto !important;
+  right: 0 !important;
+  bottom: calc(100% + 7px) !important;
+  left: 0 !important;
+  width: 100% !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(6px) scale(0.97) !important;
+  transition: opacity 0.2s ease, transform 0.22s ease, visibility 0s 0.22s !important;
+}
+.sidebar-music-item.is-volume-open .music-volume-panel {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) scale(1) !important;
+  transition-delay: 0s !important;
+}
+@media (max-width: 900px) {
+  .sidebar-music-item .music-volume-trigger {
+    position: absolute !important;
+    top: 1px !important;
+    right: 1px !important;
+    width: 30px !important;
+    height: 30px !important;
+    flex-basis: 30px !important;
+  }
+  .sidebar-music-item .music-volume-panel {
+    position: fixed !important;
+    top: var(--volume-panel-top, 92px) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: calc(var(--app-sidebar-width) + 12px) !important;
+    width: min(210px, calc(100vw - var(--app-sidebar-width) - 24px)) !important;
+  }
+}
+
+/* 手机端音量面板打开时临时解除侧栏裁切，保证滑杆可点击 */
+@media (max-width: 900px) {
+  .app-sidebar.music-volume-open {
+    overflow: visible !important;
+  }
+}
+
+/* 侧栏顶部使用透明 Logo 图片，并整体下移导航 */
+.sidebar-brand {
+  display: flex !important;
+  width: 100%;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0 14px !important;
+  border-bottom: 0 !important;
+}
+.sidebar-brand-logo {
+  display: block;
+  width: min(100%, 120px) !important;
+  height: auto !important;
+  max-height: 116px;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 4px 10px rgba(28, 71, 92, 0.18));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+body.night-mode .sidebar-brand-logo,
+html.night-mode .sidebar-brand-logo {
+  filter: drop-shadow(0 4px 12px rgba(3, 0, 24, 0.34));
+}
+.sidebar-menu {
+  margin-top: 18px !important;
+}
+
+/* 音乐文字：白天深色，夜间白色 */
+.sidebar-music-main,
+.sidebar-music-main .sidebar-music-label {
+  color: #17384d !important;
+}
+body.night-mode .sidebar-music-main,
+body.night-mode .sidebar-music-main .sidebar-music-label,
+html.night-mode .sidebar-music-main,
+html.night-mode .sidebar-music-main .sidebar-music-label {
+  color: #fff !important;
+}
+
+/* 主页面桌面排版：左侧介绍卡与右侧转盘、刮刮乐互不覆盖 */
+@media (min-width: 901px) {
+  .emotion-feature {
+    top: clamp(108px, 16vh, 170px);
+    right: auto;
+    bottom: auto;
+    left: clamp(16px, 2.2vw, 34px);
+    width: clamp(380px, 42vw, 600px);
+    grid-template-columns: clamp(104px, 9vw, 160px) minmax(0, 1fr);
+    gap: clamp(12px, 1.2vw, 18px);
+    padding: 14px 18px 14px 14px;
+    transform: none;
+  }
+  .emotion-copy { min-width: 0; }
+}
+
+/* 平板：改为纵向整齐排列 */
+@media (min-width: 701px) and (max-width: 900px) {
+  .page-shell {
+    height: 100dvh;
+    min-height: 100dvh;
+    padding: clamp(72px, 10vh, 92px) 16px calc(80px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .mood-wheel-stage {
+    position: relative;
+    inset: auto;
+    order: 1;
+    flex: 0 0 auto;
+    width: clamp(190px, min(36vw, 32vh), 320px);
+    margin: 0 auto;
+    transform: none;
+  }
+  .daily-scratch {
+    position: relative;
+    inset: auto;
+    order: 2;
+    flex: 0 0 auto;
+    width: min(520px, 100%);
+    margin: 0 auto;
+    padding: 10px 12px;
+    transform: none;
+  }
+  .emotion-feature {
+    position: relative;
+    inset: auto;
+    order: 3;
+    flex: 0 0 auto;
+    width: min(520px, 100%);
+    margin: 0 auto;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+    padding: 9px 11px;
+    transform: none;
+  }
+  .scroll-down-cue {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    order: 4;
+    flex: 0 0 auto;
+    margin: 6px auto 0;
+    transform: none;
+    animation-name: scroll-cue-bob-mobile;
+  }
+}
+@media (min-width: 701px) and (max-width: 900px) and (max-height: 720px) {
+  .page-shell {
+    padding-top: 64px;
+    padding-bottom: calc(74px + env(safe-area-inset-bottom));
+    gap: 5px;
+  }
+  .mood-wheel-stage { width: min(30vh, 190px); }
+  .scratch-surface { height: 78px; }
+  .emotion-description { -webkit-line-clamp: 2; }
+}
+
+/* 手机：转盘、刮刮乐、情绪轮说明、下滑按钮依次排列 */
+@media (max-width: 700px) {
+  .mood-wheel-stage {
+    position: relative;
+    inset: auto;
+    order: 1;
+    width: min(72vw, 292px);
+    margin: 0 auto;
+    transform: none;
+  }
+  .daily-scratch {
+    position: relative;
+    inset: auto;
+    order: 2;
+    margin: 0 auto;
+    transform: none;
+  }
+  .emotion-feature {
+    position: relative;
+    inset: auto;
+    order: 3;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    transform: none;
+  }
+  .scroll-down-cue { order: 4; }
+}
+
+/* 手机侧栏 Logo 尺寸与导航间距 */
+@media (max-width: 900px) {
+  .sidebar-brand {
+    display: flex !important;
+    padding: 2px 0 10px !important;
+  }
+  .sidebar-brand-logo {
+    width: min(100%, 64px) !important;
+    max-height: 60px;
+  }
+  .sidebar-menu { margin-top: 12px !important; }
+}
+
+/* 夜间播放态保持白色，覆盖所有旧的播放颜色规则 */
+body.night-mode .sidebar-music-main.is-playing,
+body.night-mode .sidebar-music-main.is-playing .sidebar-music-label,
+html.night-mode .sidebar-music-main.is-playing,
+html.night-mode .sidebar-music-main.is-playing .sidebar-music-label {
+  color: #fff !important;
+}
+
+/* Logo 单色显示：白天纯黑，夜间纯白，不使用金色 */
+.sidebar-brand-logo {
+  filter: brightness(0) saturate(100%) drop-shadow(0 3px 7px rgba(23, 56, 77, 0.12)) !important;
+  opacity: 0.9;
+}
+body.night-mode .sidebar-brand-logo,
+html.night-mode .sidebar-brand-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 3px 9px rgba(3, 0, 24, 0.34)) !important;
+  opacity: 0.96;
+}

@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#a9d8f2" />
   <meta name="description" content="普拉奇克情绪轮静态网页设计。" />
   <title>风歇小筑</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=20261116-3" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20261118-44" />
   <script src="assets/vendor/three.min.js" defer></script>
   <script src="assets/data/healing-quotes.js?v=20261115-1" defer></script>
-  <script src="assets/js/background-music.js?v=20261116-3" defer></script>
-  <script src="assets/js/app.js?v=20261115-3" defer></script>
-  <script src="assets/js/cloud3d.js?v=20261116-1" defer></script>
+  <script src="assets/js/background-music.js?v=20261119-6" defer></script>
+  <script src="assets/js/app.js?v=20261118-15" defer></script>
+  <script src="assets/js/cloud3d.js?v=20261118-2" defer></script>
   <script src="assets/js/scratch-card.js?v=20261115-1" defer></script>
 </head>
 <body>
@@ -24,24 +24,15 @@
 
   <div class="page-frame" aria-hidden="true"></div>
 
-  <aside class="cloud-quote-card" id="cloudQuoteCard" aria-hidden="true" aria-live="polite">
-    <button class="cloud-quote-close" id="closeCloudQuote" type="button" aria-label="关闭安慰语录">×</button>
-    <span class="cloud-quote-mark" aria-hidden="true">“</span>
-    <p id="cloudQuoteText"></p>
-  </aside>
-
   <header class="topbar">
-    <!-- 左上角留给设计师的名字艺术字，当前保持留白 -->
-    <div class="brand-art-slot" data-designer-slot="brand-art" aria-hidden="true"></div>
     <time class="time-display" id="currentTime" aria-label="当前时间">00:00</time>
   </header>
 
   <main class="page-shell">
     <div class="mood-wheel-stage" id="moodWheelStage">
-      <div class="mood-wheel" id="moodWheel" role="group" aria-label="可交互情绪颜色转盘">
+      <div class="mood-wheel" id="moodWheel" aria-hidden="true">
         <div class="wheel-rotor" id="wheelRotor"></div>
         <div class="wheel-center" aria-hidden="true"><span></span></div>
-        <div class="wheel-emotion-pop" id="wheelEmotionPop" aria-live="polite"></div>
       </div>
     </div>
 
@@ -77,6 +68,36 @@
         </p>
       </div>
     </aside>
+
+
+    <aside class="regulation-science" aria-labelledby="regulationScienceTitle">
+      <div class="regulation-science-head">
+        <span class="regulation-kicker">情绪调节 · 科学依据</span>
+        <h2 id="regulationScienceTitle">情绪调节，不是把情绪压下去</h2>
+        <p>先判断情绪发生在哪一步，再选择一个足够小的介入点。目标不是立刻开心，而是让行动不被情绪单独接管。</p>
+      </div>
+      <div class="regulation-entry-grid" aria-label="五个情绪调节入口">
+        <button class="regulation-entry" type="button" data-regulation-topic="situation" aria-haspopup="dialog">
+          <span>01</span><b>情境</b><small>调整触发源</small>
+        </button>
+        <button class="regulation-entry" type="button" data-regulation-topic="attention" aria-haspopup="dialog">
+          <span>02</span><b>注意</b><small>离开反刍</small>
+        </button>
+        <button class="regulation-entry" type="button" data-regulation-topic="reappraisal" aria-haspopup="dialog">
+          <span>03</span><b>解释</b><small>校准判断</small>
+        </button>
+        <button class="regulation-entry" type="button" data-regulation-topic="expression" aria-haspopup="dialog">
+          <span>04</span><b>表达</b><small>说清感受</small>
+        </button>
+        <button class="regulation-entry" type="button" data-regulation-topic="body" aria-haspopup="dialog">
+          <span>05</span><b>身体</b><small>降低唤醒</small>
+        </button>
+      </div>
+      <button class="regulation-more" id="openRegulationOverview" type="button" aria-haspopup="dialog">查看完整说明与研究依据</button>
+    </aside>
+    <button class="scroll-down-cue" id="scrollDownCue" type="button" aria-label="下滑查看情绪使用说明">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.8 12 15l7-7.2" /></svg>
+    </button>
   </main>
 
   <section class="home-page-secondary" aria-labelledby="emotionGuideTitle">
@@ -132,105 +153,148 @@
         </article>
       </div>
     </div>
-  </section>
+    <button class="scroll-down-cue secondary-scroll-cue" id="scrollDownCueSecondary" type="button" aria-label="下滑查看支持与安全计划">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.8 12 15l7-7.2" /></svg>
+    </button>  </section>
 
-  <nav class="side-rail" aria-label="主要功能">
-    <a class="rail-button" href="game.html" data-tooltip="情绪小游戏" aria-label="进入情绪小游戏，页面预留">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 19 9 7.5l3.7 6.2 2.8-4.2L21 19H3Z" />
-        <path d="m6.8 12 2.2-3.3L11 12" />
-        <path d="m13.8 15.5 1.7-2.6 2.2 3.3" />
-      </svg>
-      <span class="rail-tooltip">情绪小游戏</span>
-    </a>
+  <section class="support-page" id="supportPage" aria-labelledby="supportPlanTitle">
+    <div class="support-stage">
+      <div class="support-plan">
+        <header class="support-plan-header">
+          <div>
+            <p class="support-kicker">支持与安全计划</p>
+            <h2 id="supportPlanTitle">有些时候，不需要一个人扛</h2>
+            <p class="support-intro">这个世界并不全是黑暗，只是迷雾会遮住你眼里的光。如果暂时看不见，也别急着否定所有光亮。</p>
+          </div>
+        </header>
 
-    <div class="star-cluster">
-      <span class="star-halo" aria-hidden="true"></span>
-      <button class="star-button" id="agentWake" type="button" title="唤醒智能体" aria-label="唤醒情绪智能体" aria-expanded="false" aria-controls="agentPanel">
-        <span class="star-3d" aria-hidden="true">
-          <svg viewBox="0 0 100 100">
-            <defs>
-              <linearGradient id="starMain" x1="12" y1="8" x2="82" y2="94" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#fff4ad" />
-                <stop offset=".42" stop-color="#ffd65c" />
-                <stop offset="1" stop-color="#f3a62e" />
-              </linearGradient>
-              <linearGradient id="starLight" x1="22" y1="14" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#fffdf0" stop-opacity=".95" />
-                <stop offset="1" stop-color="#fffdf0" stop-opacity="0" />
-              </linearGradient>
-            </defs>
-            <path class="star-layer star-layer--back" d="M50 7 60.7 34.9 89.2 19.9 74.2 48.4 97 50 74.2 51.6 89.2 80.1 60.7 65.1 50 93 39.3 65.1 10.8 80.1 25.8 51.6 3 50l22.8-1.6L10.8 19.9l28.5 15L50 7Z" />
-            <path class="star-layer star-layer--mid" d="M50 7 60.7 34.9 89.2 19.9 74.2 48.4 97 50 74.2 51.6 89.2 80.1 60.7 65.1 50 93 39.3 65.1 10.8 80.1 25.8 51.6 3 50l22.8-1.6L10.8 19.9l28.5 15L50 7Z" fill="url(#starMain)" />
-            <path class="star-layer star-layer--front" d="M50 12.5 59 37.2 83.4 24.4 70.6 49 89.8 50 70.6 51 83.4 75.6 59 62.8 50 87.5 41 62.8 16.6 75.6 29.4 51 10.2 50l19.2-1L16.6 24.4 41 37.2 50 12.5Z" fill="url(#starLight)" />
-            <circle cx="47" cy="44" r="4.5" fill="#fff" opacity=".68" />
-          </svg>
-        </span>
-        <span class="star-spark star-spark--one" aria-hidden="true"></span>
-        <span class="star-spark star-spark--two" aria-hidden="true"></span>
-        <span class="star-spark star-spark--three" aria-hidden="true"></span>
-      </button>
+        <div class="support-plan-body">
+          <section class="support-ladder" aria-label="支持层级">
+            <article class="support-level">
+              <span class="support-level-index">01</span>
+              <div>
+                <h3>日常支持</h3>
+                <p>可以联系朋友、家人、老师或可信任的人。先让自己不必独自面对当下的难受。</p>
+              </div>
+            </article>
+            <article class="support-level">
+              <span class="support-level-index">02</span>
+              <div>
+                <h3>持续困扰时</h3>
+                <p>如果困扰持续存在，并明显影响睡眠、学习、人际或日常功能，可以考虑学校心理中心、咨询师或医疗机构。这是求助信号，不是诊断。</p>
+              </div>
+            </article>
+            <article class="support-level support-level--urgent">
+              <span class="support-level-index">03</span>
+              <div>
+                <h3>无法保证安全时</h3>
+                <p>如果出现伤害自己或他人的想法、计划，或无法保证安全，请不要独处。立即联系可信任的人，并联系当地急救、报警或前往急诊。</p>
+              </div>
+            </article>
+          </section>
 
-      <a class="rail-button chat-button" href="chat.html" data-tooltip="与情绪智能体对话" aria-label="进入智能体对话页，页面预留">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5.2 5.1h13.6a2.2 2.2 0 0 1 2.2 2.2v7.2a2.2 2.2 0 0 1-2.2 2.2h-7.2L7 20.2v-3.5H5.2A2.2 2.2 0 0 1 3 14.5V7.3a2.2 2.2 0 0 1 2.2-2.2Z" />
-          <path d="M8 9.3h8M8 12.6h5.3" />
-        </svg>
-        <span class="rail-tooltip">智能体对话</span>
-      </a>
-    </div>
+          <section class="support-response-panel" id="supportResponsePanel" aria-live="polite">
+            <p class="support-label">我现在更需要</p>
+            <div class="support-needs" role="group" aria-label="选择当前需要的支持">
+              <button class="support-need is-active" type="button" data-support-need="listen" aria-pressed="true">被听见</button>
+              <button class="support-need" type="button" data-support-need="company" aria-pressed="false">有人陪伴</button>
+              <button class="support-need" type="button" data-support-need="advice" aria-pressed="false">具体建议</button>
+              <button class="support-need" type="button" data-support-need="professional" aria-pressed="false">专业帮助</button>
+              <button class="support-need support-need--urgent" type="button" data-support-need="unsafe" aria-pressed="false">我现在不安全</button>
+            </div>
 
-    <span class="rail-divider" aria-hidden="true"></span>
+            <div class="support-message-box">
+              <p class="support-message" id="supportMessage">“我现在状态不太好，不需要你马上给建议，只希望你能听我说十分钟。”</p>
+            </div>
+            <p class="support-response-note" id="supportResponseNote">被听见不是要求对方立刻理解，而是让此刻的感受有地方安放。</p>
+            <button class="support-copy" id="copySupportMessage" type="button">复制这句话</button>
 
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换白天与黑夜模式" aria-pressed="false" data-tooltip="切换昼夜">
-      <span class="theme-track" aria-hidden="true">
-        <span class="theme-icon theme-icon--sun">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4" /><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7" /></svg>
-        </span>
-        <span class="theme-icon theme-icon--moon">
-          <svg viewBox="0 0 24 24"><path d="M20 15.4A8.4 8.4 0 0 1 8.6 4a8.5 8.5 0 1 0 11.4 11.4Z" /></svg>
-        </span>
-        <span class="theme-knob"></span>
-      </span>
-      <span class="rail-tooltip">切换昼夜</span>
-    </button>
 
-    <div class="music-volume-wrap" id="musicVolumeWrap">
-      <button class="rail-button music-button" id="musicButton" type="button" aria-label="播放背景音乐" aria-pressed="false" data-tooltip="播放背景音乐">
-        <svg class="music-icon music-icon--play" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M9 18.2V6.8l9-2v10.6" />
-          <ellipse cx="6.5" cy="18.4" rx="2.8" ry="2.1" />
-          <ellipse cx="15.5" cy="15.8" rx="2.8" ry="2.1" />
-        </svg>
-        <svg class="music-icon music-icon--pause" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M8.5 5.5v13M15.5 5.5v13" />
-        </svg>
-        <span class="music-rings" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="rail-tooltip">背景音乐</span>
-      </button>
-      <button class="music-volume-trigger" id="musicVolumeTrigger" type="button" aria-label="调节背景音乐音量" aria-expanded="false" aria-controls="musicVolumePanel">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 9h3l4-3v12l-4-3H4z" />
-          <path d="M15 9.5a4 4 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10" />
-        </svg>
-      </button>
-      <div class="music-volume-panel" id="musicVolumePanel" role="group" aria-label="背景音乐音量">
-        <div class="music-volume-heading"><span>背景音乐音量</span><output id="musicVolumeOutput" for="musicVolume">72%</output></div>
-        <input class="music-volume-range" id="musicVolume" type="range" min="0" max="100" step="1" value="72" aria-label="背景音乐音量" />
+          </section>
+        </div>
       </div>
     </div>
-  </nav>
-
-  <section class="agent-panel" id="agentPanel" aria-hidden="true" aria-labelledby="agentTitle">
-    <button class="agent-close" id="agentClose" type="button" aria-label="关闭智能体面板">×</button>
-    <div class="agent-avatar" aria-hidden="true"><span></span><i></i></div>
-    <div class="agent-copy">
-      <p>本地陪伴模式</p>
-      <h2 id="agentTitle">情绪搭子已苏醒</h2>
-      <span>我在这里。想聊聊此刻的感受，还是一起看看今天的心情颜色？</span>
-      <a href="chat.html">开始对话 <b aria-hidden="true">↗</b></a>
-    </div>
+    <footer class="site-credits" aria-labelledby="creditsTitle">
+      <div class="credits-panel">
+        <div class="credits-header">
+          <div>
+            <p class="credits-kicker">致谢与声明</p>
+            <h2 id="creditsTitle">谢谢你在风歇小筑停留。</h2>
+          </div>
+          <p class="credits-closing">愿你在看见情绪之后，更知道如何照顾自己，也更知道什么时候向人伸手。</p>
+        </div>
+        <div class="credits-grid">
+          <section>
+            <h3>本作品说明</h3>
+            <p>页面内容、视觉编排与交互代码由创作者编写或借助系统工具生成；3D 功能使用 Three.js 开源库，小游戏背景音乐按下述授权使用。</p>
+          </section>
+          <section>
+            <h3>小游戏背景音乐授权</h3>
+            <p>“Northern Glade” — Kevin MacLeod（<a href="https://incompetech.com/" target="_blank" rel="noopener noreferrer">incompetech.com</a>）<br />Licensed under Creative Commons: By Attribution 4.0 License<br /><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">creativecommons.org/licenses/by/4.0/</a></p>
+          </section>
+          <section>
+            <h3>使用声明</h3>
+            <p>本网站用于日常情绪觉察与放松，不替代医疗诊断、心理治疗或危机干预。如面临立即危险，请勿独处，及时联系可信任的人、当地急救或警方，或前往最近的急诊。</p>
+          </section>
+        </div>
+        <div class="credits-bottom">
+          <span>© 2026 风歇小筑</span>
+          <span>数据仅保存在当前浏览器本机。</span>
+        </div>
+      </div>
+    </footer>
   </section>
+  <aside class="app-sidebar" aria-label="主要导航">
+    <div class="sidebar-brand">
+      <img class="sidebar-brand-logo" src="图片/风歇小筑logo透明.webp" alt="风歇小筑" decoding="async" />
+    </div>
+
+    <nav class="sidebar-menu" aria-label="功能菜单">
+      <button class="sidebar-nav-item is-active" id="homeNav" type="button" aria-label="返回首页">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7" /><path d="M5.5 9.2V20h13V9.2" /><path d="M9.5 20v-6h5v6" /></svg>
+        <span>首页</span>
+      </button>
+
+      <a class="sidebar-nav-item" href="game.html?v=20261118-2" aria-label="打开解压小游戏">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8.2h9a4.5 4.5 0 0 1 4.3 5.8l-1 3.3a2.2 2.2 0 0 1-3.7 1l-2-2H9.9l-2 2a2.2 2.2 0 0 1-3.7-1l-1-3.3a4.5 4.5 0 0 1 4.3-5.8Z" /><path d="M8 11v4M6 13h4M16.5 12.2h.1M18.2 14h.1" /></svg>
+        <span>解压小游戏</span>
+      </a>
+
+      <a class="sidebar-nav-item" href="chat.html?v=20261118-4" aria-label="打开情绪日记">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 3.5h8.2l3.4 3.4v13.6H6.2z" /><path d="M14.2 3.6v3.6h3.6M9 11h6M9 14.2h6M9 17.4h4" /></svg>
+        <span>情绪日记</span>
+      </a>
+
+      <div class="sidebar-nav-item sidebar-music-item" id="musicVolumeWrap">
+        <button class="sidebar-music-main music-button" id="musicButton" type="button" aria-label="播放背景音乐" aria-pressed="false">
+          <svg class="music-icon music-icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18.2V6.8l9-2v10.6" /><ellipse cx="6.5" cy="18.4" rx="2.8" ry="2.1" /><ellipse cx="15.5" cy="15.8" rx="2.8" ry="2.1" /></svg>
+          <svg class="music-icon music-icon--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13M15.5 5.5v13" /></svg>
+          <span class="music-rings" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="sidebar-music-label">音乐</span>
+        </button>
+        <button class="music-volume-trigger" id="musicVolumeTrigger" type="button" aria-label="调节背景音乐音量" aria-expanded="false" aria-controls="musicVolumePanel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l4-3v12l-4-3H4z" /><path d="M15 9.5a4 4 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10" /></svg>
+        </button>
+        <div class="music-volume-panel" id="musicVolumePanel" role="group" aria-label="背景音乐音量">
+          <div class="music-volume-heading"><span>背景音乐音量</span><output id="musicVolumeOutput" for="musicVolume">72%</output></div>
+          <input class="music-volume-range" id="musicVolume" type="range" min="0" max="100" step="1" value="72" aria-label="背景音乐音量" />
+        </div>
+      </div>
+    </nav>
+
+    <button class="sidebar-theme-switch" id="themeToggle" type="button" aria-label="切换白天与黑夜模式" aria-pressed="false">
+      <span class="sidebar-theme-track" aria-hidden="true">
+        <span class="sidebar-theme-sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.3" /><path d="M12 2v2.3M12 19.7V22M2 12h2.3M19.7 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6" /></svg></span>
+        <span class="sidebar-theme-moon"><svg viewBox="0 0 24 24"><path d="M20 15.4A8.4 8.4 0 0 1 8.6 4a8.5 8.5 0 1 0 11.4 11.4Z" /></svg></span>
+        <span class="sidebar-theme-knob"></span>
+      </span>
+      <span class="sidebar-theme-label">昼夜</span>
+    </button>
+  </aside>
+
+
+
+
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -271,6 +335,20 @@
           <cite>— 罗伯特·普拉奇克</cite>
         </blockquote>
       </div>
+    </section>
+  </div>
+  <div class="modal regulation-modal" id="regulationModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-regulation></div>
+    <section class="modal-panel regulation-modal-panel" role="dialog" aria-modal="true" aria-labelledby="regulationModalTitle" tabindex="-1">
+      <header class="modal-header">
+        <div>
+          <p class="regulation-modal-kicker">基于 Gross 情绪调节过程模型</p>
+          <h2 id="regulationModalTitle">情绪调节的五个科学入口</h2>
+          <p class="modal-subtitle" id="regulationModalSubtitle">情绪调节不是把感受压下去，而是在合适的环节改变它接下来的走向。</p>
+        </div>
+        <button class="modal-close" id="closeRegulationModal" type="button" aria-label="关闭情绪调节说明">×</button>
+      </header>
+      <div class="modal-scroll regulation-modal-scroll" id="regulationModalBody"></div>
     </section>
   </div>
 </body>

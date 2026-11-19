@@ -154,31 +154,6 @@
     return geometry;
   };
 
-  const stickerTexture = (symbol, tint = '#ffffff') => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, 128, 128);
-    context.font = 'bold 86px Georgia, serif';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillStyle = 'rgba(255,255,255,.28)';
-    context.beginPath();
-    context.arc(64, 64, 42, 0, Math.PI * 2);
-    context.fill();
-    context.lineWidth = 3;
-    context.strokeStyle = 'rgba(255,255,255,.6)';
-    context.stroke();
-    context.fillStyle = tint;
-    context.shadowColor = 'rgba(70,60,35,.22)';
-    context.shadowBlur = 7;
-    context.fillText(symbol, 64, 69);
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    return texture;
-  };
-
   const addSoftShadowPlane = (scene, y = -1.55, radius = 2.5) => {
     const plane = new THREE.Mesh(
       new THREE.CircleGeometry(radius, 64),
@@ -237,7 +212,14 @@
         if (hits.length) {
           const hit = hits[0];
           const local = target.group.worldToLocal(hit.point.clone());
-          target.onClick(local, hit);
+          let localNormal = local.clone().normalize();
+          if (hit.face && hit.face.normal) {
+            const worldNormal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
+            const localAhead = target.group.worldToLocal(hit.point.clone().add(worldNormal.multiplyScalar(0.12)));
+            const derived = localAhead.sub(local);
+            if (derived.lengthSq() > 0.000001) localNormal = derived.normalize();
+          }
+          target.onClick(local, localNormal, hit);
         }
       }
     };
@@ -257,14 +239,28 @@
     const modelGroup = new THREE.Group();
     view.scene.add(modelGroup);
     const meshGroup = new THREE.Group();
-    const artGroup = new THREE.Group();
     const crackGroup = new THREE.Group();
     const grabProxy = new THREE.Mesh(
       new THREE.BoxGeometry(3.25, 3.25, 2.2),
       new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
     );
-    modelGroup.add(meshGroup, artGroup, crackGroup, grabProxy);
+    modelGroup.add(meshGroup, crackGroup, grabProxy);
     addSoftShadowPlane(view.scene, -1.52, 2.35);
+    const waxDipJar = new THREE.Group();
+    const jarGlass = new THREE.MeshPhysicalMaterial({ color: '#d9f1f5', transparent: true, opacity: 0.26, roughness: 0.08, transmission: 0.55, thickness: 0.18, side: THREE.DoubleSide, depthWrite: false });
+    const jarWax = new THREE.MeshPhysicalMaterial({ color: '#f0c46f', roughness: 0.24, clearcoat: 0.8, transparent: true, opacity: 0.82, side: THREE.DoubleSide });
+    const jarWall = new THREE.Mesh(new THREE.CylinderGeometry(1.02, 1.16, 1.15, 48, 1, true), jarGlass);
+    const jarBottom = new THREE.Mesh(new THREE.CylinderGeometry(1.17, 1.17, 0.08, 48), jarGlass);
+    const jarRim = new THREE.Mesh(new THREE.TorusGeometry(1.03, 0.035, 12, 48), new THREE.MeshStandardMaterial({ color: '#bde9ef', roughness: 0.18, metalness: 0.1, transparent: true, opacity: 0.7 }));
+    const liquid = new THREE.Mesh(new THREE.CylinderGeometry(0.94, 0.96, 0.62, 48), jarWax);
+    jarRim.rotation.x = Math.PI / 2;
+    jarRim.position.y = 0.58;
+    liquid.position.y = -0.18;
+    jarBottom.position.y = -0.58;
+    waxDipJar.add(jarWall, jarBottom, jarRim, liquid);
+    waxDipJar.position.set(0, -1.72, 0.18);
+    waxDipJar.visible = false;
+    view.scene.add(waxDipJar);
 
     let body = null;
     let waxGroup = null;
@@ -425,8 +421,8 @@
       }
     };
 
-    let rotationTargetX = -0.08;
-    let rotationTargetY = 0.18;
+    let rotationTargetX = 0;
+    let rotationTargetY = 0;
     let GrabStress = 0;
     let chipCount = 0;
     let waxDamage = 0;
@@ -435,6 +431,9 @@
     let grabHandle = null;
     let pointerInteraction = null;
     let statusHandler = () => {};
+    let dipHandler = () => {};
+    let dipTargetY = 0;
+    let dipTriggered = false;
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     const grabPlane = new THREE.Plane();
@@ -481,11 +480,11 @@
         view.scene.add(piece);
         fragments.push({
           mesh: piece,
-          velocity: new THREE.Vector3((Math.random() - 0.5) * 0.26, 0.12 + Math.random() * 0.24, (Math.random() - 0.5) * 0.18),
-          spin: new THREE.Vector3((Math.random() - 0.5) * 1.2, (Math.random() - 0.5) * 1.2, (Math.random() - 0.5) * 1.2),
+          velocity: new THREE.Vector3((Math.random() - 0.5) * 0.18, 0.05 + Math.random() * 0.1, (Math.random() - 0.5) * 0.12),
+          spin: new THREE.Vector3((Math.random() - 0.5) * 0.55, (Math.random() - 0.5) * 0.55, (Math.random() - 0.5) * 0.55),
           age: 0,
-          life: 0.7 + Math.random() * 0.45,
-          gravity: 1.5,
+          life: 1.6 + Math.random() * 0.9,
+          gravity: 1.0,
           materials: [material]
         });
       }
@@ -561,15 +560,15 @@
       const direction = cell.center.clone().sub(point).normalize();
       fragments.push({
         mesh: piece,
-        velocity: direction.multiplyScalar(0.16 + Math.random() * 0.2).add(new THREE.Vector3(
-          (Math.random() - 0.5) * 0.16,
-          -0.08 - Math.random() * 0.12,
-          (Math.random() - 0.5) * 0.15
+        velocity: direction.multiplyScalar(0.12 + Math.random() * 0.13).add(new THREE.Vector3(
+          (Math.random() - 0.5) * 0.12,
+          -0.05 - Math.random() * 0.08,
+          (Math.random() - 0.5) * 0.1
         )),
-        spin: new THREE.Vector3((Math.random() - 0.5) * 1.3, (Math.random() - 0.5) * 1.3, (Math.random() - 0.5) * 1.3),
+        spin: new THREE.Vector3((Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5),
         age: 0,
-        life: 1.35 + Math.random() * 0.45,
-        gravity: 1.0,
+        life: 3.6 + Math.random() * 1.2,
+        gravity: 0.85,
         materials: [faceMaterial, sideMaterial]
       });
       cell.mesh.visible = false;
@@ -586,9 +585,10 @@
         statusHandler({ chips: chipCount, damage: waxDamage, broken: true, detached: false, stress: 0 });
         return { detached: false, broken: true };
       }
-      const cell = candidates[0];
-      const falloff = clamp(1 - cell.center.distanceTo(point) / 1.15, 0.28, 1);
-      cell.stress = clamp(cell.stress + amount * falloff, 0, 1);
+      const stressedNearby = candidates.find((item) => item.stress > 0.35 && item.center.distanceTo(point) < 1.0);
+      const cell = stressedNearby || candidates[0];
+      const falloff = clamp(1 - cell.center.distanceTo(point) / 1.35, 0.5, 1);
+      cell.stress = clamp(cell.stress + amount * falloff * 0.2, 0, 1);
       pokes.push({ x: point.x, y: point.y, z: point.z, time: view.clock.elapsedTime, strength: 0.045 + amount * 0.1 });
       boing = Math.min(0.09, boing + 0.025);
 
@@ -609,6 +609,13 @@
       chipCount += 1;
       const brokenCells = waxCells.filter((item) => item.broken).length;
       waxDamage = waxCells.length ? brokenCells / waxCells.length : 1;
+
+      waxCells.forEach((neighbor) => {
+        if (neighbor === cell || neighbor.broken) return;
+        const distance = neighbor.center.distanceTo(cell.center);
+        if (distance < 0.72) neighbor.stress = clamp(neighbor.stress + 0.26 * (1 - distance / 0.72) * 0.2, 0, 0.92);
+      });
+
       addWaxFlakes(point, 4);
       playImpact(250 + Math.min(chipCount, 20) * 22);
       if (brokenCells >= waxCells.length) {
@@ -621,7 +628,6 @@
       }
       return { detached: true, broken };
     };
-
     const playImpact = (frequency) => {
       if (typeof window.__playSquishyImpact === 'function') window.__playSquishyImpact(frequency);
     };
@@ -632,6 +638,13 @@
       audioStartUserGesture();
       try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
       const hit = pickBody(event, mode === 3 && canSquish);
+      if (hit && mode === 3 && !canSquish) {
+        pointerInteraction = { type: 'dip', id: event.pointerId, startY: event.clientY, moved: false };
+        dipTriggered = false;
+        dipTargetY = 0;
+        canvas.style.cursor = 'grabbing';
+        return;
+      }
       if (hit && mode === 3 && canSquish) {
         const local = modelGroup.worldToLocal(hit.point.clone());
         const normal = view.camera.getWorldDirection(new THREE.Vector3()).negate();
@@ -699,6 +712,20 @@
         return;
       }
 
+      if (pointerInteraction.type === 'dip') {
+        const progress = clamp((event.clientY - pointerInteraction.startY) / 150, 0, 1);
+        const squishyStage = document.querySelector('.squishy-stage');
+        if (squishyStage) squishyStage.style.setProperty('--squishy-dip-shift', (progress * 62).toFixed(2) + '%');
+        dipTargetY = 0;
+        if (progress >= 0.94 && !dipTriggered) {
+          dipTriggered = true;
+          dipHandler();
+        } else if (progress <= 0.3 && dipTriggered) {
+          dipTriggered = false;
+        }
+        return;
+      }
+
       if (pointerInteraction.type === 'grab' && grabHandle) {
         const local = pointOnGrabPlane(event, grabHandle);
         if (!local) return;
@@ -711,9 +738,9 @@
         grabHandle.lastY = event.clientY;
         chipTrail += moveDistance;
         GrabStress += moveDistance * 0.012;
-        if (!cellDetachedThisGesture && grabHandle.targetOffset.length() > 0.08) {
-          const result = applyCellStress(grabHandle.point.clone(), Math.min(0.22, moveDistance * 0.0028));
-          if (result.detached) cellDetachedThisGesture = true;
+        if (grabHandle.targetOffset.length() > 0.06) {
+          const amount = Math.min(0.42, moveDistance * 0.018);
+          if (amount > 0.004) applyCellStress(grabHandle.point.clone(), amount);
           chipTrail = 0;
           GrabStress = 0;
         }
@@ -729,9 +756,15 @@
         rotationTargetY += 0.1;
         rotationTargetX = clamp(rotationTargetX + 0.018, -0.8, 0.8);
       }
+      if (pointerInteraction.type === 'dip') {
+        dipTargetY = 0;
+        dipTriggered = false;
+        const squishyStage = document.querySelector('.squishy-stage');
+        if (squishyStage) squishyStage.style.setProperty('--squishy-dip-shift', '0%');
+      }
       if (pointerInteraction.type === 'grab' && grabHandle) {
         if (!pointerInteraction.moved) {
-          applyCellStress(grabHandle.point.clone(), 0.48);
+          applyCellStress(grabHandle.point.clone(), 1.0);
           grabHandle = null;
         } else {
           grabHandle.active = false;
@@ -811,6 +844,7 @@
     view.setUpdate((delta, time) => {
       modelGroup.rotation.x += (rotationTargetX - modelGroup.rotation.x) * 0.1;
       modelGroup.rotation.y += (rotationTargetY - modelGroup.rotation.y) * 0.1;
+      modelGroup.position.y += (dipTargetY - modelGroup.position.y) * Math.min(1, delta * 14);
       if (!broken) {
         applyDeformation(delta);
         boing = Math.max(0, boing - delta * 2.2);
@@ -848,14 +882,22 @@
       activate() { view.activate(); },
       deactivate() { view.deactivate(); },
       resize() { view.resize(); },
+      setFrontView() {
+        rotationTargetX = 0;
+        rotationTargetY = 0;
+        modelGroup.rotation.set(0, 0, 0);
+      },
       setMode(value) {
         mode = value;
+        waxDipJar.visible = false;
         if (mode !== 3) {
           grabHandle = null;
           pointerInteraction = null;
+          dipTargetY = 0;
         }
       },
       setClickHandler(handler) { clickHandler = handler; },
+      setDipHandler(handler) { dipHandler = handler; },
       setStatusHandler(handler) { statusHandler = handler; },
       setShape(value) { if (shape === value) return; shape = value; rebuild(); },
       setColor(value) { color = value; bodyMaterial.color.set(value); bodyMaterial.sheenColor.set(value); },
@@ -868,6 +910,7 @@
       },
       setCanSquish(value) {
         canSquish = value;
+        waxDipJar.visible = false;
         if (value) {
           broken = false;
           chipCount = 0;
@@ -877,17 +920,8 @@
           pokes = [];
         }
       },
-      stamp(point, symbol) {
-        const texture = stickerTexture(symbol, '#fffdf1');
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: true, depthWrite: false }));
-        const direction = point.clone().normalize();
-        sprite.position.copy(point).addScaledVector(direction, 0.035);
-        sprite.scale.set(0.36, 0.36, 0.36);
-        artGroup.add(sprite);
-        boing = 0.04;
-      },
       poke(point) {
-        return applyCellStress(point.clone(), 0.48);
+        return applyCellStress(point.clone(), 0.72);
       },
       reset() {
         shape = 'blob';
@@ -903,9 +937,12 @@
         GrabStress = 0;
         grabHandle = null;
         pointerInteraction = null;
-        rotationTargetX = -0.08;
-        rotationTargetY = 0.18;
-        artGroup.clear();
+        rotationTargetX = 0;
+        rotationTargetY = 0;
+        dipTargetY = 0;
+        dipTriggered = false;
+        modelGroup.position.y = 0;
+        waxDipJar.visible = false;
         crackGroup.clear();
         fragments.forEach((fragment) => {
           view.scene.remove(fragment.mesh);

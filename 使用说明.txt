@@ -17,5 +17,4 @@
 页面：
 - index.html：主页面
 - game.html：小游戏页面
-- chat.html：智能体页面
-- squishy.html：脆皮捏捏乐原版页面
+- chat.html：情绪日记页面

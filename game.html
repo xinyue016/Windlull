@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#a9d8f2" />
   <title>治愈游戏屋 · 风歇小筑</title>
-  <link rel="stylesheet" href="assets/css/game.css?v=20261116-2" />
-  <script src="assets/js/background-music.js?v=20261116-3" defer></script>
-  <script src="assets/js/game.js?v=20261116-1" defer></script>
+  <link rel="stylesheet" href="assets/css/game.css?v=20261119-9" />
+  <link rel="stylesheet" href="assets/css/app-sidebar.css?v=20261118-11" />
+  <script src="assets/js/background-music.js?v=20261119-6" defer></script>
+  <script src="assets/js/app-sidebar.js?v=20261118-8" defer></script>
+  <script src="assets/js/game.js?v=20261119-29" defer></script>
 </head>
 <body>
   <div class="game-background" aria-hidden="true"></div>
@@ -33,11 +35,11 @@
     </header>
 
     <section class="game-grid" aria-label="小游戏列表">
-      <button class="game-card" type="button" data-game="squishy-ref" aria-label="打开 3D 脆皮捏捏乐">
+      <button class="game-card" type="button" data-game="squishy" aria-label="打开 3D 脆皮捏捏乐">
         <span class="game-visual game-visual--squishy">
           <img src="图片/游戏一捏捏乐宣传图.webp" alt="脆皮捏捏乐宣传图" loading="lazy" decoding="async" />
         </span>
-        <span class="game-intro">捏出形状、手绘图案，再一层层浸蜡。听见细纹裂开和蜡壳碎落的治愈脆响。</span>
+        <span class="game-intro">捏出形状、反复浸蜡，再一层层捏碎蜡壳。听见细纹裂开和蜡壳碎落的治愈脆响。</span>
         <span class="game-name"><small>01 · 3D 互动</small><strong>脆皮捏捏乐</strong></span>
       </button>
 
@@ -92,12 +94,16 @@
           <div class="play-layout">
             <div class="play-stage squishy-stage">
               <div class="webgl-mount" id="squishy3d"></div>
+              <div class="squishy-beaker" id="squishyBeaker" hidden aria-hidden="true">
+                <img class="squishy-beaker__day" src="图片/烧杯透明.png" alt="" draggable="false" />
+                <img class="squishy-beaker__night" src="图片/烧杯透明-夜晚.png" alt="" draggable="false" />
+              </div>
               <p class="stage-caption" id="squishyCaption">先挑一个喜欢的软胶内芯。</p>
             </div>
 
             <aside class="play-controls">
               <div class="control-step" data-squishy-step="1">
-                <p class="step-label">01 / 03 · 自定义塑形</p>
+                <p class="step-label">01 / 02 · 自定义塑形</p>
                 <h3>选择基础形状</h3>
                 <div class="choice-row shape-row">
                   <button type="button" class="choice-chip is-active" data-shape="blob">云朵</button>
@@ -114,33 +120,18 @@
                   <button type="button" class="color-chip" style="--c:#88bfe8" data-color="#88bfe8" aria-label="蓝色"></button>
                   <button type="button" class="color-chip" style="--c:#b99ae4" data-color="#b99ae4" aria-label="紫色"></button>
                 </div>
-                <button type="button" class="primary-action" data-squishy-next="2">进入手绘</button>
-              </div>
-
-              <div class="control-step" data-squishy-step="2" hidden>
-                <p class="step-label">02 / 03 · 手绘装饰</p>
-                <h3>选贴纸，再点一下软胶</h3>
-                <div class="sticker-row" id="squishyStickers">
-                  <button type="button" class="sticker-chip is-active" data-sticker="✿">✿</button>
-                  <button type="button" class="sticker-chip" data-sticker="★">★</button>
-                  <button type="button" class="sticker-chip" data-sticker="♡">♡</button>
-                  <button type="button" class="sticker-chip" data-sticker="✦">✦</button>
-                  <button type="button" class="sticker-chip" data-sticker="☁">☁</button>
-                </div>
-                <p class="control-note" id="decorCount">已添加 0 个装饰</p>
-                <button type="button" class="primary-action" data-squishy-next="3">完成手绘</button>
+                <button type="button" class="primary-action" data-squishy-next="3">进入浸蜡</button>
               </div>
 
               <div class="control-step" data-squishy-step="3" hidden>
-                <p class="step-label">03 / 03 · 浸蜡与捏碎</p>
+                <p class="step-label">02 / 02 · 浸蜡与捏碎</p>
                 <h3>反复浸蜡，制造脆壳</h3>
                 <div class="wax-meter" aria-hidden="true"><span id="waxMeterFill"></span></div>
                 <div class="wax-readout"><strong id="waxCount">0 次</strong><span id="waxThickness">尚未浸蜡</span></div>
-                <button type="button" class="primary-action" id="dipWax">浸蜡一次</button>
-                <p class="control-note" id="waxNote">可以反复浸很多次，但厚度会逐渐趋于稳定。</p>
+                <p class="control-note" id="waxNote">按住软胶向下拖入烧杯；保持按住上下拖动，可连续浸蜡。每次完全没入才计一次。</p>
                 <button type="button" class="secondary-action" id="squishStart" hidden>进入 3D 捏碎</button>
                 <p class="control-note" id="crackCountLabel">蜡壳完整度 100%</p>
-                <p class="squish-hint" id="squishHint">捏碎阶段：在同一块蜡附近持续点击或按住拖拽，等它松动到极限才会脱落。</p>
+                <p class="squish-hint" id="squishHint">捏碎阶段：在同一处持续点击或按住拖拽。蜡层越厚，越需要耐心；脱落的蜡片会缓慢下沉。</p>
                 <button type="button" class="text-action" id="squishyReset">重新制作</button>
               </div>
             </aside>
@@ -214,10 +205,6 @@
               <button type="button" class="secondary-action woodfish-reset" id="resetWoodfish">归零</button>
             </aside>
           </div>
-        </section>
-
-        <section class="play-panel reference-play-panel" data-panel="squishy-ref" hidden>
-          <iframe id="squishyReferenceFrame" data-src="squishy.html" title="原版 3D 脆皮捏捏乐" loading="lazy" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>
         </section>
 
         <section class="play-panel" data-panel="sand" hidden>

@@ -28,6 +28,9 @@
   let initialTheme = 'day';
   try { initialTheme = localStorage.getItem('emotion-atlas-theme') || 'day'; } catch (_) { /* storage disabled */ }
   applyGameTheme(initialTheme === 'night', false);
+  if (new URLSearchParams(window.location.search).get('embed') === '1') {
+    document.body.classList.add('embed-mode');
+  }
   gameThemeToggle.addEventListener('click', () => {
     applyGameTheme(!document.body.classList.contains('night-mode'));
   });
@@ -37,11 +40,11 @@
   const controllers = { squishy: null, jelly: null, sand: null };
 
   const gameMeta = {
-    squishy: { title: '3D 脆皮捏捏乐', kicker: 'PLAYROOM · 01 / WEBGL' },
+    squishy: { title: '3D 脆皮捏捏乐', kicker: '3D 互动' },
     jelly: { title: '果冻工坊', kicker: '' },
     woodfish: { title: '敲木鱼', kicker: '' },
     sand: { title: '3D 静心流沙', kicker: '' },
-    'squishy-ref': { title: '3D 脆皮捏捏乐 · 原版', kicker: 'PLAYROOM · 01 / ORIGINAL 3D' }
+
   };
 
   const loadedScripts = new Map();
@@ -64,7 +67,7 @@
 
   const ensure3DEngine = async () => {
     if (!window.THREE) await loadScript('assets/vendor/three.min.js');
-    if (!window.Game3D) await loadScript('assets/js/game3d.js');
+    if (!window.Game3D) await loadScript('assets/js/game3d.js?v=20261119-21');
   };
   const ensureSandAudioData = () => window.SAND_CALM_LOOP_DATA
     ? Promise.resolve()
@@ -131,7 +134,15 @@
       showToast('当前浏览器没有成功加载 WebGL 3D 引擎。');
       return null;
     }
-    if (game === 'squishy') controllers.squishy = window.Game3D.createSquishy3D(document.getElementById('squishy3d'));
+    if (game === 'squishy') {
+      try {
+        controllers.squishy = window.Game3D.createSquishy3D(document.getElementById('squishy3d'));
+      } catch (error) {
+        console.error('脆皮捏捏乐 3D 初始化失败:', error);
+        showToast('捏捏乐 3D 初始化失败：' + error.message);
+        return null;
+      }
+    }
     if (game === 'jelly') controllers.jelly = window.Game3D.createJelly3D(document.getElementById('jelly3d'));
     if (game === 'sand') controllers.sand = window.Game3D.createSand3D(document.getElementById('sand3d'));
     return controllers[game];
@@ -153,21 +164,6 @@
     document.body.classList.add('modal-open');
     setPanel(game);
     activeGame = game;
-    if (game === 'squishy-ref') {
-      modal.classList.add('reference-mode');
-      const frame = document.getElementById('squishyReferenceFrame');
-      if (frame) {
-        const url = new URL(frame.dataset.src, location.href);
-        url.searchParams.set('lang', 'zh-hans');
-        url.searchParams.set('theme', document.body.classList.contains('night-mode') ? 'night' : 'day');
-        url.searchParams.set('v', String(Date.now()));
-        frame.setAttribute('src', url.href);
-      }
-      deactivateAll();
-      return;
-    }
-
-    modal.classList.remove('reference-mode');
     const usesWebGL = game !== 'woodfish';
     let loadingTimer = window.setTimeout(() => showToast('正在准备游戏…'), 260);
     try {
@@ -203,7 +199,6 @@
     deactivateAll();
     stopSand();
     stopWoodfishAudio();
-    modal.classList.remove('reference-mode');
     activeGame = null;
   };
 
@@ -353,7 +348,7 @@
   };
 
   const gameCarousel = setupGameCarousel();
-  cards.forEach((card, index) => card.addEventListener('click', () => {
+cards.forEach((card, index) => card.addEventListener('click', () => {
     if (performance.now() < suppressCardClickUntil) return;
     if (gameCarousel && index !== gameCarousel.getActiveIndex()) {
       gameCarousel.focusCard(index);
@@ -363,31 +358,40 @@
   }));
   closeButton.addEventListener('click', closeGame);
   modal.querySelector('[data-close-game]').addEventListener('click', () => {
-    if (activeGame !== 'squishy-ref') closeGame();
+    closeGame();
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && modal.classList.contains('is-open') && activeGame !== 'squishy-ref') closeGame();
-  });
-
-  window.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'squishy-back') closeGame();
-  });
-
-  /* ---------------- 3D 脆皮捏捏乐 ---------------- */
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) closeGame();
+  });/* ---------------- 3D 脆皮捏捏乐 ---------------- */
   const squishySteps = [...document.querySelectorAll('[data-squishy-step]')];
-  const decorCount = document.getElementById('decorCount');
   const waxMeterFill = document.getElementById('waxMeterFill');
   const waxCount = document.getElementById('waxCount');
   const waxThickness = document.getElementById('waxThickness');
   const waxNote = document.getElementById('waxNote');
-  const dipWax = document.getElementById('dipWax');
   const squishStart = document.getElementById('squishStart');
   const squishyReset = document.getElementById('squishyReset');
   const squishyCaption = document.getElementById('squishyCaption');
+  const squishyStage = document.querySelector('.squishy-stage');
+  const squishyBeaker = document.getElementById('squishyBeaker');
   const crackCountLabel = document.getElementById('crackCountLabel');
-  const squishyState = { step: 1, shape: 'blob', color: '#f5c75c', sticker: '✿', decorations: 0, dips: 0, canSquish: false, damage: 0, chips: 0 };
+  const squishyState = { step: 1, shape: 'blob', color: '#f5c75c', dips: 0, canSquish: false, damage: 0, chips: 0 };
 
   const squishyController = () => ensureController('squishy');
+  const completeSquishyDip = () => {
+    if (squishyState.step !== 3 || squishyState.canSquish) return;
+    squishyState.dips += 1;
+    const dips = squishyState.dips;
+    const controller = squishyController();
+    if (controller) controller.setDips(dips);
+    const progress = Math.min(0.985, 1 - Math.exp(-dips / 2.6));
+    waxMeterFill.style.width = (progress * 100).toFixed(1) + '%';
+    waxCount.textContent = dips + ' 次';
+    waxThickness.textContent = dips < 2 ? '薄蜡层 · 脆而易落' : dips < 6 ? '中等蜡层 · 逐渐坚韧' : dips < 12 ? '厚蜡层 · 更耐捏' : '厚蜡层 · 厚度趋稳';
+    squishyCaption.textContent = '完成第 ' + dips + ' 次浸蜡，松手后软胶会从烧杯的蜡液中回弹出来。';
+    playTone(300 + Math.min(dips, 12) * 18, 0.16, 'sine', 0.018);
+    squishStart.hidden = false;
+    waxNote.textContent = dips < 8 ? '保持按住上下拖动可以连续浸蜡；软胶每次完全没入烧杯才计 1 次。蜡层越厚，蜡壳越难剥落。' : '蜡层厚度已接近稳定，继续浸蜡只会留下很小的差别。';
+  };
   const setupSquishyClick = () => {
     const controller = squishyController();
     if (!controller) return;
@@ -409,27 +413,24 @@
         squishyCaption.textContent = '这块蜡正在松动（' + Math.round(state.stress * 100) + '%）。不要换位置，继续捏或拉扯它。';
       }
     });
-    controller.setClickHandler((point) => {
-      if (squishyState.step === 2) {
-        if (squishyState.decorations >= 12) {
-          showToast('表面的装饰已经很多啦。');
-          return;
-        }
-        controller.stamp(point, squishyState.sticker);
-        squishyState.decorations += 1;
-        decorCount.textContent = '已添加 ' + squishyState.decorations + ' 个 3D 装饰';
-        playTone(660 + squishyState.decorations * 18, 0.07, 'sine', 0.012);
-      }
-    });
+    controller.setDipHandler(completeSquishyDip);
+
   };
 
   const showSquishyStep = (step) => {
     squishyState.step = step;
     squishySteps.forEach((panel) => { panel.hidden = Number(panel.dataset.squishyStep) !== step; });
+    if (squishyBeaker) squishyBeaker.hidden = step !== 3;
+    if (squishyStage) {
+      squishyStage.classList.toggle('is-dipping', step === 3);
+      squishyStage.style.setProperty('--squishy-dip-shift', '0%');
+    }
     const controller = squishyController();
-    if (controller) controller.setMode(step);
-    if (step === 2) squishyCaption.textContent = '点击 3D 软胶表面，贴上立体装饰。';
-    if (step === 3) squishyCaption.textContent = '在模型上按住并拖拽，弯折、拉伸或扭转蜡壳；拖动空白处可以旋转模型。';
+    if (controller) {
+      controller.setMode(step);
+      if (step === 3) controller.setFrontView();
+    }
+    if (step === 3) squishyCaption.textContent = '按住软胶拖入烧杯；保持按住上下拖动能连续浸蜡，每次完全没入才计一次。';
   };
 
   document.querySelectorAll('.shape-row [data-shape]').forEach((button) => {
@@ -454,32 +455,9 @@
     });
   });
 
-  document.querySelectorAll('[data-sticker]').forEach((button) => {
-    button.addEventListener('click', () => {
-      document.querySelectorAll('[data-sticker]').forEach((item) => item.classList.remove('is-active'));
-      button.classList.add('is-active');
-      squishyState.sticker = button.dataset.sticker;
-    });
-  });
 
   document.querySelectorAll('[data-squishy-next]').forEach((button) => {
     button.addEventListener('click', () => showSquishyStep(Number(button.dataset.squishyNext)));
-  });
-
-  dipWax.addEventListener('click', () => {
-    squishyState.dips += 1;
-    const dips = squishyState.dips;
-    const controller = squishyController();
-    if (controller) controller.setDips(dips);
-    const progress = Math.min(0.985, 1 - Math.exp(-dips / 2.6));
-    waxMeterFill.style.width = (progress * 100).toFixed(1) + '%';
-    waxCount.textContent = dips + ' 次';
-    waxThickness.textContent = dips < 2 ? '薄蜡层' : dips < 6 ? '中等蜡层' : dips < 12 ? '厚蜡层' : '厚度趋于稳定';
-    squishyCaption.textContent = '完成第 ' + dips + ' 次浸蜡。蜡层会继续变厚，但增幅越来越小。';
-    playTone(300 + Math.min(dips, 12) * 18, 0.16, 'sine', 0.018);
-    squishStart.hidden = false;
-    dipWax.textContent = dips === 1 ? '继续浸蜡' : '再浸蜡一次';
-    waxNote.textContent = dips < 8 ? '可以一直继续浸蜡；越往后，厚度变化越不明显。' : '厚度已接近稳定，继续浸蜡只会留下很小的差别。';
   });
 
   squishStart.addEventListener('click', () => {
@@ -488,17 +466,23 @@
     squishyState.chips = 0;
     if (crackCountLabel) crackCountLabel.textContent = '蜡壳完整度 100%';
     const controller = squishyController();
-    if (controller) controller.setCanSquish(true);
-    squishyCaption.textContent = '点击或按住拖拽同一块蜡，持续用力后它才会慢慢松脱。';
-    showToast('在同一处多捏几次，或者持续按住拖拽。');
+    if (controller) {
+      controller.setCanSquish(true);
+      controller.setFrontView();
+    }
+    if (squishyBeaker) squishyBeaker.hidden = true;
+    if (squishyStage) {
+      squishyStage.classList.remove('is-dipping');
+      squishyStage.style.setProperty('--squishy-dip-shift', '0%');
+    }
+    squishyCaption.textContent = '点击或按住拖拽同一处。薄蜡更容易脱落，厚蜡需要更久才会松动。';
+    showToast('在同一处多捏几次，或者持续按住拖拽。蜡层越厚，越需要耐心。');
   });
 
   function resetSquishy() {
     squishyState.step = 1;
     squishyState.shape = 'blob';
     squishyState.color = '#f5c75c';
-    squishyState.sticker = '✿';
-    squishyState.decorations = 0;
     squishyState.dips = 0;
     squishyState.canSquish = false;
     squishyState.damage = 0;
@@ -510,11 +494,13 @@
       controller.setMode(1);
     }
     squishyCaption.textContent = '拖动画面旋转 3D 软胶；先挑一个内芯和颜色。';
-    decorCount.textContent = '已添加 0 个 3D 装饰';
-    waxNote.textContent = '可以反复浸很多次，但厚度会逐渐趋于稳定。';
-    dipWax.disabled = false;
-    dipWax.textContent = '浸蜡一次';
+    waxNote.textContent = '一次按住拖拽可以连续浸蜡；每次完全没入烧杯才计一次。蜡层越厚，蜡壳越难剥落。';
     squishStart.hidden = true;
+    if (squishyBeaker) squishyBeaker.hidden = true;
+    if (squishyStage) {
+      squishyStage.classList.remove('is-dipping');
+      squishyStage.style.setProperty('--squishy-dip-shift', '0%');
+    }
     if (crackCountLabel) crackCountLabel.textContent = '蜡壳完整度 100%';
     waxMeterFill.style.width = '0%';
     waxCount.textContent = '0 次';
