@@ -418,3 +418,33 @@ html.night-mode .sidebar-brand-logo {
   filter: brightness(0) invert(1) drop-shadow(0 3px 9px rgba(3, 0, 24, 0.34)) !important;
   opacity: 0.96;
 }
+
+/* Compact fixed rail on narrow phones */
+@media (max-width: 560px) {
+  :root { --app-sidebar-width: 64px; }
+  .app-sidebar { width: 64px; padding: 10px 5px 8px; border-radius: 18px 0 0 0; }
+  .sidebar-brand { padding: 2px 0 8px !important; }
+  .sidebar-brand-logo { width: min(100%, 48px) !important; max-height: 46px; }
+  .sidebar-menu { margin-top: 10px !important; gap: 4px; }
+  .sidebar-nav-item { min-height: 50px; padding: 4px 1px; gap: 3px; font-size: 8.5px; line-height: 1.12; }
+  .sidebar-nav-item svg { width: 18px; height: 18px; flex-basis: 18px; }
+  .sidebar-music-item { min-height: 54px; margin-top: 18px !important; padding: 3px 1px; }
+  .sidebar-music-main { gap: 3px; font-size: 8.5px; }
+  .sidebar-music-item .music-volume-trigger { width: 17px; height: 17px; padding: 3px; }
+  .sidebar-theme-switch { min-height: 44px; padding: 5px 2px; gap: 3px; font-size: 8.5px; }
+  .sidebar-theme-track { width: 50px; height: 27px; flex-basis: 50px; }
+  .sidebar-theme-knob { width: 21px; height: 21px; }
+  body.night-mode .sidebar-theme-knob,
+  html.night-mode .sidebar-theme-knob { transform: translateX(23px); }
+  .music-volume-panel {
+    position: fixed;
+    right: auto !important;
+    bottom: 10px !important;
+    left: calc(var(--app-sidebar-width) + 8px) !important;
+    width: min(280px, calc(100vw - var(--app-sidebar-width) - 18px)) !important;
+  }
+  body.has-app-sidebar .game-modal-panel {
+    width: calc(100vw - var(--app-sidebar-width) - 10px);
+    height: calc(100dvh - 10px);
+  }
+}

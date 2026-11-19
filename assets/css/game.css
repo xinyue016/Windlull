@@ -1115,3 +1115,27 @@ canvas,
 body.embed-mode .back-home {
   display: none !important;
 }
+
+/* Mobile game modal fitting */
+@media (max-width: 700px) {
+  body.has-app-sidebar .game-modal-panel {
+    width: calc(100vw - var(--app-sidebar-width) - 10px);
+    height: calc(100dvh - 12px);
+    border-radius: 18px;
+  }
+  .game-modal-header {
+    padding: 13px 14px 10px;
+    gap: 12px;
+  }
+  .game-modal-header h2 { font-size: 21px; }
+  .game-close { width: 34px; height: 34px; font-size: 22px; }
+  .game-modal-body { padding: 10px 10px 15px; }
+  .play-layout { gap: 10px; }
+  .play-stage { min-height: clamp(245px, 40dvh, 340px); }
+  .play-controls { min-height: 0; padding: 15px; border-radius: 20px; }
+  .step-label { font-size: 9.5px; }
+  .play-controls h3 { margin: 14px 0 9px; font-size: 17px; }
+  .control-note, .squish-hint { font-size: 11px; line-height: 1.65; }
+  .choice-chip { min-height: 38px; padding-inline: 12px; }
+  .primary-action, .secondary-action, .text-action { min-height: 43px; font-size: 12.5px; }
+}

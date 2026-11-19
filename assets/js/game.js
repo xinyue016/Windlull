@@ -159,39 +159,40 @@
   };
 
   const openGame = async (game) => {
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-    setPanel(game);
     activeGame = game;
     const usesWebGL = game !== 'woodfish';
-    let loadingTimer = window.setTimeout(() => showToast('正在准备游戏…'), 260);
+    const loadingTimer = window.setTimeout(() => showToast('正在准备游戏…'), 180);
     try {
       if (game === 'sand') await ensureSandAudioData();
       if (game === 'woodfish') await ensureWoodfishAudioData();
       if (usesWebGL) await ensure3DEngine();
       if (activeGame !== game) return;
+
+      const controller = usesWebGL ? ensureController(game) : null;
+      if (usesWebGL && !controller) return;
+
+      resetGame(game);
+      deactivateAll();
+      setPanel(game);
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+
+      if (controller) {
+        requestAnimationFrame(() => {
+          controller.resize();
+          controller.activate();
+        });
+      }
+      window.setTimeout(() => modalPanel.focus({ preventScroll: true }), 50);
     } catch (error) {
       console.error('Game resources failed to load:', error);
+      showToast('游戏资源加载失败，请稍后重试。');
+      if (activeGame === game) activeGame = null;
+    } finally {
       window.clearTimeout(loadingTimer);
-      showToast('游戏资源加载失败，请检查网络后重试。');
-      return;
     }
-    window.clearTimeout(loadingTimer);
-
-    const controller = usesWebGL ? ensureController(game) : null;
-    if (usesWebGL && !controller) return;
-    resetGame(game);
-    deactivateAll();
-    if (controller) {
-      requestAnimationFrame(() => {
-        controller.resize();
-        controller.activate();
-      });
-    }
-    window.setTimeout(() => modalPanel.focus({ preventScroll: true }), 50);
   };
-
   const closeGame = () => {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
@@ -348,14 +349,26 @@
   };
 
   const gameCarousel = setupGameCarousel();
-cards.forEach((card, index) => card.addEventListener('click', () => {
-    if (performance.now() < suppressCardClickUntil) return;
-    if (gameCarousel && index !== gameCarousel.getActiveIndex()) {
-      gameCarousel.focusCard(index);
-      return;
-    }
-    openGame(card.dataset.game);
-  }));
+cards.forEach((card, index) => {
+    const preload = () => {
+      const requests = [];
+      if (card.dataset.game === 'woodfish') requests.push(ensureWoodfishAudioData());
+      if (card.dataset.game === 'sand') requests.push(ensureSandAudioData());
+      if (card.dataset.game !== 'woodfish') requests.push(ensure3DEngine());
+      Promise.allSettled(requests).catch(() => {});
+    };
+    card.addEventListener('pointerenter', preload, { once: true });
+    card.addEventListener('focus', preload, { once: true });
+    card.addEventListener('pointerdown', preload, { once: true });
+    card.addEventListener('click', () => {
+      if (performance.now() < suppressCardClickUntil) return;
+      if (gameCarousel && index !== gameCarousel.getActiveIndex()) {
+        gameCarousel.focusCard(index);
+        return;
+      }
+      openGame(card.dataset.game);
+    });
+  });
   closeButton.addEventListener('click', closeGame);
   modal.querySelector('[data-close-game]').addEventListener('click', () => {
     closeGame();

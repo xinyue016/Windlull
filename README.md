@@ -39,6 +39,7 @@ assets/
 
 - 页面结构、样式与业务交互代码由项目创作者编写或借助系统工具生成。
 - 3D 场景使用本地 Three.js 开源库。
+- 主页面背景音乐：《Morning》 — Kevin MacLeod，来源 Incompetech，CC BY 4.0；仅用于网页背景播放，未改变音乐内容。
 - 小游戏背景音乐：“Northern Glade” — Kevin MacLeod，Licensed under Creative Commons: By Attribution 4.0 License。
 - 其余视觉素材由项目创作者提供或生成。
 

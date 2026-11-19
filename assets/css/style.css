@@ -4755,7 +4755,7 @@ html.night-mode .credits-closing { color: rgba(49, 36, 84, 0.72); }
 .credits-grid {
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1.1fr 1.15fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(14px, 2vw, 26px);
   align-content: start;
 }
@@ -4910,4 +4910,146 @@ html.night-mode .credits-bottom {
   line-height: 1.45;
   letter-spacing: 0.04em;
   color: var(--ink-soft);
+}
+
+/* Final mobile layout hardening */
+@media (max-width: 700px) {
+  html,
+  body { overflow-x: hidden; }
+  .site-credits {
+    height: auto;
+    min-height: 33.3333svh;
+    padding: 0 12px max(10px, env(safe-area-inset-bottom));
+  }
+  .credits-panel {
+    height: auto;
+    min-height: 33.3333svh;
+    overflow-y: visible;
+  }
+  .credits-grid { grid-template-columns: 1fr; gap: 10px; }
+  .credits-grid section:last-child { grid-column: auto; }
+  .credits-grid p { font-size: 11px; line-height: 1.65; overflow-wrap: anywhere; }
+  .credits-grid h3 { font-size: 12px; }
+  .credits-bottom { flex-wrap: wrap; row-gap: 4px; }
+}
+@media (max-width: 560px) {
+  :root { --app-sidebar-width: 64px; }
+  .app-sidebar { width: 64px; padding: 10px 5px 8px; border-radius: 18px 0 0 0; }
+  .sidebar-brand { padding: 2px 0 8px !important; }
+  .sidebar-brand-logo { width: min(100%, 48px) !important; max-height: 46px; }
+  .sidebar-menu { margin-top: 10px !important; gap: 4px; }
+  .sidebar-nav-item { min-height: 50px; padding: 4px 1px; gap: 3px; font-size: 8.5px; line-height: 1.12; }
+  .sidebar-nav-item svg { width: 18px; height: 18px; flex-basis: 18px; }
+  .sidebar-music-item { min-height: 54px; margin-top: 18px !important; padding: 3px 1px; }
+  .sidebar-music-main { gap: 3px; font-size: 8.5px; }
+  .sidebar-music-item .music-volume-trigger { width: 17px; height: 17px; padding: 3px; }
+  .sidebar-theme-switch { min-height: 44px; padding: 5px 2px; gap: 3px; font-size: 8.5px; }
+  .sidebar-theme-track { width: 50px; height: 27px; flex-basis: 50px; }
+  .sidebar-theme-knob { width: 21px; height: 21px; }
+  body.night-mode .sidebar-theme-knob,
+  html.night-mode .sidebar-theme-knob { transform: translateX(23px); }
+  .music-volume-panel {
+    position: fixed;
+    right: auto !important;
+    bottom: 10px !important;
+    left: calc(var(--app-sidebar-width) + 8px) !important;
+    width: min(280px, calc(100vw - var(--app-sidebar-width) - 18px)) !important;
+  }
+}
+
+/* Mobile third page: fixed frame with internal card scrolling */
+@media (max-width: 700px) {
+  .support-page {
+    height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+  .support-stage {
+    height: 66.6667svh;
+    min-height: 66.6667svh;
+    padding: 58px 10px 8px;
+  }
+  .support-plan {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .support-plan-header {
+    padding-bottom: 8px;
+  }
+  .support-plan-body {
+    min-height: 0;
+    padding: 1px 3px 8px 1px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: y proximity;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(70, 135, 158, 0.28) transparent;
+  }
+  .support-plan-body::-webkit-scrollbar { width: 3px; }
+  .support-plan-body::-webkit-scrollbar-thumb {
+    border-radius: 99px;
+    background: rgba(70, 135, 158, 0.28);
+  }
+  .support-ladder,
+  .support-response-panel {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  .support-level,
+  .support-response-panel {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+  .site-credits {
+    height: 33.3333svh;
+    min-height: 33.3333svh;
+    margin-top: 0;
+    padding: 0 10px 8px;
+  }
+  .credits-panel {
+    height: 100%;
+    min-height: 0;
+    padding: 10px 11px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .credits-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .credits-grid section:last-child { grid-column: auto; }
+  .credits-grid p { font-size: 10.5px; line-height: 1.55; overflow-wrap: anywhere; }
+  .credits-grid h3 { font-size: 11.5px; }
+  .credits-bottom { flex-wrap: wrap; row-gap: 4px; }
+}
+
+/* Mobile credits: keep the last license sentence and footer from overlapping */
+@media (max-width: 700px) {
+  .credits-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+  }
+  .credits-header,
+  .credits-grid,
+  .credits-bottom {
+    flex: 0 0 auto;
+  }
+  .credits-grid {
+    padding-bottom: 8px;
+  }
+  .credits-bottom {
+    margin-top: 2px;
+    padding-top: 10px;
+  }
 }

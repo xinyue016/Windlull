@@ -1345,3 +1345,25 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
   pointer-events: auto;
   touch-action: pan-y;
 }
+
+/* Final narrow-phone fitting */
+@media (max-width: 560px) {
+  .diary-app {
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    left: calc(var(--app-sidebar-width) + 8px);
+  }
+  .diary-main { padding: 14px 12px 12px; border-radius: 18px; }
+  .diary-header { flex-wrap: wrap; align-items: flex-start; }
+  .diary-intro,
+  .diary-local-note,
+  .mood-form-note { font-size: 10.5px; line-height: 1.6; }
+  .diary-stats { flex-direction: row; flex-wrap: wrap; gap: 5px; }
+  .diary-stats span { padding: 5px 7px; }
+  .diary-modal-panel {
+    width: calc(100vw - var(--app-sidebar-width) - 12px);
+    max-height: calc(100dvh - 16px);
+    overflow-y: auto;
+  }
+}

@@ -7,7 +7,7 @@
   const isGamePage = /\/game\.html$/i.test(pagePath);
   const pageTrack = isGamePage
     ? { src: 'assets/audio/game-background-web.mp3', volume: 0.18, fadeIn: 3200 }
-    : { src: 'assets/audio/wind-chime-04-loop-web.mp3', volume: 0.72, fadeIn: 0 };
+    : { src: 'assets/audio/main-background.mp3', volume: 0.72, fadeIn: 700 };
 
   const ENABLED_KEY = 'emotion-atlas-background-music';
   const POSITION_KEY = isGamePage
@@ -54,7 +54,7 @@
   let volumePercent = clamp(readNumber(VOLUME_KEY, 72), 0, 100);
   const getTargetVolume = () => {
     const master = volumePercent / 100;
-    return isGamePage ? Math.min(pageTrack.volume, master * 0.25) : Math.min(1, master);
+    return isGamePage ? Math.min(pageTrack.volume, master * 0.25) : Math.min(pageTrack.volume, master);
   };
   audio.volume = isGamePage ? 0 : getTargetVolume();
   audio.preload = 'none';
@@ -173,13 +173,13 @@
     if (!ready || !enabled) return false;
     restoreTimeline();
 
-    if (isGamePage && audio.paused) audio.volume = 0;
+    if (audio.paused) audio.volume = 0;
     try {
       await audio.play();
       const target = getTargetVolume();
-      if (isGamePage && audio.volume < target * 0.98) {
+      if (pageTrack.fadeIn > 0 && audio.volume < target * 0.98) {
         await fadeTo(target, pageTrack.fadeIn);
-      } else if (!isGamePage) {
+      } else {
         audio.volume = target;
       }
       return true;
@@ -194,7 +194,7 @@
     timelineRestored = true;
     write(ENABLED_KEY, 'play');
     clearTimeline();
-    audio.volume = isGamePage ? 0 : getTargetVolume();
+    audio.volume = 0;
     try { audio.currentTime = 0; } catch (_) { /* media may not be ready */ }
     const started = await startPlayback();
     notify();
