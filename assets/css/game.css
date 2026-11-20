@@ -334,7 +334,7 @@ body.night-mode .squishy-beaker__night { display: block; }
     radial-gradient(circle at 50% 42%, rgba(255,255,255,.92), rgba(215,242,255,.45) 52%, transparent 76%),
     linear-gradient(145deg, #dff5ff, #bde5f7 58%, #d7effa);
 }
-.stage-caption { position: absolute; bottom: 18px; left: 20px; right: 20px; margin: 0; color: var(--ink-soft); font-size: 11px; text-align: center; }
+.stage-caption { position: absolute; bottom: 18px; left: 20px; right: 20px; margin: 0; color: var(--ink-soft); font-size: 11px; text-align: center; pointer-events: none; }
 .play-controls {
   min-height: 500px;
   padding: 23px;

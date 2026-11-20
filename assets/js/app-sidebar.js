@@ -14,10 +14,10 @@
       <img class="sidebar-brand-logo" src="图片/风歇小筑logo透明.webp" alt="风歇小筑" decoding="async" />
     </div>
     <nav class="sidebar-menu" aria-label="功能菜单">
-      <a class="sidebar-nav-item" href="index.html?v=20261119-36" aria-label="返回首页">
+      <a class="sidebar-nav-item" href="index.html?v=20261119-37" aria-label="返回首页">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.5 9.2V20h13V9.2"/><path d="M9.5 20v-6h5v6"/></svg><span>首页</span>
       </a>
-      <a class="sidebar-nav-item${isGamePage ? ' is-active' : ''}" href="game.html?v=20261119-36" aria-label="打开解压小游戏">
+      <a class="sidebar-nav-item${isGamePage ? ' is-active' : ''}" href="game.html?v=20261119-38" aria-label="打开解压小游戏">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8.2h9a4.5 4.5 0 0 1 4.3 5.8l-1 3.3a2.2 2.2 0 0 1-3.7 1l-2-2H9.9l-2 2a2.2 2.2 0 0 1-3.7-1l-1-3.3a4.5 4.5 0 0 1 4.3-5.8Z"/><path d="M8 11v4M6 13h4M16.5 12.2h.1M18.2 14h.1"/></svg><span>解压小游戏</span>
       </a>
       <a class="sidebar-nav-item${isDiaryPage ? ' is-active' : ''}" href="chat.html?v=20261119-36" aria-label="打开情绪日记">

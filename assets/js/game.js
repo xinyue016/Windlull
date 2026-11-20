@@ -67,7 +67,7 @@
 
   const ensure3DEngine = async () => {
     if (!window.THREE) await loadScript('assets/vendor/three.min.js');
-    if (!window.Game3D) await loadScript('assets/js/game3d.js?v=20261119-21');
+    if (!window.Game3D) await loadScript('assets/js/game3d.js?v=20261119-22');
   };
   const ensureSandAudioData = () => window.SAND_CALM_LOOP_DATA
     ? Promise.resolve()

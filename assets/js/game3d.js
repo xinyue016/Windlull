@@ -240,11 +240,7 @@
     view.scene.add(modelGroup);
     const meshGroup = new THREE.Group();
     const crackGroup = new THREE.Group();
-    const grabProxy = new THREE.Mesh(
-      new THREE.BoxGeometry(3.25, 3.25, 2.2),
-      new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
-    );
-    modelGroup.add(meshGroup, crackGroup, grabProxy);
+    modelGroup.add(meshGroup, crackGroup);
     addSoftShadowPlane(view.scene, -1.52, 2.35);
     const waxDipJar = new THREE.Group();
     const jarGlass = new THREE.MeshPhysicalMaterial({ color: '#d9f1f5', transparent: true, opacity: 0.26, roughness: 0.08, transmission: 0.55, thickness: 0.18, side: THREE.DoubleSide, depthWrite: false });
@@ -440,18 +436,14 @@
     const scratchVector = new THREE.Vector3();
     const canvas = view.renderer.domElement;
 
-    const pickBody = (event, includeGrabProxy = false) => {
+    const pickBody = (event) => {
       const rect = canvas.getBoundingClientRect();
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointer, view.camera);
       if (!body) return null;
       const bodyHit = raycaster.intersectObject(body, false)[0];
-      if (bodyHit) return bodyHit;
-      if (includeGrabProxy && waxCells.some((cell) => !cell.broken)) {
-        return raycaster.intersectObject(grabProxy, false)[0] || null;
-      }
-      return null;
+      return bodyHit || null;
     };
 
     const pointOnGrabPlane = (event, handle) => {
@@ -632,12 +624,12 @@
       if (typeof window.__playSquishyImpact === 'function') window.__playSquishyImpact(frequency);
     };
 
-    canvas.addEventListener('pointerdown', (event) => {
+    mount.addEventListener('pointerdown', (event) => {
       if (event.button !== undefined && event.button !== 0) return;
       event.preventDefault();
       audioStartUserGesture();
-      try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
-      const hit = pickBody(event, mode === 3 && canSquish);
+      try { mount.setPointerCapture(event.pointerId); } catch (_) {}
+      const hit = pickBody(event);
       if (hit && mode === 3 && !canSquish) {
         pointerInteraction = { type: 'dip', id: event.pointerId, startY: event.clientY, moved: false };
         dipTriggered = false;
@@ -696,7 +688,7 @@
       canvas.style.cursor = 'grabbing';
     });
 
-    canvas.addEventListener('pointermove', (event) => {
+    mount.addEventListener('pointermove', (event) => {
       if (!pointerInteraction || pointerInteraction.id !== event.pointerId) return;
       const dx = event.clientX - pointerInteraction.startX;
       const dy = event.clientY - pointerInteraction.startY;
@@ -775,10 +767,10 @@
       }
       canvas.style.cursor = 'grab';
       pointerInteraction = null;
-      try { canvas.releasePointerCapture(event.pointerId); } catch (_) {}
+      try { mount.releasePointerCapture(event.pointerId); } catch (_) {}
     };
-    canvas.addEventListener('pointerup', endPointer);
-    canvas.addEventListener('pointercancel', endPointer);
+    mount.addEventListener('pointerup', endPointer);
+    mount.addEventListener('pointercancel', endPointer);
 
     const applyDeformation = (delta) => {
       if (!geometry || (!grabHandle && !pokes.length)) return;
