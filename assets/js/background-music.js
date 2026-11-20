@@ -4,9 +4,10 @@
   if (embeddedView) return;
 
   const pagePath = decodeURIComponent(window.location.pathname).replace(/\\/g, '/');
-  const isGamePage = /\/game\.html$/i.test(pagePath);
+  const declaredPage = document.body?.dataset.page || '';
+  const isGamePage = declaredPage === 'game' || /\/game\.html$/i.test(pagePath);
   const pageTrack = isGamePage
-    ? { src: 'assets/audio/game-background-web.mp3', volume: 0.18, fadeIn: 3200 }
+    ? { src: 'assets/audio/game-background-web.mp3', volume: 0.72, fadeIn: 3200 }
     : { src: 'assets/audio/main-background.mp3', volume: 0.72, fadeIn: 700 };
 
   const ENABLED_KEY = 'emotion-atlas-background-music';
@@ -17,6 +18,8 @@
     ? 'emotion-atlas-game-music-updated-at'
     : 'emotion-atlas-background-music-updated-at';
   const VOLUME_KEY = 'emotion-atlas-music-volume';
+  const OWNER_KEY = 'emotion-atlas-music-owner';
+  const TAB_ID = 'music-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 
   const audio = new Audio(pageTrack.src);
   audio.loop = true;
@@ -54,14 +57,14 @@
   let volumePercent = clamp(readNumber(VOLUME_KEY, 72), 0, 100);
   const getTargetVolume = () => {
     const master = volumePercent / 100;
-    return isGamePage ? Math.min(pageTrack.volume, master * 0.25) : Math.min(pageTrack.volume, master);
+    return Math.min(pageTrack.volume, master);
   };
   audio.volume = isGamePage ? 0 : getTargetVolume();
   audio.preload = isGamePage ? 'metadata' : 'none';
 
   const notify = () => {
     document.dispatchEvent(new CustomEvent('backgroundmusicchange', {
-      detail: { enabled, playing: !audio.paused, track: isGamePage ? 'game' : 'main', volume: volumePercent }
+      detail: { enabled, playing: !audio.paused && !audio.muted, track: isGamePage ? 'game' : 'main', volume: volumePercent }
     }));
   };
 
@@ -150,31 +153,30 @@
     remove(UPDATED_AT_KEY);
   };
 
-  const armResumeAfterInteraction = () => {
-    if (resumeArmed) return;
-    resumeArmed = true;
-    const resume = async (event) => {
-      if (event?.target?.closest?.('#musicButton, #sharedMusicButton')) return;
-      document.removeEventListener('pointerdown', resume, true);
-      document.removeEventListener('keydown', resume, true);
-      resumeArmed = false;
-      if (enabled) await startPlayback();
-    };
-    document.addEventListener('pointerdown', resume, true);
-    document.addEventListener('keydown', resume, true);
-  };
-
-  const startPlayback = async () => {
-    if (!enabled) return false;
+  const startPlayback = async (allowMutedAutoplay = false) => {
+    if (!enabled || document.hidden) {
+      if (enabled) armResumeAfterInteraction();
+      return false;
+    }
+    write(OWNER_KEY, TAB_ID);
     if (audio.readyState === 0) {
       audio.preload = 'auto';
       try { audio.load(); } catch (_) { /* media may still be loading */ }
     }
+    if (allowMutedAutoplay) audio.muted = false;
     if (audio.paused) audio.volume = 0;
     let playPromise;
     try {
       playPromise = audio.play();
     } catch (_) {
+      if (allowMutedAutoplay) {
+        audio.muted = true;
+        try {
+          await audio.play();
+          notify();
+          return true;
+        } catch (_) { /* fall back to the next user gesture */ }
+      }
       armResumeAfterInteraction();
       return false;
     }
@@ -194,9 +196,51 @@
       }
       return true;
     } catch (_) {
+      if (allowMutedAutoplay) {
+        audio.muted = true;
+        try {
+          await audio.play();
+          notify();
+          return true;
+        } catch (_) { /* fall back to the next user gesture */ }
+      }
       armResumeAfterInteraction();
       return false;
     }
+  };
+
+  const makeAudible = async () => {
+    if (!enabled) return false;
+    const wasMuted = audio.muted;
+    audio.muted = false;
+    if (audio.paused) {
+      const started = await startPlayback(false);
+      notify();
+      return started;
+    }
+    const target = getTargetVolume();
+    if (wasMuted) {
+      audio.volume = 0;
+      await fadeTo(target, isGamePage ? 900 : 450);
+    } else if (audio.volume < target * 0.98) {
+      await fadeTo(target, 300);
+    }
+    notify();
+    return true;
+  };
+
+  const armResumeAfterInteraction = () => {
+    if (resumeArmed) return;
+    resumeArmed = true;
+    const resume = async (event) => {
+      if (event?.target?.closest?.('#musicButton, #sharedMusicButton')) return;
+      document.removeEventListener('pointerdown', resume, true);
+      document.removeEventListener('keydown', resume, true);
+      resumeArmed = false;
+      if (enabled) await makeAudible();
+    };
+    document.addEventListener('pointerdown', resume, true);
+    document.addEventListener('keydown', resume, true);
   };
 
   const enable = async () => {
@@ -204,9 +248,10 @@
     timelineRestored = true;
     write(ENABLED_KEY, 'play');
     clearTimeline();
+    audio.muted = false;
     audio.volume = 0;
     try { audio.currentTime = 0; } catch (_) { /* media may not be ready */ }
-    const started = await startPlayback();
+    const started = await startPlayback(false);
     notify();
     return started;
   };
@@ -218,15 +263,20 @@
     window.clearInterval(fadeTimer);
     fadeToken += 1;
     audio.pause();
+    audio.muted = false;
     audio.volume = 0;
     try { audio.currentTime = 0; } catch (_) { /* media may not be ready */ }
     notify();
   };
 
   const toggle = async () => {
-    if (enabled && !audio.paused) {
+    if (enabled && !audio.paused && !audio.muted) {
       disable();
       return { enabled: false, started: false };
+    }
+    if (enabled) {
+      const started = await makeAudible();
+      return { enabled: true, started };
     }
     const started = await enable();
     return { enabled: true, started };
@@ -272,6 +322,7 @@
   window.addEventListener('pagehide', () => {
     saveTimeline();
     audio.pause();
+    if (read(OWNER_KEY) === TAB_ID) write(OWNER_KEY, '');
   });
   window.addEventListener('pageshow', (event) => {
     if (event.persisted && enabled) startPlayback();
@@ -287,6 +338,14 @@
     if (enabled) startPlayback();
   });
   window.addEventListener('storage', (event) => {
+    if (event.key === OWNER_KEY) {
+      if (event.newValue && event.newValue !== TAB_ID && !audio.paused) {
+        saveTimeline();
+        audio.pause();
+        notify();
+      }
+      return;
+    }
     if (event.key === VOLUME_KEY) {
       volumePercent = clamp(Number(event.newValue), 0, 100);
       if (!audio.paused) {
@@ -310,7 +369,7 @@
 
   window.BackgroundMusic = {
     isEnabled: () => enabled,
-    isPlaying: () => !audio.paused,
+    isPlaying: () => !audio.paused && !audio.muted,
     isGamePage,
     toggle,
     enable,
@@ -325,7 +384,7 @@
 
   if (enabled) {
     armResumeAfterInteraction();
-    const deferInitialPlayback = () => startPlayback();
+    const deferInitialPlayback = () => startPlayback(true);
     if ('requestIdleCallback' in window) {
       window.requestIdleCallback(deferInitialPlayback, { timeout: 1200 });
     } else {
