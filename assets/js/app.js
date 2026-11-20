@@ -751,7 +751,7 @@
   const backgroundMusic = window.BackgroundMusic;
   if (backgroundMusic) {
     syncVolumeUI(backgroundMusic.getVolume());
-    setMusicUI(backgroundMusic.isEnabled());
+    setMusicUI(backgroundMusic.isPlaying());
 
     musicVolumeTrigger.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -772,20 +772,20 @@
       musicButton.disabled = true;
       try {
         const result = await backgroundMusic.toggle();
-        setMusicUI(result.enabled);
+        setMusicUI(backgroundMusic.isPlaying());
         if (result.enabled && !result.started) {
           showToast('背景音乐已开启，轻触页面后开始播放。');
         }
       } catch (error) {
         console.warn('Background music could not be started:', error);
         showToast('背景音乐暂时无法播放，请稍后再试。');
-        setMusicUI(backgroundMusic.isEnabled());
+        setMusicUI(backgroundMusic.isPlaying());
       } finally {
         musicButton.disabled = false;
       }
     });
     document.addEventListener('backgroundmusicchange', (event) => {
-      setMusicUI(Boolean(event.detail && event.detail.enabled));
+      setMusicUI(Boolean(event.detail && event.detail.playing));
       if (event.detail && Number.isFinite(Number(event.detail.volume))) {
         syncVolumeUI(event.detail.volume);
       }

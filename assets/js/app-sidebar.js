@@ -14,13 +14,13 @@
       <img class="sidebar-brand-logo" src="图片/风歇小筑logo透明.webp" alt="风歇小筑" decoding="async" />
     </div>
     <nav class="sidebar-menu" aria-label="功能菜单">
-      <a class="sidebar-nav-item" href="index.html?v=20261120-40" aria-label="返回首页">
+      <a class="sidebar-nav-item" href="index.html?v=20261120-41" aria-label="返回首页">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10.5 8.5-7 8.5 7"/><path d="M5.5 9.2V20h13V9.2"/><path d="M9.5 20v-6h5v6"/></svg><span>首页</span>
       </a>
-      <a class="sidebar-nav-item${isGamePage ? ' is-active' : ''}" href="game.html?v=20261120-40" aria-label="打开解压小游戏">
+      <a class="sidebar-nav-item${isGamePage ? ' is-active' : ''}" href="game.html?v=20261120-41" aria-label="打开解压小游戏">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 8.2h9a4.5 4.5 0 0 1 4.3 5.8l-1 3.3a2.2 2.2 0 0 1-3.7 1l-2-2H9.9l-2 2a2.2 2.2 0 0 1-3.7-1l-1-3.3a4.5 4.5 0 0 1 4.3-5.8Z"/><path d="M8 11v4M6 13h4M16.5 12.2h.1M18.2 14h.1"/></svg><span>解压小游戏</span>
       </a>
-      <a class="sidebar-nav-item${isDiaryPage ? ' is-active' : ''}" href="chat.html?v=20261120-40" aria-label="打开情绪日记">
+      <a class="sidebar-nav-item${isDiaryPage ? ' is-active' : ''}" href="chat.html?v=20261120-41" aria-label="打开情绪日记">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 3.5h8.2l3.4 3.4v13.6H6.2z"/><path d="M14.2 3.6v3.6h3.6M9 11h6M9 14.2h6M9 17.4h4"/></svg><span>情绪日记</span>
       </a>
       <div class="sidebar-nav-item sidebar-music-item" id="sharedMusicWrap">
@@ -71,27 +71,28 @@
   const volumeRange = sidebar.querySelector('#sharedMusicVolume');
   const volumeOutput = sidebar.querySelector('#sharedMusicVolumeOutput');
   const backgroundMusic = window.BackgroundMusic;
-  const syncMusic = (enabled, volume) => {
+  const syncMusic = (enabled, volume, playing) => {
     const value = Math.max(0, Math.min(100, Math.round(Number(volume) || 0)));
-    musicButton.classList.toggle('is-playing', Boolean(enabled));
-    musicButton.setAttribute('aria-pressed', String(Boolean(enabled)));
-    musicButton.setAttribute('aria-label', enabled ? '关闭背景音乐' : '播放背景音乐');
+    const active = Boolean(enabled && playing);
+    musicButton.classList.toggle('is-playing', active);
+    musicButton.setAttribute('aria-pressed', String(active));
+    musicButton.setAttribute('aria-label', active ? '关闭背景音乐' : '播放背景音乐');
     volumeRange.value = String(value);
     volumeOutput.value = value + '%';
     volumeOutput.textContent = value + '%';
   };
   if (backgroundMusic) {
-    syncMusic(backgroundMusic.isEnabled(), backgroundMusic.getVolume());
+    syncMusic(backgroundMusic.isEnabled(), backgroundMusic.getVolume(), backgroundMusic.isPlaying());
     musicButton.addEventListener('click', async () => {
       const result = await backgroundMusic.toggle();
-      syncMusic(result.enabled, backgroundMusic.getVolume());
+      syncMusic(result.enabled, backgroundMusic.getVolume(), backgroundMusic.isPlaying());
     });
     volumeRange.addEventListener('input', () => {
       backgroundMusic.setVolume(Number(volumeRange.value));
-      syncMusic(backgroundMusic.isEnabled(), volumeRange.value);
+      syncMusic(backgroundMusic.isEnabled(), volumeRange.value, backgroundMusic.isPlaying());
     });
     document.addEventListener('backgroundmusicchange', (event) => {
-      syncMusic(Boolean(event.detail?.enabled), event.detail?.volume ?? backgroundMusic.getVolume());
+      syncMusic(Boolean(event.detail?.enabled), event.detail?.volume ?? backgroundMusic.getVolume(), Boolean(event.detail?.playing));
     });
   } else {
     musicButton.disabled = true;

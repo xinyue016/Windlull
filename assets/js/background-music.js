@@ -20,7 +20,7 @@
 
   const audio = new Audio(pageTrack.src);
   audio.loop = true;
-  audio.preload = 'none';
+  audio.preload = isGamePage ? 'metadata' : 'none';
   audio.volume = 0;
   audio.setAttribute('playsinline', '');
   audio.setAttribute('aria-hidden', 'true');
@@ -57,7 +57,7 @@
     return isGamePage ? Math.min(pageTrack.volume, master * 0.25) : Math.min(pageTrack.volume, master);
   };
   audio.volume = isGamePage ? 0 : getTargetVolume();
-  audio.preload = 'none';
+  audio.preload = isGamePage ? 'metadata' : 'none';
 
   const notify = () => {
     document.dispatchEvent(new CustomEvent('backgroundmusicchange', {
@@ -153,7 +153,8 @@
   const armResumeAfterInteraction = () => {
     if (resumeArmed) return;
     resumeArmed = true;
-    const resume = async () => {
+    const resume = async (event) => {
+      if (event?.target?.closest?.('#musicButton, #sharedMusicButton')) return;
       document.removeEventListener('pointerdown', resume, true);
       document.removeEventListener('keydown', resume, true);
       resumeArmed = false;
@@ -169,13 +170,22 @@
       audio.preload = 'auto';
       try { audio.load(); } catch (_) { /* media may still be loading */ }
     }
-    const ready = await waitForMetadata();
-    if (!ready || !enabled) return false;
-    restoreTimeline();
-
     if (audio.paused) audio.volume = 0;
+    let playPromise;
     try {
-      await audio.play();
+      playPromise = audio.play();
+    } catch (_) {
+      armResumeAfterInteraction();
+      return false;
+    }
+    const ready = await waitForMetadata();
+    if (!ready || !enabled) {
+      try { audio.pause(); } catch (_) { /* audio may not be ready */ }
+      return false;
+    }
+    restoreTimeline();
+    try {
+      await playPromise;
       const target = getTargetVolume();
       if (pageTrack.fadeIn > 0 && audio.volume < target * 0.98) {
         await fadeTo(target, pageTrack.fadeIn);
@@ -214,7 +224,7 @@
   };
 
   const toggle = async () => {
-    if (enabled) {
+    if (enabled && !audio.paused) {
       disable();
       return { enabled: false, started: false };
     }
