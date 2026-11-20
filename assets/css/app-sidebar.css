@@ -27,9 +27,9 @@
 .sidebar-brand { padding: 4px 5px 18px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(67, 124, 151, 0.12); }
 .sidebar-brand-icon { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border-radius: 12px; color: #299bb2; background: rgba(255, 255, 255, 0.64); box-shadow: 5px 5px 12px rgba(84,128,159,.12), -5px -5px 12px rgba(255,255,255,.86), inset 0 1px rgba(255,255,255,.9); }
 .sidebar-brand-icon svg, .sidebar-menu svg, .sidebar-theme-switch svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.sidebar-brand-text { color: #245469; font-size: 17px; font-weight: 700; white-space: nowrap; }
+.sidebar-brand-text { color: #245469; font-size: 1.0625rem; font-weight: 700; white-space: nowrap; }
 .sidebar-menu { margin-top: 16px; display: flex; flex-direction: column; gap: 7px; }
-.sidebar-nav-item { position: relative; width: 100%; min-height: 45px; padding: 0 10px; display: flex; align-items: center; gap: 9px; border: 0; border-radius: 14px; background: transparent; color: #315f73; font: 600 12.5px/1.25 "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; text-align: left; text-decoration: none; cursor: pointer; transition: transform .24s, background .24s, box-shadow .24s, color .24s; }
+.sidebar-nav-item { position: relative; width: 100%; min-height: 45px; padding: 0 10px; display: flex; align-items: center; gap: 9px; border: 0; border-radius: 14px; background: transparent; color: #315f73; font: 600 0.78125rem/1.25 "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; text-align: left; text-decoration: none; cursor: pointer; transition: transform .24s, background .24s, box-shadow .24s, color .24s; }
 .sidebar-nav-item:hover { transform: translateX(2px); background: rgba(255,255,255,.5); box-shadow: 5px 5px 12px rgba(81,128,159,.1), -4px -4px 10px rgba(255,255,255,.66); }
 .sidebar-nav-item.is-active { color: #228ba3; background: rgba(255,255,255,.94); box-shadow: 7px 7px 16px rgba(76,125,158,.14), -7px -7px 16px rgba(255,255,255,.9), inset 0 1px #fff; }
 .sidebar-music-item { min-height: 45px; padding: 4px 4px 4px 9px; }
@@ -44,9 +44,9 @@
 .music-volume-trigger svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .music-volume-panel { position: absolute; z-index: 1600; top: auto; right: 0; bottom: 8px; left: calc(100% + 8px); width: 210px; padding: 11px 12px; border: 1px solid rgba(255,255,255,.75); border-radius: 15px; background: rgba(245,252,255,.96); box-shadow: 0 14px 34px rgba(34,88,119,.18); visibility: hidden; opacity: 0; pointer-events: none; transform: translateX(-5px) scale(.97); transition: opacity .22s, transform .24s, visibility 0s .24s; }
 .sidebar-music-item.is-volume-open .music-volume-panel { visibility: visible; opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); transition-delay: 0s; }
-.music-volume-heading { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; color: #4d7484; font-size: 9px; }
+.music-volume-heading { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 7px; color: #4d7484; font-size: 0.5625rem; }
 .music-volume-range { width: 100%; accent-color: #45aeba; }
-.sidebar-theme-switch { width: 100%; min-height: 54px; margin-top: auto; padding: 7px 8px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 16px; background: rgba(255,255,255,.34); color: #315f73; font: 600 11px/1.2 "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; text-align: left; cursor: pointer; }
+.sidebar-theme-switch { width: 100%; min-height: 54px; margin-top: auto; padding: 7px 8px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 16px; background: rgba(255,255,255,.34); color: #315f73; font: 600 0.6875rem/1.2 "HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; text-align: left; cursor: pointer; }
 .sidebar-theme-track { position: relative; width: 58px; height: 30px; flex: 0 0 58px; border-radius: 999px; background: rgba(255,255,255,.72); box-shadow: inset 0 2px 5px rgba(67,116,146,.13); }
 .sidebar-theme-sun,.sidebar-theme-moon { position: absolute; z-index: 1; top: 50%; width: 15px; height: 15px; transform: translateY(-50%); }
 .sidebar-theme-sun { left: 7px; color: #d7962e; }
@@ -64,13 +64,13 @@ html.night-mode .sidebar-theme-sun, body.night-mode .sidebar-theme-sun { opacity
   .sidebar-brand-text { display: none; }
   .sidebar-brand-icon { width: 36px; height: 36px; flex-basis: 36px; }
   .sidebar-menu { gap: 6px; }
-  .sidebar-nav-item { min-height: 52px; padding: 5px 2px; flex-direction: column; justify-content: center; gap: 3px; font-size: 8px; text-align: center; }
+  .sidebar-nav-item { min-height: 52px; padding: 5px 2px; flex-direction: column; justify-content: center; gap: 3px; font-size: 0.5rem; text-align: center; }
   .sidebar-nav-item svg { width: 19px; height: 19px; }
   .sidebar-music-item { min-height: 54px; padding: 3px 1px; flex-direction: column; }
-  .sidebar-music-main { flex-direction: column; justify-content: center; gap: 3px; font-size: 8px; text-align: center; }
+  .sidebar-music-main { flex-direction: column; justify-content: center; gap: 3px; font-size: 0.5rem; text-align: center; }
   .sidebar-music-item .music-volume-trigger { position: absolute; top: 1px; right: 1px; width: 18px; height: 18px; padding: 3px; }
   .music-volume-panel { right: 0; bottom: 8px; left: calc(100% + 8px); width: min(210px, calc(100vw - 100px)); }
-  .sidebar-theme-switch { min-height: 46px; padding: 6px 4px; flex-direction: column; justify-content: center; gap: 3px; font-size: 8px; text-align: center; }
+  .sidebar-theme-switch { min-height: 46px; padding: 6px 4px; flex-direction: column; justify-content: center; gap: 3px; font-size: 0.5rem; text-align: center; }
   .sidebar-theme-track { width: 56px; height: 29px; flex-basis: 56px; }
   .sidebar-theme-knob { width: 23px; height: 23px; top: 3px; } html.night-mode .sidebar-theme-knob, body.night-mode .sidebar-theme-knob { transform: translateX(27px); }
 }
@@ -426,12 +426,12 @@ html.night-mode .sidebar-brand-logo {
   .sidebar-brand { padding: 2px 0 8px !important; }
   .sidebar-brand-logo { width: min(100%, 48px) !important; max-height: 46px; }
   .sidebar-menu { margin-top: 10px !important; gap: 4px; }
-  .sidebar-nav-item { min-height: 50px; padding: 4px 1px; gap: 3px; font-size: 8.5px; line-height: 1.12; }
+  .sidebar-nav-item { min-height: 50px; padding: 4px 1px; gap: 3px; font-size: 0.53125rem; line-height: 1.12; }
   .sidebar-nav-item svg { width: 18px; height: 18px; flex-basis: 18px; }
   .sidebar-music-item { min-height: 54px; margin-top: 18px !important; padding: 3px 1px; }
-  .sidebar-music-main { gap: 3px; font-size: 8.5px; }
+  .sidebar-music-main { gap: 3px; font-size: 0.53125rem; }
   .sidebar-music-item .music-volume-trigger { width: 17px; height: 17px; padding: 3px; }
-  .sidebar-theme-switch { min-height: 44px; padding: 5px 2px; gap: 3px; font-size: 8.5px; }
+  .sidebar-theme-switch { min-height: 44px; padding: 5px 2px; gap: 3px; font-size: 0.53125rem; }
   .sidebar-theme-track { width: 50px; height: 27px; flex-basis: 50px; }
   .sidebar-theme-knob { width: 21px; height: 21px; }
   body.night-mode .sidebar-theme-knob,

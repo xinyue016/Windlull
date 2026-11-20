@@ -88,16 +88,16 @@ svg { display: block; }
   border-radius: 999px;
   background: rgba(255,255,255,.4);
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 0.6875rem;
   text-decoration: none;
 }
 .back-home:hover { background: rgba(255,255,255,.72); }
 .back-home svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .agent-profile { margin: 28px 4px 19px; }
-.profile-stars { color: #e8b84d; font-size: 25px; text-shadow: 0 0 18px rgba(232,184,77,.5); }
-.agent-profile p { margin: 10px 0 5px; color: var(--ink-faint); font-size: 8px; font-weight: 700; letter-spacing: .18em; }
-.agent-profile h1 { margin: 0; font-family: var(--font-serif); font-size: 27px; font-weight: 600; letter-spacing: -.03em; }
-.agent-profile span { display: block; margin-top: 8px; color: var(--ink-soft); font-size: 11px; line-height: 1.55; }
+.profile-stars { color: #e8b84d; font-size: 1.5625rem; text-shadow: 0 0 18px rgba(232,184,77,.5); }
+.agent-profile p { margin: 10px 0 5px; color: var(--ink-faint); font-size: 0.5rem; font-weight: 700; letter-spacing: .18em; }
+.agent-profile h1 { margin: 0; font-family: var(--font-serif); font-size: 1.6875rem; font-weight: 600; letter-spacing: -.03em; }
+.agent-profile span { display: block; margin-top: 8px; color: var(--ink-soft); font-size: 0.6875rem; line-height: 1.55; }
 .new-chat {
   min-height: 43px;
   display: flex;
@@ -108,14 +108,14 @@ svg { display: block; }
   border-radius: 14px;
   background: rgba(255,255,255,.5);
   color: var(--ink);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   transition: transform .25s var(--ease), background .25s;
 }
 .new-chat:hover { transform: translateY(-2px); background: rgba(255,255,255,.76); }
-.new-chat span { font-size: 17px; font-weight: 400; }
+.new-chat span { font-size: 1.0625rem; font-weight: 400; }
 .conversation-list { margin-top: 24px; }
-.sidebar-label { margin: 0 6px 9px; color: var(--ink-faint); font-size: 8px; font-weight: 700; letter-spacing: .14em; }
+.sidebar-label { margin: 0 6px 9px; color: var(--ink-faint); font-size: 0.5rem; font-weight: 700; letter-spacing: .14em; }
 .conversation {
   width: 100%;
   min-height: 56px;
@@ -132,8 +132,8 @@ svg { display: block; }
 .conversation.active { border-color: rgba(39,92,116,.1); background: rgba(255,255,255,.52); }
 .conversation-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #e5b252; box-shadow: 0 0 0 5px rgba(229,178,82,.13); }
 .conversation span:last-child { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.conversation b { font-size: 11px; font-weight: 600; }
-.conversation small { color: var(--ink-faint); font-size: 9px; }
+.conversation b { font-size: 0.6875rem; font-weight: 600; }
+.conversation small { color: var(--ink-faint); font-size: 0.5625rem; }
 .local-note {
   margin-top: auto;
   padding: 13px 12px;
@@ -141,16 +141,16 @@ svg { display: block; }
   border-radius: 14px;
   background: rgba(255,255,255,.36);
 }
-.local-note p { margin: 0 0 5px; display: flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 600; }
+.local-note p { margin: 0 0 5px; display: flex; align-items: center; gap: 7px; font-size: 0.625rem; font-weight: 600; }
 .local-dot { width: 6px; height: 6px; border-radius: 50%; background: #69b783; box-shadow: 0 0 0 4px rgba(105,183,131,.12); }
-.local-note small { display: block; color: var(--ink-faint); font-size: 9px; line-height: 1.55; }
+.local-note small { display: block; color: var(--ink-faint); font-size: 0.5625rem; line-height: 1.55; }
 .clear-chat {
   margin-top: 10px;
   padding: 8px;
   border: 0;
   background: transparent;
   color: var(--ink-faint);
-  font-size: 9px;
+  font-size: 0.5625rem;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -171,9 +171,9 @@ svg { display: block; }
   padding: 0 0 17px;
   border-bottom: 1px solid var(--line-dark);
 }
-.chat-header p { margin: 0 0 4px; color: var(--ink-faint); font-size: 8px; font-weight: 700; letter-spacing: .18em; }
-.chat-header h2 { margin: 0; font-family: var(--font-serif); font-size: clamp(22px,2.1vw,32px); font-weight: 600; letter-spacing: -.03em; }
-.agent-state { display: inline-flex; align-items: center; gap: 7px; margin-right: 155px; padding: 7px 10px; border: 1px solid rgba(39,92,116,.1); border-radius: 999px; background: rgba(255,255,255,.38); color: var(--ink-soft); font-size: 9px; white-space: nowrap; }
+.chat-header p { margin: 0 0 4px; color: var(--ink-faint); font-size: 0.5rem; font-weight: 700; letter-spacing: .18em; }
+.chat-header h2 { margin: 0; font-family: var(--font-serif); font-size: clamp(1.375rem,2.1vw,2rem); font-weight: 600; letter-spacing: -.03em; }
+.agent-state { display: inline-flex; align-items: center; gap: 7px; margin-right: 155px; padding: 7px 10px; border: 1px solid rgba(39,92,116,.1); border-radius: 999px; background: rgba(255,255,255,.38); color: var(--ink-soft); font-size: 0.5625rem; white-space: nowrap; }
 .agent-state i { width: 6px; height: 6px; border-radius: 50%; background: #70bf8a; box-shadow: 0 0 0 4px rgba(112,191,138,.13); }
 .emotion-insight {
   flex: 0 0 auto;
@@ -188,17 +188,17 @@ svg { display: block; }
 .emotion-current { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .emotion-dot { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #8eaab8; box-shadow: 0 0 0 4px rgba(142,170,184,.13); }
 .emotion-current div { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
-.emotion-current small { color: var(--ink-faint); font-size: 8px; white-space: nowrap; }
-.emotion-current strong { color: var(--ink); font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.emotion-trend { padding: 4px 8px; border-radius: 999px; background: rgba(80,126,148,.09); color: var(--ink-soft); font-size: 8px; white-space: nowrap; }
+.emotion-current small { color: var(--ink-faint); font-size: 0.5rem; white-space: nowrap; }
+.emotion-current strong { color: var(--ink); font-size: 0.75rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.emotion-trend { padding: 4px 8px; border-radius: 999px; background: rgba(80,126,148,.09); color: var(--ink-soft); font-size: 0.5rem; white-space: nowrap; }
 .emotion-trend.is-improved { background: rgba(91,168,123,.13); color: #3f7654; }
 .emotion-trend.is-worse { background: rgba(190,104,100,.12); color: #8b4b48; }
 .emotion-meter { height: 4px; margin: 9px 0 7px; overflow: hidden; border-radius: 999px; background: rgba(38,91,115,.08); }
 .emotion-meter i { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #9cc7d8, #6c9fb5); transition: width .35s var(--ease), background .35s; }
-.emotion-hint { margin: 0; color: var(--ink-faint); font-size: 9px; line-height: 1.55; }
+.emotion-hint { margin: 0; color: var(--ink-faint); font-size: 0.5625rem; line-height: 1.55; }
 .mood-check { display: flex; align-items: center; gap: 8px; margin-top: 9px; padding-top: 9px; border-top: 1px solid rgba(38,91,115,.08); }
 .mood-check[hidden] { display: none; }
-.mood-check > span { flex: 0 0 auto; color: var(--ink-faint); font-size: 8px; }
+.mood-check > span { flex: 0 0 auto; color: var(--ink-faint); font-size: 0.5rem; }
 .mood-buttons { display: flex; flex-wrap: wrap; gap: 4px; }
 .mood-buttons button {
   min-height: 26px;
@@ -207,7 +207,7 @@ svg { display: block; }
   border-radius: 999px;
   background: rgba(255,255,255,.48);
   color: var(--ink-soft);
-  font-size: 8px;
+  font-size: 0.5rem;
   transition: transform .2s, background .2s, border-color .2s;
 }
 .mood-buttons button:hover { transform: translateY(-1px); background: rgba(255,255,255,.88); }
@@ -220,7 +220,7 @@ svg { display: block; }
   border-radius: 10px;
   background: rgba(255,255,255,.72);
   color: var(--ink);
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 700;
 }
 .emotion-game[hidden] { display: none; }
@@ -247,7 +247,7 @@ svg { display: block; }
   border-radius: 50%;
   background: linear-gradient(145deg,#fff2b4,#e5ac3f);
   color: #72572b;
-  font-size: 14px;
+  font-size: 0.875rem;
   box-shadow: 0 5px 13px rgba(140,99,28,.17);
 }
 .message-bubble {
@@ -257,13 +257,13 @@ svg { display: block; }
   border-radius: 17px 17px 17px 5px;
   background: rgba(255,255,255,.66);
   color: var(--ink);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.7;
   box-shadow: 0 8px 22px rgba(31,83,108,.08);
   word-break: break-word;
 }
 .message-row.user .message-bubble { border-color: transparent; border-radius: 17px 17px 5px 17px; background: #23495d; color: #fff; }
-.message-time { display: block; margin-top: 5px; color: var(--ink-faint); font-size: 8px; text-align: right; }
+.message-time { display: block; margin-top: 5px; color: var(--ink-faint); font-size: 0.5rem; text-align: right; }
 .message-row.user .message-time { color: rgba(255,255,255,.5); }
 .typing-bubble { display: inline-flex; gap: 4px; align-items: center; min-width: 48px; min-height: 35px; }
 .typing-bubble i { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-soft); animation: typing-dot 1.2s infinite; }
@@ -276,7 +276,7 @@ svg { display: block; }
   border-radius: 999px;
   background: rgba(255,255,255,.4);
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 0.625rem;
   transition: transform .2s var(--ease), background .2s;
 }
 .quick-prompts button:hover { transform: translateY(-2px); background: rgba(255,255,255,.75); }
@@ -303,7 +303,7 @@ svg { display: block; }
   background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.55;
 }
 .chat-composer textarea::placeholder { color: var(--ink-faint); }
@@ -322,7 +322,7 @@ svg { display: block; }
 .send-button:hover { transform: translateY(-2px); background: #284f63; }
 .send-button:disabled { opacity: .38; cursor: not-allowed; }
 .send-button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.chat-disclaimer { margin: 8px 0 0; color: var(--ink-faint); font-size: 8px; text-align: center; }
+.chat-disclaimer { margin: 8px 0 0; color: var(--ink-faint); font-size: 0.5rem; text-align: center; }
 
 /* 3D hanging star */
 .agent-star-widget {
@@ -415,7 +415,7 @@ svg { display: block; }
   border-radius: 14px;
   background: rgba(255,255,255,.82);
   color: var(--ink);
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 1.55;
   text-align: left;
   opacity: 0;
@@ -436,25 +436,25 @@ svg { display: block; }
   .chat-sidebar { min-height: 66px; padding: 10px 14px; flex-direction: row; align-items: center; gap: 12px; border-radius: 22px; }
   .agent-profile, .conversation-list, .local-note, .clear-chat { display: none; }
   .new-chat { width: 44px; height: 42px; min-height: 42px; margin-left: auto; padding: 0; font-size: 0; }
-  .new-chat span { font-size: 20px; }
+  .new-chat span { font-size: 1.25rem; }
   .chat-main { padding: 19px 16px 15px; border-radius: 22px; }
-  .chat-header h2 { font-size: 22px; }
+  .chat-header h2 { font-size: 1.375rem; }
   .agent-state { margin-right: 0; }
   .emotion-insight { margin-top: 9px; padding: 10px 11px; }
   .emotion-current div { display: block; }
-  .emotion-current strong { display: block; font-size: 11px; }
+  .emotion-current strong { display: block; font-size: 0.6875rem; }
   .mood-check { align-items: flex-start; flex-direction: column; gap: 6px; }
   .message-bubble { max-width: 84%; }
   .agent-star-widget { top: 84px; right: 24px; width: 104px; height: 120px; }
   .star-model { width: 88px; height: 88px; }
-  .star-speech { max-width: 180px; font-size: 10px; }
+  .star-speech { max-width: 180px; font-size: 0.625rem; }
 }
 @media (max-width: 560px) {
   .chat-app { top: 68px; right: 11px; bottom: 12px; left: 11px; }
   .chat-header { padding-bottom: 13px; }
   .chat-header p { display: none; }
-  .chat-header h2 { font-size: 20px; }
-  .agent-state { padding: 6px 8px; font-size: 8px; }
+  .chat-header h2 { font-size: 1.25rem; }
+  .agent-state { padding: 6px 8px; font-size: 0.5rem; }
   .emotion-insight-row { align-items: flex-start; }
   .emotion-trend { max-width: 105px; white-space: normal; text-align: right; }
   .mood-buttons button { min-height: 28px; padding: 0 6px; }
@@ -462,7 +462,7 @@ svg { display: block; }
   .quick-prompts { overflow-x: auto; padding-bottom: 9px; }
   .quick-prompts button { white-space: nowrap; }
   .chat-composer { padding: 8px 8px 8px 12px; border-radius: 17px; }
-  .chat-composer textarea { font-size: 12px; }
+  .chat-composer textarea { font-size: 0.75rem; }
   .send-button { width: 38px; height: 38px; flex-basis: 38px; border-radius: 12px; }
   .agent-star-widget { top: 75px; right: 16px; transform: scale(.92); transform-origin: top right; }
 }
@@ -631,7 +631,7 @@ body .agent-star-widget.diary-star-widget {
 .diary-kicker {
   margin: 0 0 5px;
   color: var(--ink-faint);
-  font-size: 9px;
+  font-size: 0.5625rem;
   font-weight: 700;
   letter-spacing: 0.16em;
 }
@@ -639,7 +639,7 @@ body .agent-star-widget.diary-star-widget {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-serif);
-  font-size: clamp(28px, 3vw, 38px);
+  font-size: clamp(1.75rem, 3vw, 2.375rem);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
@@ -647,7 +647,7 @@ body .agent-star-widget.diary-star-widget {
   max-width: 620px;
   margin: 7px 0 0;
   color: var(--ink-soft);
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.6;
 }
 .diary-stats {
@@ -661,9 +661,9 @@ body .agent-star-widget.diary-star-widget {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.34);
   color: var(--ink-soft);
-  font-size: 10px;
+  font-size: 0.625rem;
 }
-.diary-stats b { color: var(--ink); font-size: 12px; }
+.diary-stats b { color: var(--ink); font-size: 0.75rem; }
 .diary-local-note {
   flex: 0 0 auto;
   margin: 10px 0 9px;
@@ -671,7 +671,7 @@ body .agent-star-widget.diary-star-widget {
   align-items: center;
   gap: 7px;
   color: var(--ink-faint);
-  font-size: 9px;
+  font-size: 0.5625rem;
 }
 .diary-local-note span {
   width: 6px;
@@ -707,7 +707,7 @@ body .agent-star-widget.diary-star-widget {
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 20px rgba(31, 80, 103, 0.08);
-  font-size: clamp(34px, 4vw, 54px);
+  font-size: clamp(2.125rem, 4vw, 3.375rem);
   line-height: 1;
   cursor: pointer;
   pointer-events: auto;
@@ -734,10 +734,10 @@ body .agent-star-widget.diary-star-widget {
 .mood-empty strong {
   color: var(--ink-soft);
   font-family: var(--font-serif);
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 600;
 }
-.mood-empty span { font-size: 10px; }
+.mood-empty span { font-size: 0.625rem; }
 .mood-actions {
   position: absolute;
   right: 0;
@@ -771,8 +771,8 @@ body .agent-star-widget.diary-star-widget {
 }
 .mood-action:hover,
 .mood-action:focus-visible { transform: translateY(-3px); filter: brightness(1.06); }
-.mood-action span { font-size: 23px; line-height: 1; }
-.mood-action small { font-size: 8px; line-height: 1; white-space: nowrap; }
+.mood-action span { font-size: 1.4375rem; line-height: 1; }
+.mood-action small { font-size: 0.5rem; line-height: 1; white-space: nowrap; }
 .mood-action--history { background: linear-gradient(145deg, #89a5db, #8878c9); }
 
 .diary-modal {
@@ -821,8 +821,8 @@ html.night-mode .diary-modal-panel { background: rgba(29, 23, 55, 0.98); }
   padding-bottom: 13px;
   border-bottom: 1px solid var(--line-dark);
 }
-.diary-modal-header p { margin: 0 0 4px; color: var(--ink-faint); font-size: 8px; font-weight: 700; letter-spacing: 0.15em; }
-.diary-modal-header h2 { margin: 0; font-family: var(--font-serif); font-size: 25px; font-weight: 600; }
+.diary-modal-header p { margin: 0 0 4px; color: var(--ink-faint); font-size: 0.5rem; font-weight: 700; letter-spacing: 0.15em; }
+.diary-modal-header h2 { margin: 0; font-family: var(--font-serif); font-size: 1.5625rem; font-weight: 600; }
 .diary-modal-close {
   width: 34px;
   height: 34px;
@@ -831,13 +831,13 @@ html.night-mode .diary-modal-panel { background: rgba(29, 23, 55, 0.98); }
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.38);
   color: var(--ink);
-  font-size: 23px;
+  font-size: 1.4375rem;
   line-height: 1;
   cursor: pointer;
 }
 .mood-form { margin-top: 16px; display: grid; gap: 12px; }
 .mood-form label { display: grid; gap: 6px; }
-.mood-form label > span { color: var(--ink-soft); font-size: 10px; font-weight: 600; }
+.mood-form label > span { color: var(--ink-soft); font-size: 0.625rem; font-weight: 600; }
 .mood-form input,
 .mood-form select,
 .mood-form textarea {
@@ -847,7 +847,7 @@ html.night-mode .diary-modal-panel { background: rgba(29, 23, 55, 0.98); }
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.48);
   color: var(--ink);
-  font: 12px/1.5 var(--font-sans);
+  font: 0.75rem/1.5 var(--font-sans);
   outline: none;
   resize: vertical;
 }
@@ -857,15 +857,15 @@ html.night-mode .diary-modal-panel { background: rgba(29, 23, 55, 0.98); }
 html.night-mode .mood-form input,
 html.night-mode .mood-form select,
 html.night-mode .mood-form textarea { background: rgba(255, 255, 255, 0.07); }
-.mood-form-note { margin: 0; color: var(--ink-faint); font-size: 9px; line-height: 1.5; }
-.mood-form-error { min-height: 14px; margin: 0; color: #b14f59; font-size: 10px; }
+.mood-form-note { margin: 0; color: var(--ink-faint); font-size: 0.5625rem; line-height: 1.5; }
+.mood-form-error { min-height: 14px; margin: 0; color: #b14f59; font-size: 0.625rem; }
 .diary-modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 9px; }
 .diary-button {
   min-height: 38px;
   padding: 0 16px;
   border: 1px solid var(--line-dark);
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -875,15 +875,15 @@ html.night-mode .mood-form textarea { background: rgba(255, 255, 255, 0.07); }
 html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
 .mood-detail-list { margin: 18px 0 0; display: grid; gap: 12px; }
 .mood-detail-list div { padding: 11px 12px; border: 1px solid var(--line-dark); border-radius: 13px; background: rgba(255, 255, 255, 0.26); }
-.mood-detail-list dt { margin-bottom: 4px; color: var(--ink-faint); font-size: 9px; }
-.mood-detail-list dd { margin: 0; color: var(--ink); font-size: 12px; line-height: 1.65; white-space: pre-wrap; }
+.mood-detail-list dt { margin-bottom: 4px; color: var(--ink-faint); font-size: 0.5625rem; }
+.mood-detail-list dd { margin: 0; color: var(--ink); font-size: 0.75rem; line-height: 1.65; white-space: pre-wrap; }
 .mood-history-list { margin-top: 15px; display: grid; gap: 9px; }
 .history-mood-item { padding: 12px 13px; border: 1px solid var(--line-dark); border-radius: 13px; background: rgba(255, 255, 255, 0.26); }
 .history-mood-item header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.history-mood-item strong { font-size: 12px; }
-.history-mood-item time { color: var(--ink-faint); font-size: 9px; }
-.history-mood-item p { margin: 6px 0 0; color: var(--ink-soft); font-size: 10px; line-height: 1.6; white-space: pre-wrap; }
-.history-empty { padding: 24px 0; color: var(--ink-faint); font-size: 11px; text-align: center; }
+.history-mood-item strong { font-size: 0.75rem; }
+.history-mood-item time { color: var(--ink-faint); font-size: 0.5625rem; }
+.history-mood-item p { margin: 6px 0 0; color: var(--ink-soft); font-size: 0.625rem; line-height: 1.6; white-space: pre-wrap; }
+.history-empty { padding: 24px 0; color: var(--ink-faint); font-size: 0.6875rem; text-align: center; }
 
 @media (max-width: 900px) {
   .diary-app {
@@ -894,31 +894,31 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
   }
   .diary-main { padding: 16px 15px 14px; border-radius: 22px; }
   .diary-header { gap: 12px; }
-  .diary-header h1 { font-size: 24px; }
-  .diary-intro { font-size: 10px; }
-  .diary-stats span { padding: 6px 8px; font-size: 8px; }
+  .diary-header h1 { font-size: 1.5rem; }
+  .diary-intro { font-size: 0.625rem; }
+  .diary-stats span { padding: 6px 8px; font-size: 0.5rem; }
   .mood-board { border-radius: 18px; }
   .mood-actions { height: 76px; gap: 14px; }
   .mood-action { width: 54px; height: 54px; }
-  .mood-action span { font-size: 20px; }
-  .mood-action small { font-size: 7px; }
+  .mood-action span { font-size: 1.25rem; }
+  .mood-action small { font-size: 0.4375rem; }
   .diary-modal-panel { width: calc(100vw - var(--app-sidebar-width) - 20px); padding: 17px; border-radius: 20px; }
   .diary-star-widget { top: 76px; right: 18px; }
 }
 @media (max-width: 560px) {
   .diary-app { top: 62px; right: 8px; bottom: 8px; left: calc(var(--app-sidebar-width) + 7px); }
   .diary-main { padding: 12px 10px 10px; border-radius: 18px; }
-  .diary-kicker { font-size: 7px; }
-  .diary-header h1 { font-size: 21px; }
-  .diary-intro { font-size: 9px; }
+  .diary-kicker { font-size: 0.4375rem; }
+  .diary-header h1 { font-size: 1.3125rem; }
+  .diary-intro { font-size: 0.5625rem; }
   .diary-stats { flex-direction: column; gap: 4px; }
   .diary-stats span { padding: 4px 7px; }
-  .diary-local-note { margin: 7px 0; font-size: 8px; }
-  .mood-record { width: 46px; height: 46px; font-size: 36px; }
+  .diary-local-note { margin: 7px 0; font-size: 0.5rem; }
+  .mood-record { width: 46px; height: 46px; font-size: 2.25rem; }
   .diary-modal-panel { width: calc(100vw - var(--app-sidebar-width) - 14px); padding: 14px; }
-  .diary-modal-header h2 { font-size: 21px; }
-  .mood-form input, .mood-form select, .mood-form textarea { font-size: 11px; }
-  .diary-button { min-height: 34px; padding: 0 12px; font-size: 10px; }
+  .diary-modal-header h2 { font-size: 1.3125rem; }
+  .mood-form input, .mood-form select, .mood-form textarea { font-size: 0.6875rem; }
+  .diary-button { min-height: 34px; padding: 0 12px; font-size: 0.625rem; }
 }
 
 .mood-empty[hidden] { display: none !important; }
@@ -999,12 +999,12 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
   transform: translate(-50%, -50%);
 }
 .mood-record[data-emotion="happy"]::before,
-.mood-record[data-emotion="happy"]::after { content: "✨"; font-size: 16px; }
+.mood-record[data-emotion="happy"]::after { content: "✨"; font-size: 1rem; }
 .mood-record[data-emotion="joy"]::before,
-.mood-record[data-emotion="joy"]::after { content: "♪"; font-size: 19px; color: #e8b64d; }
-.mood-record[data-emotion="angry"]::before { content: "🔨"; font-size: 25px; }
-.mood-record[data-emotion="angry"]::after { content: "✦"; font-size: 21px; color: #e9956c; }
-.mood-record[data-emotion="sad"]::before { content: "☁️"; font-size: 20px; }
+.mood-record[data-emotion="joy"]::after { content: "♪"; font-size: 1.1875rem; color: #e8b64d; }
+.mood-record[data-emotion="angry"]::before { content: "🔨"; font-size: 1.5625rem; }
+.mood-record[data-emotion="angry"]::after { content: "✦"; font-size: 1.3125rem; color: #e9956c; }
+.mood-record[data-emotion="sad"]::before { content: "☁️"; font-size: 1.25rem; }
 .mood-record[data-emotion="sad"]::after {
   content: "";
   width: 4px;
@@ -1013,8 +1013,8 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
   background: #77b5e4;
   box-shadow: 11px 1px 0 #77b5e4, -10px 5px 0 #77b5e4, 5px 10px 0 #77b5e4, -17px 14px 0 #77b5e4;
 }
-.mood-record[data-emotion="blue"]::before { content: "☁️"; font-size: 19px; }
-.mood-record[data-emotion="blue"]::after { content: "〰"; font-size: 20px; color: #7c9eb7; }
+.mood-record[data-emotion="blue"]::before { content: "☁️"; font-size: 1.1875rem; }
+.mood-record[data-emotion="blue"]::after { content: "〰"; font-size: 1.25rem; color: #7c9eb7; }
 
 .mood-record.is-long-press[data-emotion="happy"] { animation: mood-fx-happy .72s ease-in-out infinite; }
 .mood-record.is-long-press[data-emotion="joy"] { animation: mood-fx-joy .68s ease-in-out infinite; }
@@ -1124,21 +1124,21 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
 
 /* 八种基本情绪的专属图标与动效 */
 .mood-record[data-emotion="joy"]::before,
-.mood-record[data-emotion="joy"]::after { content: "✨"; font-size: 17px; color: #e8bc55; }
-.mood-record[data-emotion="trust"]::before { content: "✦"; font-size: 15px; color: #dfb34f; }
+.mood-record[data-emotion="joy"]::after { content: "✨"; font-size: 1.0625rem; color: #e8bc55; }
+.mood-record[data-emotion="trust"]::before { content: "✦"; font-size: 0.9375rem; color: #dfb34f; }
 .mood-record[data-emotion="trust"]::after { content: ""; width: 28px; height: 28px; border: 2px solid rgba(222,177,74,.72); border-radius: 50%; }
-.mood-record[data-emotion="fear"]::before { content: "💧"; font-size: 15px; }
-.mood-record[data-emotion="fear"]::after { content: "！"; font-size: 22px; font-weight: 800; color: #72a8d1; }
-.mood-record[data-emotion="surprise"]::before { content: "！"; font-size: 25px; font-weight: 800; color: #d69255; }
-.mood-record[data-emotion="surprise"]::after { content: "✦"; font-size: 20px; color: #f0ce6c; }
-.mood-record[data-emotion="sadness"]::before { content: "☁️"; font-size: 20px; }
+.mood-record[data-emotion="fear"]::before { content: "💧"; font-size: 0.9375rem; }
+.mood-record[data-emotion="fear"]::after { content: "！"; font-size: 1.375rem; font-weight: 800; color: #72a8d1; }
+.mood-record[data-emotion="surprise"]::before { content: "！"; font-size: 1.5625rem; font-weight: 800; color: #d69255; }
+.mood-record[data-emotion="surprise"]::after { content: "✦"; font-size: 1.25rem; color: #f0ce6c; }
+.mood-record[data-emotion="sadness"]::before { content: "☁️"; font-size: 1.25rem; }
 .mood-record[data-emotion="sadness"]::after { content: ""; width: 4px; height: 7px; border-radius: 60% 60% 65% 65%; background: #77b5e4; box-shadow: 11px 1px 0 #77b5e4, -10px 5px 0 #77b5e4, 5px 10px 0 #77b5e4, -17px 14px 0 #77b5e4; }
-.mood-record[data-emotion="disgust"]::before { content: "〰"; font-size: 20px; color: #78a969; }
-.mood-record[data-emotion="disgust"]::after { content: "•••"; font-size: 17px; color: #84ad71; }
-.mood-record[data-emotion="anger"]::before { content: "🔨"; font-size: 25px; }
-.mood-record[data-emotion="anger"]::after { content: "✦"; font-size: 21px; color: #e9956c; }
-.mood-record[data-emotion="anticipation"]::before { content: "✦"; font-size: 17px; color: #e1b548; }
-.mood-record[data-emotion="anticipation"]::after { content: "✧"; font-size: 18px; color: #e9cf74; }
+.mood-record[data-emotion="disgust"]::before { content: "〰"; font-size: 1.25rem; color: #78a969; }
+.mood-record[data-emotion="disgust"]::after { content: "•••"; font-size: 1.0625rem; color: #84ad71; }
+.mood-record[data-emotion="anger"]::before { content: "🔨"; font-size: 1.5625rem; }
+.mood-record[data-emotion="anger"]::after { content: "✦"; font-size: 1.3125rem; color: #e9956c; }
+.mood-record[data-emotion="anticipation"]::before { content: "✦"; font-size: 1.0625rem; color: #e1b548; }
+.mood-record[data-emotion="anticipation"]::after { content: "✧"; font-size: 1.125rem; color: #e9cf74; }
 
 .mood-record.is-long-press[data-emotion="joy"] { animation: mood-fx-happy .72s ease-in-out infinite; }
 .mood-record.is-long-press[data-emotion="trust"] { animation: mood-fx-trust 1.15s ease-in-out infinite; }
@@ -1272,23 +1272,23 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
 
 /* 本地保存提醒字号 */
 .diary-local-note {
-  font-size: 12.5px;
+  font-size: 0.78125rem;
   line-height: 1.55;
 }
-.diary-intro { font-size: 13.5px; }
-.diary-stats span { font-size: 11px; }
+.diary-intro { font-size: 0.84375rem; }
+.diary-stats span { font-size: 0.6875rem; }
 @media (max-width: 900px) {
-  .diary-local-note { font-size: 11.5px; }
-  .diary-intro { font-size: 12px; }
+  .diary-local-note { font-size: 0.71875rem; }
+  .diary-intro { font-size: 0.75rem; }
 }
 @media (max-width: 560px) {
-  .diary-local-note { font-size: 11px; line-height: 1.5; }
-  .diary-intro { font-size: 11px; }
+  .diary-local-note { font-size: 0.6875rem; line-height: 1.5; }
+  .diary-intro { font-size: 0.6875rem; }
 }
 
 /* 喜悦动效增强 */
 .mood-record[data-emotion="joy"]::before,
-.mood-record[data-emotion="joy"]::after { font-size: 22px; }
+.mood-record[data-emotion="joy"]::after { font-size: 1.375rem; }
 .mood-record.is-long-press[data-emotion="joy"] { animation: mood-joy-big .78s ease-in-out infinite; }
 .mood-record.is-bursting[data-emotion="joy"] { animation: mood-joy-big .82s ease-in-out 1 both; }
 .mood-record.is-long-press[data-emotion="joy"]::before { animation: fx-joy-spark-left .78s ease-out infinite; }
@@ -1316,14 +1316,14 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
 /* 放大 50 条规则说明 */
 .mood-form-note {
   color: var(--ink-soft);
-  font-size: 12.5px;
+  font-size: 0.78125rem;
   line-height: 1.6;
 }
 @media (max-width: 900px) {
-  .mood-form-note { font-size: 11.5px; }
+  .mood-form-note { font-size: 0.71875rem; }
 }
 @media (max-width: 560px) {
-  .mood-form-note { font-size: 11px; }
+  .mood-form-note { font-size: 0.6875rem; }
 }
 
 /* 记录区允许滚动，表情保持原尺寸且不重叠 */
@@ -1358,7 +1358,7 @@ html.night-mode .diary-button--quiet { background: rgba(255, 255, 255, 0.07); }
   .diary-header { flex-wrap: wrap; align-items: flex-start; }
   .diary-intro,
   .diary-local-note,
-  .mood-form-note { font-size: 10.5px; line-height: 1.6; }
+  .mood-form-note { font-size: 0.65625rem; line-height: 1.6; }
   .diary-stats { flex-direction: row; flex-wrap: wrap; gap: 5px; }
   .diary-stats span { padding: 5px 7px; }
   .diary-modal-panel {
