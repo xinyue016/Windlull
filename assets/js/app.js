@@ -147,7 +147,7 @@
   let touchDirection = null;
 
   const isInteractiveGestureTarget = (target) => Boolean(target.closest(
-    '.daily-scratch, .emotion-feature, .regulation-science, .support-plan, .scroll-down-cue, .app-sidebar, .topbar, .modal'
+    '.daily-scratch, .emotion-feature, .regulation-science, .support-plan, .support-plan-body, .site-credits, .credits-panel, .scroll-down-cue, .app-sidebar, .topbar, .modal'
   ));
 
   const getCurrentPageIndex = () => {

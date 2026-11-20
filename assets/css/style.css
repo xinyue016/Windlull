@@ -5053,3 +5053,48 @@ html.night-mode .credits-bottom {
     padding-top: 10px;
   }
 }
+
+/* Credits flow: text and footer always stack without overlap */
+.credits-panel {
+  display: flex !important;
+  flex-direction: column;
+  grid-template-rows: none;
+  gap: clamp(8px, 1.2vh, 13px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.credits-header,
+.credits-grid,
+.credits-bottom {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+.credits-grid {
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.credits-grid section,
+.credits-grid p,
+.credits-grid a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.credits-bottom {
+  margin-top: auto;
+  padding-top: 10px;
+}
+@media (max-width: 700px) {
+  .credits-grid { grid-template-columns: 1fr; }
+  .credits-grid section:last-child { grid-column: auto; }
+}
+
+/* Internal page-three scrolling should not trigger page navigation */
+.support-page { overscroll-behavior: contain; }
+.support-plan-body,
+.credits-panel {
+  touch-action: pan-y;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
